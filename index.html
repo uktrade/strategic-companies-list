@@ -52,6 +52,23 @@
         margin-top: 0;
       }
     }
+
+    .scl-input-with-search-icon {
+      padding-left: 30px;
+    }
+    .scl-input-with-search-icon {
+
+    }
+    .scl-input-search-icon {
+      display: block;
+      position: relative;
+      z-index: 1;
+      margin-bottom: -2.5rem;
+      width: 40px;
+      height: 2.5rem;
+      background: url(/images/icon-search.svg) no-repeat -3px center;
+    }
+}
   </style>
 </head>
 
@@ -133,7 +150,8 @@
         <label class="govuk-label" for="event-name">
           Search for a company by its name
         </label>
-        <input class="govuk-input" id="event-name" name="eventName" type="text">
+        <span class="scl-input-search-icon"></span>
+        <input class="govuk-input scl-input-with-search-icon" id="event-name" name="eventName" type="text">
       </div>
     </main>
   </div>
