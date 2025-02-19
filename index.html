@@ -19,6 +19,21 @@
     .dbt-header__logotype {
       margin-bottom: -5px;
     }
+
+    .govuk-header__security-classification {
+      display: block;
+    }
+    .govuk-header__security-classification > .govuk-tag {
+      margin: 7px 0 0 0;
+    }
+    @media (min-width: 48.0625em) {
+      .govuk-header__security-classification {
+        float: right;
+      }
+      .govuk-header__security-classification > .govuk-tag {
+        margin: 3px 0 0 0;
+      }
+    }
   </style>
 </head>
 
@@ -36,21 +51,12 @@
             Strategic Companies List
           </span>
         </a>
+        <span class="govuk-header__security-classification"><strong class="govuk-tag govuk-tag--red govuk-phase-banner__content__tag">
+          OFFICIAL SENSITIVE
+        </strong></span>
       </div>
     </div>
   </header>
-  <div class="govuk-width-container">
-    <div class="govuk-phase-banner">
-      <p class="govuk-phase-banner__content">
-        <strong class="govuk-tag govuk-tag--red govuk-phase-banner__content__tag">
-          OFFICIAL SENSITIVE
-        </strong>
-        <span class="govuk-phase-banner__text">
-          Only share this information with those that have a genuine need to know.
-        </span>
-      </p>
-    </div>
-  </div>
   <div class="govuk-width-container">
     <main class="govuk-main-wrapper" id="main-content">
       <h1 class="govuk-heading-xl">Default page template</h1>
