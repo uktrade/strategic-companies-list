@@ -34,6 +34,24 @@
         margin: 3px 0 0 0;
       }
     }
+
+    .scl-key-info-banner {
+      border-bottom: 1px solid #b1b4b6;
+      background-color: #f8f8f8;
+    }
+    .scl-key-info-panel {
+      border: 1px solid rgb(177, 180, 182);
+      background: white;
+    }
+    .scl-key-info-panel-subsequent {
+      margin-top: 15px;
+    }
+
+    @media (min-width: 40.0625em) {
+      .scl-key-info-panel-subsequent {
+        margin-top: 0;
+      }
+    }
   </style>
 </head>
 
@@ -42,7 +60,7 @@
     document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
   </script>
   <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
-  <header class="govuk-header" data-module="govuk-header">
+  <header class="govuk-header govuk-header--full-width-border" data-module="govuk-header">
     <div class="govuk-header__container govuk-width-container">
       <div class="govuk-header__logo">
         <a href="/" class="govuk-header__link govuk-header__link--homepage">
@@ -57,9 +75,29 @@
       </div>
     </div>
   </header>
+  <div class="scl-key-info-banner govuk-!-padding-top-5 govuk-!-padding-bottom-5">
+    <div class="govuk-width-container">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
+          <div class="scl-key-info-panel govuk-!-padding-3">
+            <h1 class="govuk-heading-m">Your companies</h1>
+            <p class="govuk-body">These are the companies you have been granted privileged access to.</p>
+          </div>
+        </div>
+        <div class="govuk-grid-column-one-half">
+          <div class="scl-key-info-panel scl-key-info-panel-subsequent govuk-!-padding-3">
+            <p class="govuk-body govuk-body-s" style="float: right"><a href="#">Past events</a></p>
+            <h1 class="govuk-heading-m govuk-!-padding-top-0">Future events</h1>
+            <p class="govuk-body">The future events scheduled for the companies you have privileged access to.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="govuk-width-container">
     <main class="govuk-main-wrapper" id="main-content">
-      <h1 class="govuk-heading-xl">Default page template</h1>
+      <h1 class="govuk-heading-m">All companies on the Strategic Companies List</h1>
+      <p class="govuk-body">You will only be able to see limited details for companies you have not been granted privileged access to.</p>
     </main>
   </div>
   <footer class="govuk-footer">
