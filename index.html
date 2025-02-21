@@ -279,10 +279,12 @@
           Search for a company by its name
         </label>
         <span class="scl-input-search-icon"></span>
-        <input class="govuk-input scl-input-with-search-icon" id="event-name" name="eventName" type="text">
+        <input class="govuk-input scl-input-with-search-icon" id="company-name" name="companyName" type="text">
       </div>
 
-      <ul class="govuk-list scl-company-list">
+      <p id="company-name-search-error" class="govuk-body" style="display: none">No companies found</p>
+
+      <ul class="govuk-list scl-company-list" id="company-list">
         <li>
           <a class="govuk-link govuk-link--no-visited-state" href="#">Aqua Limited</a>
         </li>
@@ -536,6 +538,24 @@
       initAll
     } from '/javascripts/govuk-frontend.min.js'
     initAll()
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+      const companyNameInput = document.getElementById("company-name");
+      const companyList = document.getElementById("company-list");
+      const error = document.getElementById("company-name-search-error");
+      companyNameInput.addEventListener("input", () => {
+        const value = companyNameInput.value.trim().toLowerCase();
+        let total = 0;
+        Array.from(companyList.children).forEach(child => {
+          const text = child.textContent;
+          const toShow = (value == '' || text.toLowerCase().includes(value))
+          child.style.display = toShow ? null : 'none';
+          if (toShow) total += 1;
+        });
+        error.style.display = total ? 'none' : null;
+      });
+  });
   </script>
 </body>
 
