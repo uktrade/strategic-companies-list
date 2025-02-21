@@ -20,27 +20,48 @@
       margin-bottom: -5px;
       padding-right: 12px;
       border-right: 2px solid white;
+      width: 33px;
     }
+    @media (min-width: 48.0625em) {
+      .dbt-header__logotype {
+        width: auto;
+      }
+    }
+    .govuk-header__logo {
+      padding-right: 0;
+    }
+
     a:focus .dbt-header__logotype {
       border-right: 2px solid #0b0c0c;
     }
 
-    .govuk-header__security-classification {
-      display: block;
+    .govuk-header__product-name {
+      line-height: 30px;
+      margin-top: 0;
     }
+
     .govuk-header__security-classification > .govuk-tag {
-      margin: 10px 0 0 0;
-      padding: 3px 7px 2px 7px;
+      margin: 4px 0 0 0;
+      padding: 0 7px 0 7px;
       font-weight: bold;
+      float: right;
+      line-height: 22px;
       font-size: 0.8rem; /* A bit smaller, but since it's capitalised, so doesn't look smaller */
       background: #e88978; /* A bit darker than default so it looks red in black background */
     }
-    @media (min-width: 48.0625em) {
-      .govuk-header__security-classification {
-        float: right;
+
+    .govuk-header__security-classification__long {
+      display: none;
+    }
+    .govuk-header__security-classification__short {
+      display: inline;
+    }
+    @media (min-width: 40.0625em) {
+      .govuk-header__security-classification__long {
+        display: inline;
       }
-      .govuk-header__security-classification > .govuk-tag {
-        margin: 4px 0 0 0;
+      .govuk-header__security-classification__short {
+        display: none;
       }
     }
 
@@ -52,21 +73,79 @@
       padding-bottom: 2px;
     }
 
-    .scl-key-info-banner {
-      border-bottom: 1px solid #b1b4b6;
-      background-color: #f8f8f8;
+    /* Should sort out a min-width pattern */
+    @media (max-width: 640px) {
+      .scl-max-width-mobile {
+        margin: 0;
+        padding: 0;
+
+      }
     }
+
     .scl-key-info-panel {
-      border: 1px solid rgb(177, 180, 182);
-      background: white;
+      padding: 0;
     }
-    .scl-key-info-panel-subsequent {
-      margin-top: 15px;
+    @media (min-width: 40.0625em) {
+      .scl-key-info-panel {
+        padding: 25px;
+      }
+    }
+
+    .scl-key-info-panel-header {
+      padding: 15px 15px 0 15px;
+    }
+    @media (min-width: 40.0625em) {
+      .scl-key-info-panel-header {
+        padding: 0;
+      }
+    }
+
+    @media (min-width: 40.0625em) {
+      .scl-key-info-banner {
+        border-bottom: 1px solid #b1b4b6;
+        background-color: #f8f8f8;
+        padding-top: 25px;
+        padding-bottom: 25px;
+      }
+      .scl-key-info-panel {
+        border: 1px solid rgb(177, 180, 182);
+        background: white;
+      }
+      .scl-key-info-panel-subsequent {
+        margin-top: 15px;
+      }
     }
 
     @media (min-width: 40.0625em) {
       .scl-key-info-panel-subsequent {
         margin-top: 0;
+      }
+    }
+
+    .scl-mobile-list {
+      border-top: 1px solid #b1b4b6;
+    }
+    .scl-mobile-list > li {
+      border-bottom: 1px solid #b1b4b6;
+      margin-bottom: 0;
+    }
+    .scl-mobile-list > li > a {
+      padding: 10px 15px 10px 15px;
+      display: block;
+      text-decoration-line: none;
+    }
+    @media (min-width: 40.0625em) {
+      .scl-mobile-list {
+        border: none;
+      }
+      .scl-mobile-list > li {
+        border: none;
+        margin-bottom: 5px;
+      }
+      .scl-mobile-list > li > a {
+        padding: 0;
+        display: inline;
+        text-decoration-line: underline;
       }
     }
 
@@ -94,6 +173,15 @@
       flex: 0 0 33.33333%;
       padding-bottom: 3px;
     }
+
+    .scl-hide-block-on-mobile {
+      display: none;
+    }
+    @media (min-width: 40.0625em) {
+      .scl-hide-block-on-mobile  {
+        display: block;
+      }
+    }
   </style>
 </head>
 
@@ -111,41 +199,26 @@
             Strategic Companies List
           </span>
         </a>
-        <span class="govuk-header__security-classification"><strong class="govuk-tag govuk-tag--red">
+        <span class="govuk-header__security-classification govuk-header__security-classification__long"><strong class="govuk-tag govuk-tag--red">
           OFFICIAL-SENSITIVE
+        </strong></span>
+        <span class="govuk-header__security-classification govuk-header__security-classification__short"><strong class="govuk-tag govuk-tag--red">
+          OFF-SEN
         </strong></span>
       </div>
     </div>
   </header>
-  <div class="scl-key-info-banner govuk-!-padding-top-5 govuk-!-padding-bottom-5">
-    <div class="govuk-width-container">
-      <div class="govuk-grid-row">
+  <div class="scl-key-info-banner">
+    <div class="govuk-width-container scl-max-width-mobile">
+      <div class="govuk-grid-row scl-no-grid-mobile">
         <div class="govuk-grid-column-one-half">
-          <div class="scl-key-info-panel govuk-!-padding-3">
-            <h1 class="govuk-heading-m">Your companies</h1>
-            <p class="govuk-body">These are the companies you have been granted privileged access to.</p>
-            <ul class="govuk-list">
-              <li>
-                <a class="govuk-link govuk-link--no-visited-state" href="#">Aqua Limited</a>
-              </li>
-              <li>
-                <a class="govuk-link govuk-link--no-visited-state" href="#">Blue International</a>
-              </li>
-              <li>
-                <a class="govuk-link govuk-link--no-visited-state" href="#">Red Lion Group</a>
-              </li>
-              <li>
-                <a class="govuk-link govuk-link--no-visited-state" href="#">Yellow plc</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="govuk-grid-column-one-half">
-          <div class="scl-key-info-panel scl-key-info-panel-subsequent govuk-!-padding-3">
-            <p class="govuk-body govuk-body-s" style="float: right"><a href="#" class="govuk-link--no-visited-state">Past engagements</a></p>
-            <h1 class="govuk-heading-m govuk-!-padding-top-0">Future engagements</h1>
-            <p class="govuk-body">The future engagements scheduled for the companies you have privileged access to.</p>
-            <ul class="govuk-list">
+          <div class="scl-key-info-panel">
+            <div class="scl-key-info-panel-header">
+              <p class="govuk-body govuk-body-s" style="float: right"><a href="#" class="govuk-link--no-visited-state">Past engagements</a></p>
+              <h1 class="govuk-heading-m govuk-!-padding-top-0">Your engagements</h1>
+            </div>
+            <p class="govuk-body scl-hide-block-on-mobile">The future engagements scheduled for the companies you have privileged access to.</p>
+            <ul class="govuk-list scl-mobile-list">
               <li>
                 <a class="govuk-link govuk-link--no-visited-state" href="#">3rd March 2025 - Blue International</a>
               </li>
@@ -157,6 +230,28 @@
               </li>
               <li>
                 <a class="govuk-link govuk-link--no-visited-state" href="#">3rd April 2025 - Red Lion Group</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="govuk-grid-column-one-half">
+          <div class="scl-key-info-panel scl-key-info-panel-subsequent">
+            <div class="scl-key-info-panel-header">
+              <h1 class="govuk-heading-m">Your companies</h1>
+              <p class="govuk-body scl-hide-block-on-mobile">These are the companies you have been granted privileged access to.</p>
+            </div>
+            <ul class="govuk-list scl-mobile-list">
+              <li>
+                <a class="govuk-link govuk-link--no-visited-state" href="#">Aqua Limited</a>
+              </li>
+              <li>
+                <a class="govuk-link govuk-link--no-visited-state" href="#">Blue International</a>
+              </li>
+              <li>
+                <a class="govuk-link govuk-link--no-visited-state" href="#">Red Lion Group</a>
+              </li>
+              <li>
+                <a class="govuk-link govuk-link--no-visited-state" href="#">Yellow plc</a>
               </li>
             </ul>
           </div>
