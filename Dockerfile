@@ -9,6 +9,7 @@ RUN \
 	npm install && \
 	npm install -g local-web-server
 
+COPY images ./images
 COPY index.html .
 
 CMD ws --rewrite '/assets/(.*) -> /node_modules/govuk-frontend/dist/govuk/assets/$1' --rewrite '/stylesheets/(.*) -> /node_modules/govuk-frontend/dist/govuk/$1' --rewrite '/javascripts/(.*) -> /node_modules/govuk-frontend/dist/govuk/$1'
