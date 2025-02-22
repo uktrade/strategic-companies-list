@@ -17,8 +17,9 @@ resource "aws_internet_gateway" "main" {
 resource "aws_subnet" "public" {
   count = length(var.subnets_public)
 
-  vpc_id     = aws_vpc.main.id
-  cidr_block = var.subnets_public[count.index].cidr_block
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.subnets_public[count.index].cidr_block
+  availability_zone = "${data.aws_region.current.name}${var.subnets_public[count.index].availability_zone_short}"
 
   tags = {
     Name = "${var.prefix}-public-${var.subnets_public[count.index].availability_zone_short}-${var.suffix}"
@@ -28,8 +29,9 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count = length(var.subnets_private)
 
-  vpc_id     = aws_vpc.main.id
-  cidr_block = var.subnets_private[count.index].cidr_block
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.subnets_private[count.index].cidr_block
+  availability_zone = "${data.aws_region.current.name}${var.subnets_private[count.index].availability_zone_short}"
 
   tags = {
     Name = "${var.prefix}-private-${var.subnets_private[count.index].availability_zone_short}-${var.suffix}"
