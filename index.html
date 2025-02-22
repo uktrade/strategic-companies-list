@@ -385,14 +385,22 @@
       const companyList = document.getElementById("company-list");
       const error = document.getElementById("company-name-search-error");
       companyNameInput.addEventListener("input", () => {
-        const value = companyNameInput.value.replace(/\s/g,'').toLowerCase();
-        let total = 0;
+        // We show companies where every lowercased word in the search string is contained in
+        // the lowercased and space-removed company name. This allows a good range of both "full"
+        // and "quick" searches, e.g. "quantum holdings", "quantumholdings" and "quan hold" all
+        // match "Quantum Holdings", but the number of incorrect matches is very likely to be low
+        const segmenter = new Intl.Segmenter([], { granularity: 'word' });
+        const segmentedText = segmenter.segment(companyNameInput.value);
+        const words = [...segmentedText].filter(s => s.isWordLike).map(s => s.segment);
+        let totalMatched = 0;
+
         Array.from(companyList.children).forEach((child) => {
-          const toShow = (value == '' || child.textContent.replace(/\s/g,'').toLowerCase().includes(value))
-          child.style.display = toShow ? null : 'none';
-          if (toShow) total += 1;
+          const allWordsMatch = words.every((word) => child.textContent.replace(/\s/g,'').toLocaleLowerCase("en-GB").includes(word.toLocaleLowerCase("en-GB")))
+
+          child.style.display = allWordsMatch ? null : 'none';
+          if (allWordsMatch) totalMatched += 1;
         });
-        error.style.display = total ? 'none' : null;
+        error.style.display = totalMatched ? 'none' : null;
       });
   });
   </script>
