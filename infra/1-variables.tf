@@ -54,3 +54,17 @@ variable "subnets_private" {
     },
   ]
 }
+
+variable "container_port" {
+  type    = number
+  default = 8000
+}
+
+variable "container_name" {
+  type    = string
+  default = "main"
+}
+
+variable "domain_name" {
+  type = string
+}
