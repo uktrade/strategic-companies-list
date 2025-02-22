@@ -380,16 +380,15 @@
     initAll()
   </script>
   <script>
-    document.addEventListener("DOMContentLoaded", (event) => {
+    document.addEventListener("DOMContentLoaded", () => {
       const companyNameInput = document.getElementById("company-name");
       const companyList = document.getElementById("company-list");
       const error = document.getElementById("company-name-search-error");
       companyNameInput.addEventListener("input", () => {
-        const value = companyNameInput.value.trim().toLowerCase();
+        const value = companyNameInput.value.replace(/\s/g,'').toLowerCase();
         let total = 0;
-        Array.from(companyList.children).forEach(child => {
-          const text = child.textContent;
-          const toShow = (value == '' || text.toLowerCase().includes(value))
+        Array.from(companyList.children).forEach((child) => {
+          const toShow = (value == '' || child.textContent.replace(/\s/g,'').toLowerCase().includes(value))
           child.style.display = toShow ? null : 'none';
           if (toShow) total += 1;
         });
