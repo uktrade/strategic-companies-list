@@ -23,7 +23,7 @@ Visit http://localhost:8000/
 
 ## Provisioning infrastructure
 
-AWS infrastructure for running the strategic-companies-list is defined through Terraform in [infra/](./infra/), although each environment needs some manual setup. There are various options, but one possibility:
+AWS infrastructure for running the strategic-companies-list is defined through Terraform in [infra/](./infra/), although each environment (dev, prod, etc) needs some manual setup. There are various options, but one possibility:
 
 1. Create or get access to an AWS account for running the infrastructure.
 
@@ -45,7 +45,7 @@ AWS infrastructure for running the strategic-companies-list is defined through T
           └── prod
     ```
 
-7. In each environment directory, create a `main.tf` as follows, replacing the `<...>`` patterns with the S3 bucket name, DynamoDB table, and environment name.
+7. In each environment directory, create a `main.tf` as follows, replacing the `<...>`` patterns with the S3 bucket name, DynamoDB table, and environment name, and populating the `module` with additional variables defined in [infra/variables.tf](./infra/variables.tf)
 
     ```hcl
     terraform {
