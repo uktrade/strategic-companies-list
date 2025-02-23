@@ -35,21 +35,6 @@ resource "aws_codebuild_project" "main" {
     image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
-
-    environment_variable {
-      name  = "ECR_URL"
-      value = ""
-    }
-
-    environment_variable {
-      name  = "ECS_CLUSTER"
-      value = "SOME_VALUE2"
-    }
-
-    environment_variable {
-      name  = "ECS_SERVICE"
-      value = "SOME_VALUE2"
-    }
   }
 
   logs_config {
