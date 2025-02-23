@@ -81,6 +81,10 @@ AWS infrastructure for running the strategic-companies-list is defined through T
     module "strategic_companies_list" {
       source = "../../strategic-companies-list/infra"
     }
+
+    output "strategic_companies_list" {
+      value = module.strategic_companies_list
+    }
     ```
 
 8. If you configured AWS CLI though SSO access, run:
