@@ -65,6 +65,11 @@ variable "container_name" {
   default = "main"
 }
 
+variable "github_source_url" {
+  type    = string
+  default = "https://github.com/uktrade/strategic-companies-list.git"
+}
+
 variable "domain_name" {
   type = string
 }
