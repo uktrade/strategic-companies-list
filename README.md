@@ -6,7 +6,15 @@
 
 ----
 
-## Developing
+### Contents
+
+- [Running locally](#running-locally)
+- [Provisioning infrastructure](#provisioning-infrastructure)
+- [Licenses and attributions](#licenses-and-attributions)
+
+----
+
+## Running locally
 
 Install dependencies: GOV.UK Design System and a local web server:
 
@@ -26,7 +34,12 @@ Visit http://localhost:8000/
 
 ## Provisioning infrastructure
 
-AWS infrastructure for running the strategic-companies-list is defined through Terraform in [infra/](./infra/), although each environment (dev, prod, etc) needs some manual setup. There are various options, but one possibility:
+> [!IMPORTANT]
+> The instructions below use Terraform to provision the infrastructure for Strategic Companies List, the "entry-point" of which is an internet-facing Application Load Balancer (ALB). However, it is assumed this ALB is the origin of a CloudFront distribution, but this CloudFront distribution, as well as the DNS records for it and the ABL, are currently _not_ defined in the Terraform, and so must be provisioned separately. While potentially awkard when setting up each environment, it allows for flexibility. For example, they can be setup in another AWS account by other users.
+>
+> In future versions it is possible that the CloudFront distribution and DNS records are provisioned using the Terraform in this repository.
+
+AWS infrastructure for running the strategic-companies-list is defined through Terraform in [infra/](./infra/), although each environment (dev, prod, etc) needs manual bootstrapping. There are various options, but one possibility:
 
 1. Create or get access to an AWS account for running the infrastructure.
 
