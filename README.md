@@ -1,7 +1,10 @@
-# strategic-companies-list
+<p align="center">
+  <img alt="Strategic Companies List logo" width="180" height="180" src="./.assets/scl-logo.svg">
+</p>
 
-A service for maintaining and securely sharing information on top tier companies.
+<h3 align="center">Strategic Companies List</h3><p align="center"><em>A service for maintaining and securely sharing information on top tier companies</em></p>
 
+----
 
 ## Developing
 
@@ -86,3 +89,10 @@ AWS infrastructure for running the strategic-companies-list is defined through T
    ```
 
 10. (Optional) Use [direnv](https://direnv.net/) to avoid having to use `AWS_PROFILE=my-profile-name` for future terraform commands.
+
+
+# Licenses and attributions
+
+The code of Strategic Companies List is licensed under the [MIT License](./LICENSE).
+
+However, the [Secure Companies List logo](./assets/scl-logo.svg) is not licensed in the MIT License: it is a modified version of [Nursila's strategy icon](https://thenounproject.com/icon/strategy-7052985/), purchased via a Noun project subscription.
