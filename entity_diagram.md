@@ -6,8 +6,8 @@ erDiagram
     GOV-DEPARTMENT ||--|{ GOV-PRIORITY: has
     GOV-PRIORITY }o--o{ COMPANY-ISSUE: creates
     GOV-PRIORITY }o--o{ COMPANY-ISSUE: creates
-    COMPANY-KEY-PERSON }o--o{ INTERACTION: involvement-in
-    GOV-KEY-PERSON }o--o{ INTERACTION: involvement-in
+    COMPANY-KEY-PERSON }|--o{ INTERACTION: involvement-in
+    GOV-KEY-PERSON }|--o{ INTERACTION: involvement-in
     COMPANY{
         float number_of_employees_uk
         float number_of_employees_global
