@@ -2,9 +2,7 @@
 erDiagram
     COMPANY ||--|{ COMPANY-KEY-PERSON: has
     COMPANY ||--o{ COMPANY-ISSUE: has
-    COMPANY ||--o{ INTERACTION: creates
     GOV-DEPARTMENT ||--|{ GOV-KEY-PERSON: has
-    GOV-DEPARTMENT ||--o{ INTERACTION: creates
     GOV-DEPARTMENT ||--|{ GOV-PRIORITY: has
     GOV-PRIORITY }o--o{ COMPANY-ISSUE: creates
     GOV-PRIORITY }o--o{ COMPANY-ISSUE: creates
