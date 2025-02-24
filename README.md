@@ -108,7 +108,7 @@ AWS infrastructure for running the strategic-companies-list is defined through T
 10. (Optional) Use [direnv](https://direnv.net/) to avoid having to use `AWS_PROFILE=my-profile-name` for future terraform commands.
 
 
-# Licenses and attributions
+## Licenses and attributions
 
 The code of Strategic Companies List is licensed under the [MIT License](./LICENSE).
 
