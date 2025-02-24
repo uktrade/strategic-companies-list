@@ -1,0 +1,4 @@
+# For now, Data Infrastructure own this project, but we don't
+# enforce review from them
+CODEOWNERS @uktrade/data-infrastructure
+
