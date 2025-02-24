@@ -1,7 +1,35 @@
 ```mermaid
 erDiagram
-    COMPANY ||--|{ KEY-PERSON: has
-    COMPANY ||--o{ ISSUE: has
-    COMPANY ||--o{ INTERACTION: has
-    GOVERNMENT-DEPARTMENT ||--o{ INTERACTION: has
+    COMPANY ||--|{ COMPANY-KEY-PERSON: employs
+    COMPANY ||--o{ COMPANY-ISSUE: has
+    COMPANY ||--o{ INTERACTION: creates
+    GOV-DEPARTMENT ||--o{ INTERACTION: creates
+    GOV-DEPARTMENT ||--|{ GOV-COMPANY-PRIORITY: has
+    GOV-PRIORITY }o--o{ COMPANY-ISSUE: creates
+    COMPANY{
+        float number_of_employees_uk
+        float number_of_employees_global
+        float size_rank_in_sector
+        string workforce_skills_activities
+    }
+    COMPANY-KEY-PERSON{
+        string occupation
+        string title
+        string forename
+        string surname
+        date appointment_date
+    }
+    COMPANY-ISSUE{
+        text issue_heading
+        text issue_text
+    }
+    GOV-COMPANY-PRIORITY{
+        text priority_heading
+        text priority_text
+    }
+    INTERACTION{
+        text interaction_subject
+        date interaction_date
+    }
+    
 ```
