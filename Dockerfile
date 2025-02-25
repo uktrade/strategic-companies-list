@@ -34,7 +34,9 @@ COPY start.sh .
 COPY manage.py .
 COPY scl ./scl
 
-RUN python manage.py collectstatic
+RUN \
+    python manage.py collectstatic && \
+    find /app/assets/ -type f -exec gzip -k -9 {} \;
 
 USER scl
 
