@@ -79,45 +79,49 @@ resource "aws_iam_role_policy" "codebuild" {
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow",
-      Resource = [
-        "${aws_cloudwatch_log_group.codebuild.arn}",
-        "${aws_cloudwatch_log_group.codebuild.arn}:*",
-      ],
-      Action = [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents",
-      ],
-      }, {
-      Effect = "Allow",
-      Resource = [
-        "*",
-      ],
-      Action = [
-        "ecr:GetAuthorizationToken",
-      ],
-      }, {
-      Effect = "Allow",
-      Resource = [
-        aws_ecr_repository.main.arn,
-      ],
-      Action = [
-        "ecr:BatchCheckLayerAvailability",
-        "ecr:CompleteLayerUpload",
-        "ecr:InitiateLayerUpload",
-        "ecr:PutImage",
-        "ecr:UploadLayerPart"
-      ],
-      }, {
-      Effect = "Allow",
-      Resource = [
-        aws_ecs_service.main.id,
-      ],
-      Action = [
-        "ecs:UpdateService",
-      ],
+    Statement = [
+      {
+        Effect = "Allow",
+        Resource = [
+          "${aws_cloudwatch_log_group.codebuild.arn}",
+          "${aws_cloudwatch_log_group.codebuild.arn}:*",
+        ],
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+        ],
+      },
+      {
+        Effect = "Allow",
+        Resource = [
+          "*",
+        ],
+        Action = [
+          "ecr:GetAuthorizationToken",
+        ],
+      },
+      {
+        Effect = "Allow",
+        Resource = [
+          aws_ecr_repository.main.arn,
+        ],
+        Action = [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:CompleteLayerUpload",
+          "ecr:InitiateLayerUpload",
+          "ecr:PutImage",
+          "ecr:UploadLayerPart"
+        ],
+      },
+      {
+        Effect = "Allow",
+        Resource = [
+          aws_ecs_service.main.id,
+        ],
+        Action = [
+          "ecs:UpdateService",
+        ],
       },
       # Codebuild requires various VPC permissions to run things in our VPC
       # (which is maybe inconsistent with ECS, which doesn't need similar permissions)
@@ -134,7 +138,8 @@ resource "aws_iam_role_policy" "codebuild" {
           "ec2:DescribeVpcs"
         ],
         Resource = "*"
-        }, {
+      },
+      {
         Effect = "Allow",
         Action = [
           "ec2:CreateNetworkInterfacePermission"
