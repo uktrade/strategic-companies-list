@@ -17,10 +17,7 @@ RUN \
         parallel && \
     rm -rf /var/lib/apt/lists/*
 
-RUN \
-    useradd -m scl && \
-    mkdir -p /app/assets && \
-    chown scl -R /app/assets
+RUN useradd -m scl
 
 WORKDIR /app
 
