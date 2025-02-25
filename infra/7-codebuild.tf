@@ -35,6 +35,7 @@ resource "aws_codebuild_project" "main" {
     image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
+    privileged_mode             = true # For running the Docker daemon
   }
 
   logs_config {
@@ -42,6 +43,15 @@ resource "aws_codebuild_project" "main" {
       group_name  = aws_cloudwatch_log_group.codebuild.name
       stream_name = "main"
     }
+  }
+
+  # This isn't strictly needed, but it means that requests from CodeBuild will come via our
+  # NAT instance, and so from our IP, and so less likely to hit rate limits that are based on IP
+  # addresses that are shared with other CodeBuild users. Specifically, pulling from Docker Hub
+  vpc_config {
+    vpc_id             = aws_vpc.main.id
+    subnets            = aws_subnet.private[*].id
+    security_group_ids = [aws_security_group.codebuild.id]
   }
 }
 
@@ -108,11 +118,61 @@ resource "aws_iam_role_policy" "codebuild" {
       Action = [
         "ecs:UpdateService",
       ],
-    }]
+      },
+      # Codebuild requires various VPC permissions to run things in our VPC
+      # (which is maybe inconsistent with ECS, which doesn't need similar permissions)
+      # https://docs.aws.amazon.com/codebuild/latest/userguide/auth-and-access-control-iam-identity-based-access-control.html#customer-managed-policies-example-create-vpc-network-interface
+      {
+        Effect = "Allow",
+        Action = [
+          "ec2:CreateNetworkInterface",
+          "ec2:DescribeDhcpOptions",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteNetworkInterface",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeVpcs"
+        ],
+        Resource = "*"
+        }, {
+        Effect = "Allow",
+        Action = [
+          "ec2:CreateNetworkInterfacePermission"
+        ],
+        Resource = "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:network-interface/*",
+        Condition = {
+          StringEquals = {
+            "ec2:AuthorizedService" = "codebuild.amazonaws.com"
+          },
+          ArnEquals = {
+            "ec2:Subnet" = aws_subnet.private[*].arn
+          }
+        }
+      }
+    ]
   })
 }
 
 resource "aws_cloudwatch_log_group" "codebuild" {
   name              = "${var.prefix}-codebuild-${var.suffix}"
   retention_in_days = "3653"
+}
+
+resource "aws_security_group" "codebuild" {
+  name        = "${var.prefix}-codebuild-${var.suffix}"
+  description = "${var.prefix}-codebuild-${var.suffix}"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.prefix}-codebuild-${var.suffix}"
+  }
+}
+
+resource "aws_vpc_security_group_egress_rule" "codebuild_https_to_all" {
+  security_group_id = aws_security_group.codebuild.id
+  cidr_ipv4         = "0.0.0.0/0"
+
+  ip_protocol = "tcp"
+  from_port   = "443"
+  to_port     = "443"
 }
