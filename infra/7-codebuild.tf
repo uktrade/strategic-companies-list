@@ -22,9 +22,13 @@ resource "aws_codebuild_project" "main" {
         build:
           commands:
             - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${aws_ecr_repository.main.repository_url}
-            - DOCKER_DEFAULT_PLATFORM=linux/amd64 docker build -t ${var.prefix}-${var.suffix} .
-            - docker tag ${var.prefix}-${var.suffix}:latest ${aws_ecr_repository.main.repository_url}:latest
-            - docker push ${aws_ecr_repository.main.repository_url}:latest
+            - docker buildx create --use --name builder --driver docker-container
+            - |
+              docker buildx build --builder builder \
+                --push -t ${aws_ecr_repository.main.repository_url}:latest \
+                --cache-from type=registry,ref=${aws_ecr_repository.main.repository_url}:cache \
+                --cache-to mode=max,image-manifest=true,oci-mediatypes=true,type=registry,ref=${aws_ecr_repository.main.repository_url}:cache \
+                .
             - aws ecs update-service --cluster ${aws_ecs_cluster.main.name} --service ${aws_ecs_service.main.name} --force-new-deployment
     EOT
   }
@@ -111,7 +115,11 @@ resource "aws_iam_role_policy" "codebuild" {
           "ecr:CompleteLayerUpload",
           "ecr:InitiateLayerUpload",
           "ecr:PutImage",
-          "ecr:UploadLayerPart"
+          "ecr:UploadLayerPart",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:ListImages",
+          "ecr:DescribeImages",
+          "ecr:BatchGetImage",
         ],
       },
       {
