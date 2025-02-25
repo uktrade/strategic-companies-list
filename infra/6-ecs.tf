@@ -179,6 +179,12 @@ resource "aws_lb_listener_rule" "main" {
   }
 
   condition {
+    host_header {
+      values = [var.external_domain_name]
+    }
+  }
+
+  condition {
     http_header {
       http_header_name = random_id.cdn_header_name.hex
       values           = [random_bytes.cdn_header_value.hex]
