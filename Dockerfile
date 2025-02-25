@@ -37,6 +37,8 @@ COPY start.sh .
 COPY manage.py .
 COPY scl ./scl
 
+RUN python manage.py collectstatic
+
 USER scl
 
 CMD ["./start.sh"]
