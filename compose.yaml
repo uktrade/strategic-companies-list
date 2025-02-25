@@ -3,6 +3,3 @@ services:
     build: .
     ports:
       - "8000:8000"
-    environment:
-      DJANGO_ALLOWED_HOST: localhost
-      DJANGO_SECRET_KEY: django-insecure-168_p0t5zwjh+@d!#5cu^u^6&b2erdxb341(td%yb=xkq+=l%=

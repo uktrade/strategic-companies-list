@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+from django.core.management.utils import get_random_secret_key
+
 
 # General settings
 
@@ -20,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security settings
 
-SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', get_random_secret_key())
 
 # The ALB enforces that requests have the right header, which means we don't have to enforce that
 # here, which also allows requests from the ALB itself as part of its healthcheck
