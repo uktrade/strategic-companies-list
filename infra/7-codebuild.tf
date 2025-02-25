@@ -181,3 +181,13 @@ resource "aws_vpc_security_group_egress_rule" "codebuild_https_to_all" {
   from_port   = "443"
   to_port     = "443"
 }
+
+# Debian packages are installed by http
+resource "aws_vpc_security_group_egress_rule" "codebuild_http_to_all" {
+  security_group_id = aws_security_group.codebuild.id
+  cidr_ipv4         = "0.0.0.0/0"
+
+  ip_protocol = "tcp"
+  from_port   = "80"
+  to_port     = "80"
+}
