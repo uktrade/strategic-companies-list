@@ -39,6 +39,12 @@ resource "aws_ecs_task_definition" "main" {
           hostPort      = var.container_port
         }
       ],
+      secrets = [
+        {
+          valueFrom = aws_secretsmanager_secret_version.django_secret_key.arn
+          name      = "DJANGO_SECRET_KEY"
+        }
+      ],
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -49,6 +55,21 @@ resource "aws_ecs_task_definition" "main" {
       }
     }
   ])
+}
+
+resource "aws_secretsmanager_secret" "django_secret_key" {
+  name = "${var.prefix}-django-secret-key-${var.suffix}"
+}
+
+resource "aws_secretsmanager_secret_version" "django_secret_key" {
+  secret_id     = aws_secretsmanager_secret.django_secret_key.id
+  secret_string = random_password.django_secret_key.result
+}
+
+resource "random_password" "django_secret_key" {
+  length           = 64
+  special          = true
+  override_special = "!@#$%^&*(-_=+)" # Taken from Django source code
 }
 
 resource "aws_cloudwatch_log_group" "ecs_task" {
@@ -74,9 +95,36 @@ resource "aws_iam_role" "ecs_task_main_execution" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_main_execution" {
-  role       = aws_iam_role.ecs_task_main_execution.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+resource "aws_iam_role_policy" "ecs_task_main_execution" {
+  name = "${var.prefix}-task-execution-${var.suffix}"
+  role = aws_iam_role.ecs_task_main_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:ListSecretVersionIds"
+        ],
+        Resource = aws_secretsmanager_secret.django_secret_key.arn
+      }
+    ]
+  })
 }
 
 resource "aws_lb" "main" {
