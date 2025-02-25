@@ -39,6 +39,12 @@ resource "aws_ecs_task_definition" "main" {
           hostPort      = var.container_port
         }
       ],
+      environment = [
+        {
+          name  = "DJANGO_ALLOWED_HOST"
+          value = var.external_domain_name
+        }
+      ],
       secrets = [
         {
           valueFrom = aws_secretsmanager_secret_version.django_secret_key.arn
