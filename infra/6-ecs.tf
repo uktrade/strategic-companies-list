@@ -150,8 +150,39 @@ resource "aws_lb_listener" "main" {
   certificate_arn   = aws_acm_certificate.main.arn
 
   default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      status_code  = "401"
+    }
+  }
+}
+
+# AWS recommends _both_ the header name and its value are not made public
+resource "random_id" "cdn_header_name" {
+  byte_length = 16
+  prefix      = "x-cdn-"
+}
+
+resource "random_bytes" "cdn_header_value" {
+  length = 64
+}
+
+resource "aws_lb_listener_rule" "main" {
+  listener_arn = aws_lb_listener.main.arn
+  priority     = 100
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.main.arn
+  }
+
+  condition {
+    http_header {
+      http_header_name = random_id.cdn_header_name.hex
+      values           = [random_bytes.cdn_header_value.hex]
+    }
   }
 }
 

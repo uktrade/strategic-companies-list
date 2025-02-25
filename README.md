@@ -83,7 +83,8 @@ AWS infrastructure for running the strategic-companies-list is defined through T
     }
 
     output "strategic_companies_list" {
-      value = module.strategic_companies_list
+      value     = module.strategic_companies_list
+      sensitive = true
     }
     ```
 
