@@ -7,22 +7,19 @@ COPY package-lock.json .
 
 RUN npm install
 
-COPY images ./images
-COPY index.html .
-
-FROM node:23-bookworm-slim
+FROM python:3.13-slim-bookworm
 
 WORKDIR /app
 
-RUN npm install -g local-web-server
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 # Copy in assets (images and fonts), stylesheets and JavaScript files to where they're expected
-# (Technically copying a bit too much, but a trivial amount and can be tidied later)
-COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/assets ./assets
-COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk ./stylesheets
-COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk ./javascripts
+COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/assets ./scl/core/static
+COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.* ./scl/core/static
 
-COPY images ./images
-COPY index.html .
+COPY start.sh .
+COPY manage.py .
+COPY scl ./scl
 
-CMD ws
+CMD ["./start.sh"]
