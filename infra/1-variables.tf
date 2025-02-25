@@ -70,6 +70,10 @@ variable "github_source_url" {
   default = "https://github.com/uktrade/strategic-companies-list.git"
 }
 
-variable "domain_name" {
+variable "external_domain_name" {
+  type = string
+}
+
+variable "internal_domain_name" {
   type = string
 }
