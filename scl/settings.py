@@ -21,7 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security settings
 
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-ALLOWED_HOSTS = [os.environ['DJANGO_ALLOWED_HOST']]
+
+# The ALB enforces that requests have the right header, which means we don't have to enforce that
+# here, which also allows requests from the ALB itself as part of its healthcheck
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
