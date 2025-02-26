@@ -152,3 +152,8 @@ LOGGING = {
         "level": "WARNING",
     },
 }
+
+
+# Transcription
+
+AWS_TRANSCRIBE_ROLE_ARN = os.environ.get('AWS_TRANSCRIBE_ROLE_ARN')
