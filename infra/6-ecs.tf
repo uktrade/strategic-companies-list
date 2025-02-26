@@ -28,6 +28,7 @@ resource "aws_ecs_task_definition" "main" {
   cpu                      = 1024
   memory                   = 3072
   execution_role_arn       = aws_iam_role.ecs_task_main_execution.arn
+  task_role_arn            = aws_iam_role.ecs_task_main_service.arn
   container_definitions = jsonencode([
     {
       name      = var.container_name
@@ -129,6 +130,24 @@ resource "aws_iam_role_policy" "ecs_task_main_execution" {
         ],
         Resource = aws_secretsmanager_secret.django_secret_key.arn
       }
+    ]
+  })
+}
+
+resource "aws_iam_role" "ecs_task_main_service" {
+  name = "${var.prefix}-task-service-${var.suffix}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      },
     ]
   })
 }
@@ -263,7 +282,7 @@ resource "aws_iam_role" "transcribe" {
       {
         Effect = "Allow",
         Principal = {
-          AWS = aws_iam_role.ecs_task_main_execution.arn
+          AWS = aws_iam_role.ecs_task_main_service.arn
         },
         Action = "sts:AssumeRole"
       },

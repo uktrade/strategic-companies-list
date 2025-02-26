@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const client = new TranscribeStreamingClient({
     region: "eu-west-2",
     credentials: (async function() {
-      response = await (await fetch('/api/v1/aws-credentials')).json()
+      const response = await (await fetch('/api/v1/aws-credentials')).json()
       return {
         accessKeyId: response.AccessKeyId,
         secretAccessKey: response.SecretAccessKey,
