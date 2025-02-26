@@ -25,11 +25,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // var processor = null;
   var stream = null;
 
-
   async function stopRecording() {
     isRecording = false;
     recordButton.classList.toggle('scl-ready-to-record', !isRecording);
     recordButton.classList.toggle('scl-recording', isRecording);
+    partialOutput.classList.toggle('scl-recording', isRecording);
     // audioContext.suspend();
 
     // if (processor && input) input.disconnect(procesor);
@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     isRecording = true;
     recordButton.classList.toggle('scl-ready-to-record', !isRecording);
     recordButton.classList.toggle('scl-recording', isRecording);
+    partialOutput.classList.toggle('scl-recording', isRecording);
 
     const audioContext = new AudioContext({sampleRate: 16000});
     stream = await navigator.mediaDevices.getUserMedia({
@@ -93,6 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             finalOutput.innerText = (finalOutput.innerText || '') + ' ' + transcript;
             partialOutput.innerText = '';
+          }
+          if (transcript != '') {
+            partialOutput.classList.add("scl-with-text");
           }
         });
       }
