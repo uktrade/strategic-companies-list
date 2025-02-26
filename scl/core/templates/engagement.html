@@ -3,6 +3,18 @@
 
 {% block content %}
 
+<style>
+  .partial-output {
+    font-weight: bold;
+  }
+  .partial-output.scl-with-text {
+    padding-right: 5px;
+  }
+  .partial-output.scl-recording {
+    border-right: 2px solid #1d70b8;
+  }
+</style>
+
 <div class="scl-key-info-banner">
   <div class="govuk-width-container">
     <div class="govuk-grid-row scl-no-grid-mobile">
@@ -17,7 +29,7 @@
                 <svg width="18" viewBox="0 0 24 24" fill="currentColor"  xmlns="http://www.w3.org/2000/svg" style="overflow: visible; margin-left: 5px; position: relative; top: 2px"><style>.spinner_7uc5{animation:spinner_3l8F .9s linear infinite;animation-delay:-.9s}.spinner_RibN{animation-delay:-.7s}.spinner_ZAxd{animation-delay:-.5s}@keyframes spinner_3l8F{0%,66.66%{animation-timing-function:cubic-bezier(0.14,.73,.34,1);y:6px;height:12px}33.33%{animation-timing-function:cubic-bezier(0.65,.26,.82,.45);y:1px;height:22px}}</style><rect class="spinner_7uc5 spinner_ZAxd" x="1" y="6" width="2.8" height="12"/><rect class="spinner_7uc5 spinner_RibN" x="5.8" y="6" width="2.8" height="12"/><rect class="spinner_7uc5" x="10.6" y="6" width="2.8" height="12"/><rect class="spinner_7uc5 spinner_RibN" x="15.4" y="6" width="2.8" height="12"/><rect class="spinner_7uc5 spinner_ZAxd" x="20.2" y="6" width="2.8" height="12"/></svg>
               </span>
             </button>
-            <p class="govuk-body"><span id="final-output"></span><span id="partial-output" style="font-weight: bold">&nbsp;</span></p>
+            <p class="govuk-body"><span id="final-output"></span><span id="partial-output" class="partial-output">&nbsp;</span></p>
           </div>
         </div>
       <div class="govuk-grid-column-one-half"></div>
