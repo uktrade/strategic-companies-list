@@ -17,9 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from scl.core.views import index
+from scl.core.views import index, engagement
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", index),
+    path("engagement", engagement),
 ]
