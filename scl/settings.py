@@ -111,12 +111,25 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Storages
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+}
+
+
 # Static resources
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # GOV.UK Design System expects assets in assets/
 STATIC_ROOT = '/app/assets/'
 STATIC_URL = 'assets/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
