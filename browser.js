@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
         accessKeyId: response.AccessKeyId,
         secretAccessKey: response.SecretAccessKey,
         sessionToken: response.SessionToken,
-        expiration: Date.parse(response.Expiration)
+        expiration: new Date(Date.parse(response.Expiration)),
       }
     })
   });
