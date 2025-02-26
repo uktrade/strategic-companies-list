@@ -39,6 +39,12 @@ resource "aws_ecs_task_definition" "main" {
           hostPort      = var.container_port
         }
       ],
+      environment = [
+        {
+          name  = "AWS_TRANSCRIBE_ROLE_ARN"
+          value = aws_iam_role.transcribe.arn
+        }
+      ],
       secrets = [
         {
           valueFrom = aws_secretsmanager_secret_version.django_secret_key.arn
@@ -246,4 +252,39 @@ resource "aws_lb_target_group" "main" {
   port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"
+}
+
+resource "aws_iam_role" "transcribe" {
+  name = "${var.prefix}-transcrbe-${var.suffix}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = aws_iam_role.ecs_task_main_execution.arn
+        },
+        Action = "sts:AssumeRole"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "transcribe" {
+  name = "${var.prefix}-transcribe-${var.suffix}"
+  role = aws_iam_role.transcribe.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "transcribe:StartStreamTranscriptionWebSocket",
+        ],
+        Resource = "*"
+      },
+    ]
+  })
 }

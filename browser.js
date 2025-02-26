@@ -2,10 +2,18 @@ import { TranscribeStreamingClient, StartStreamTranscriptionCommand } from "@aws
 import { Readable } from 'readable-stream'
 
 document.addEventListener("DOMContentLoaded", () => {
-  const client = new TranscribeStreamingClient({region: "eu-west-2", credentials: {
-    accessKeyId: "",
-    secretAccessKey: ""
-  }});
+  const client = new TranscribeStreamingClient({
+    region: "eu-west-2",
+    credentials: (async function() {
+      response = await (await fetch('/api/v1/aws-credentials')).json()
+      return {
+        accessKeyId: response.AccessKeyId,
+        secretAccessKey: response.SecretAccessKey,
+        sessionToken: response.SessionToken,
+        expiration: Date.parse(response.Expiration)
+      }
+    })
+  });
 
   const recordButton = document.getElementById("record");
   const finalOutput = document.getElementById("final-output");
