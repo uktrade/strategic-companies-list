@@ -238,8 +238,24 @@
 
 
   /* --- company briefing styles ---- */
+
+    @media print {
+      header,
+      footer {
+        display: none !important;
+      }
+      .content-header button {
+        visibility: hidden;
+      }
+    }
+
     .company_section.company_section--primary {
         margin: 50px 0;
+    }
+
+    .content-header {
+      display: grid;
+      grid-template-columns: 1fr 100px;
     }
 
 
