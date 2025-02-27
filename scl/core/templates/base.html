@@ -217,6 +217,21 @@
       }
     }
 
+    .scl-transcription-target {
+      display: none;
+      padding: 0 15px;
+      margin-top: 10px;
+    }
+    .scl-transcription-target.scl-transcription-with-content {
+      display: block;
+    }
+    @media (min-width: 40.0625em) {
+      .scl-transcription-target {
+        display: none;
+        padding: 0;
+      }
+    }
+
     .scl-record-button > .scl-microphone,
     .scl-record-button > .scl-recording-animation {
       display: none;
@@ -238,6 +253,15 @@
       display: inline-block;
     }
 
+    .partial-output {
+      font-weight: bold;
+    }
+    .partial-output.scl-with-text {
+      padding-right: 5px;
+    }
+    .partial-output.scl-recording {
+      border-right: 2px solid #1d70b8;
+    }
 
   /* --- company briefing styles ---- */
 
@@ -331,6 +355,7 @@
     } from '{% static 'govuk-frontend.min.js' %}'
     initAll()
   </script>
+  <script src="{% static 'bundle.js' %}"></script>
 </body>
 
 </html>
