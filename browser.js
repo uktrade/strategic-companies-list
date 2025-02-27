@@ -48,7 +48,7 @@ import { Readable } from 'readable-stream'
     async function startRecording() {
       isRecording = true;
       setClasses();
-      console.log('starting');
+      target.classList.add('scl-transcription-with-content');
 
       const audioContext = new AudioContext({sampleRate: 16000});
       stream = await navigator.mediaDevices.getUserMedia({
