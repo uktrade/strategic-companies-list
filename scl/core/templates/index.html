@@ -97,12 +97,12 @@
         Search for a company by its name
       </label>
       <span class="scl-input-search-icon"></span>
-      <input class="govuk-input scl-input-with-search-icon" id="company-name" name="companyName" type="text">
+      <input class="govuk-input scl-input-with-search-icon" data-module="scl-filter-list" data-scl-filter-list-target="#scl-company-list" data-scl-filter-list-no-results="#scl-company-search-no-results" name="companyName" type="text">
     </div>
 
-    <p id="company-name-search-error" class="govuk-body" style="display: none">No companies found</p>
+    <p id="scl-company-search-no-results" class="govuk-body scl-company-search-no-results-element scl-company-search-has-results">No companies found</p>
 
-    <ul class="govuk-list scl-company-list" id="company-list">
+    <ul class="govuk-list scl-company-list" id="scl-company-list">
       <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing?company=Apex Group&owned=true">Apex Group</a></li>
       <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing?company=Apex Dynamics&owned=false">Apex Dynamics</a></li>
       <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing?company=Apex Industries&owned=false">Apex Industries</a></li>
@@ -158,28 +158,34 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const companyNameInput = document.getElementById("company-name");
-    const companyList = document.getElementById("company-list");
-    const error = document.getElementById("company-name-search-error");
-    companyNameInput.addEventListener("input", () => {
-      // We show companies where every lowercased word in the search string is contained in
-      // the lowercased and space-removed company name. This allows a good range of both "full"
-      // and "quick" searches, e.g. "quantum holdings", "quantumholdings" and "quan hold" all
-      // match "Quantum Holdings", but the number of incorrect matches is very likely to be low
-      const segmenter = new Intl.Segmenter([], { granularity: 'word' });
-      const segmentedText = segmenter.segment(companyNameInput.value);
-      const words = [...segmentedText].filter(s => s.isWordLike).map(s => s.segment);
-      let totalMatched = 0;
+  (() => {
+    const registerFilterList = (input) => {
+      const list = document.querySelector(input.getAttribute("data-scl-filter-list-target"));
+      const noResults = document.querySelector(input.getAttribute("data-scl-filter-list-no-results"));
 
-      Array.from(companyList.children).forEach((child) => {
-        const allWordsMatch = words.every((word) => child.textContent.replace(/\s/g,'').toLocaleLowerCase("en-GB").includes(word.toLocaleLowerCase("en-GB")))
+      input.addEventListener("input", () => {
+        // We show results where every lowercased word in the search string is contained in
+        // the lowercased and space-removed company name. This allows a good range of both "full"
+        // and "quick" searches, e.g. "quantum holdings", "quantumholdings" and "quan hold" all
+        // match "Quantum Holdings", but the number of incorrect matches is very likely to be low
+        const segmenter = new Intl.Segmenter([], { granularity: 'word' });
+        const segmentedText = segmenter.segment(input.value);
+        const words = [...segmentedText].filter(s => s.isWordLike).map(s => s.segment);
+        let totalMatched = 0;
 
-        child.style.display = allWordsMatch ? null : 'none';
-        if (allWordsMatch) totalMatched += 1;
+        Array.from(list.children).forEach((child) => {
+          const allWordsMatch = words.every((word) => child.textContent.replace(/\s/g,'').toLocaleLowerCase("en-GB").includes(word.toLocaleLowerCase("en-GB")))
+
+          child.style.display = allWordsMatch ? null : 'none';
+          if (allWordsMatch) totalMatched += 1;
+        });
+        noResults.classList.toggle('scl-company-search-no-results', !totalMatched);
       });
-      error.style.display = totalMatched ? 'none' : null;
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll('[data-module="scl-filter-list"]').forEach(registerFilterList);
     });
-});
+  })();
 </script>
 {% endblock %}
