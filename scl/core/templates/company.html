@@ -2,10 +2,14 @@
 
 {% block content %}
 <div class="govuk-width-container">
-  <main class="govuk-main-wrapper" id="main-content">   
+  <main class="govuk-main-wrapper" id="main-content">
+    <div class="content-header">
+      <div>
       <h1 class="govuk-heading-l">{{company_name}}</h1>
-      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
+      </div>
+      <button class="govuk-button" data-module="govuk-button" onclick="window.print()">Print</button>
+    </div>
+       <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
       <section class="company_section company_section--primary">
         <h2 class="govuk-heading-m">Key facts</h2>
         <ul class="govuk-list govuk-list--bullet">
