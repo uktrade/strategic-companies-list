@@ -1,5 +1,8 @@
 services:
   web:
+    restart: always
     build: .
     ports:
       - "8000:8000"
+    volumes:
+       - ./scl/core/templates:/app/scl/core/templates

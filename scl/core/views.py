@@ -5,6 +5,9 @@ import boto3
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
+import logging
+
+logger = logging.getLogger().warning
 
 
 def index(request):
@@ -43,3 +46,13 @@ def aws_credentials(request):
         },
         status=200,
     )
+
+
+def company(request):
+    company_name = request.GET.get('company')
+    is_owner = request.GET.get('owned')
+    context = {
+        "company_name": company_name,
+        "is_owner": is_owner
+    }
+    return render(request, "company.html", context)
