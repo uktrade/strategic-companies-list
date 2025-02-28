@@ -21,115 +21,112 @@
             </button>
           </div>
         </div>
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         <p class="govuk-body govuk-body-s">Last updated: 28 Feb. 2025</p>
       </div>
     </div>
     <div class="govuk-grid-row">
       <section class="govuk-grid-column-two-thirds">
-        <div class="card">
-          <h2 class="govuk-heading-m">Key facts</h2>
-          <ul class="govuk-list govuk-list--bullet">
-            <li>Largest UK company in the health sector.</li>
-            <li>
-              The company employs around 1000 in the UK and 7000 globally.
-            </li>
-            <li>
-              Their activities in developing the skills of their workforce
-              include: Science, Technology, Engineering and Math.
-            </li>
-          </ul>
-        </div>
-        <div class="card">
-          <h2 class="govuk-heading-m">Key people</h2>
-          <ul class="govuk-list govuk-list--bullet">
-            <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
-            <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
-          </ul>
-        </div>
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+        <h2 class="govuk-heading-m">Key facts</h2>
+        <ul class="govuk-list govuk-list--bullet editable">
+          <li>Largest UK company in the health sector.</li>
+          <li>
+            The company employs around 1000 in the UK and 7000 globally.
+          </li>
+          <li>
+            Their activities in developing the skills of their workforce
+            include: Science, Technology, Engineering and Math.
+          </li>
+        </ul>
+        <h2 class="govuk-heading-m">Key people</h2>
+        <ul class="govuk-list govuk-list--bullet editable">
+          <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
+          <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
+        </ul>
         {% if is_owner == 'true' %}
-        <div class="card card--private">
-          <h2 class="govuk-heading-m">Company current issues and priorities</h2>
-          <ol class="govuk-list govuk-list--number">
-            <li>
-              <b>Support key exports</b>
-              <div>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </div>
-            </li>
-            <li>
-              <b>Support programme.</b>
-              <div>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </div>
-            </li>
-            <li>
-              <b>International partnerships.</b>
-              <div>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </div>
-            </li>
-          </ol>
-        </div>
-        <div class="card card--private">
-          <h2 class="govuk-heading-m">HMG priorities for engagement</h2>
-          <ol class="govuk-list govuk-list--number">
-            <li>
-              <b>Growing exports</b>
-              <div>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </div>
-            </li>
-            <li>
-              <b>Building support programmes</b>
-              <div>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </div>
-            </li>
-            <li>
-              <b>Growing capabilities.</b>
-              <div>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </div>
-            </li>
-          </ol>
-        </div>
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--visible govuk-!-margin-bottom-0">
+        <span class="govuk-header__security-classification govuk-header__security-classification__long"><strong class="govuk-tag govuk-tag--red scl-privileged">
+          PRIVILEGED
+        </strong></span>
+        <h2 class="govuk-heading-m govuk-!-margin-top-3">Company current issues and priorities</h2>
+        <ol class="govuk-list govuk-list--number editable">
+          <li>
+            <b>Support key exports</b>
+            <div>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+          </li>
+          <li>
+            <b>Support programme.</b>
+            <div>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+          </li>
+          <li>
+            <b>International partnerships.</b>
+            <div>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+          </li>
+        </ol>
+        <h2 class="govuk-heading-m">HMG priorities for engagement</h2>
+        <ol class="govuk-list govuk-list--number editable">
+          <li>
+            <b>Growing exports</b>
+            <div>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+          </li>
+          <li>
+            <b>Building support programmes</b>
+            <div>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+          </li>
+          <li>
+            <b>Growing capabilities.</b>
+            <div>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+          </li>
+        </ol>
         {% endif %}
       </section>
       {% if is_owner == 'true' %}
       <aside class="govuk-grid-column-one-third" role="complementary">
-        <div class="card card--private">
-          <h2 class="govuk-heading-m">
-            Recent top-level engagements across HMG
-          </h2>
-          <ul class="govuk-list govuk-list--bullet">
-            <li>
-              <a href="" class="govuk-link"
-                >UK manufacturing round table 01/02/2025</a
-              >
-            </li>
-            <li><a href="" class="govuk-link">France meeting 23/01/2025</a></li>
-            <li><a href="" class="govuk-link">Italy meeting 10/12/2024</a></li>
-            <li>
-              <a href="" class="govuk-link">Aerospace round table 15/11/2024</a>
-            </li>
-          </ul>
-          <a href="#" class="govuk-link govuk-link--no-visited-state">View working-level engagements</a>
-        </div>
-        <div class="card">
-          <h2 class="govuk-heading-m">Account managers</h2>
-          <ul class="govuk-list govuk-list--bullet">
-            <li><a href="#" class="govuk-link">Joe Smith</a></li>
-            <li><a href="#" class="govuk-link">Cara miller</a></li>
-            <li><a href="#" class="govuk-link">Loiuse Adams</a></li>
-          </ul>
-        </div>
+        <hr class="govuk-section-break govuk-section-break--m govuk-!-margin-top-0 govuk-section-break--visible govuk-!-margin-bottom-0">
+        <span class="govuk-header__security-classification govuk-header__security-classification__long"><strong class="govuk-tag govuk-tag--red scl-privileged">
+          PRIVILEGED
+        </strong></span>
+        <h2 class="govuk-heading-m govuk-!-margin-top-4">
+          Recent top-level engagements across HMG
+        </h2>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>
+            <a href="" class="govuk-link govuk-link--no-visited-state"
+              >UK manufacturing round table 01/02/2025</a
+            >
+          </li>
+          <li><a href="" class="govuk-link govuk-link--no-visited-state">France meeting 23/01/2025</a></li>
+          <li><a href="" class="govuk-link govuk-link--no-visited-state">Italy meeting 10/12/2024</a></li>
+          <li>
+            <a href="" class="govuk-link govuk-link--no-visited-state">Aerospace round table 15/11/2024</a>
+          </li>
+        </ul>
+        <p class="govuk-body govuk-body-s"><a href="#" class="govuk-link govuk-link--no-visited-state">View working-level engagements</a></p>
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        <h2 class="govuk-heading-m">Account managers</h2>
+        <ul class="govuk-list govuk-list--bullet">
+          <li><a href="#" class="govuk-link govuk-link--no-visited-state">Joe Smith</a></li>
+          <li><a href="#" class="govuk-link govuk-link--no-visited-state">Cara miller</a></li>
+          <li><a href="#" class="govuk-link govuk-link--no-visited-state">Loiuse Adams</a></li>
+        </ul>
       </aside>
       {% endif %}
     </div>
@@ -139,24 +136,21 @@
   (() => {
     document.addEventListener("DOMContentLoaded", () => {
       const editButton = document.getElementById("edit-button");
+      const editableSection = Array.from(document.querySelectorAll('.editable'));
       const main = document.querySelector('main');
-      const editableSection = document.querySelector('section');
-      const ulListItems = Array.from(editableSection.querySelectorAll('ul'))
-      const olListItems = Array.from(editableSection.querySelectorAll('ol'))
-      const listItems = [...ulListItems, ...olListItems]
 
       const toggleEdit = () => {
-        main.classList.toggle("editable")
-        const isEditable = Boolean(document.querySelector('.editable'))
+        main.classList.toggle("editing")
+        const isEditable = Boolean(document.querySelector('.editing'))
         
         if(isEditable){
           editButton.innerHTML = "Save"
-          listItems.map((item)=>{
+          editableSection.map((item)=>{
             item.setAttribute('contenteditable', true)
           })
         }else{
           editButton.innerHTML = "Edit"
-          listItems.map((item)=>{
+          editableSection.map((item)=>{
             item.removeAttribute('contenteditable')
           })
         }
