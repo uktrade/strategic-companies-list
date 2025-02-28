@@ -17,3 +17,7 @@ output "_04_alias" {
 output "_05_cdn_header" {
   value = "You must make sure that the CloudFront distribution sets the '${random_id.cdn_header_name.hex}' HTTP header to '${random_bytes.cdn_header_value.hex}' (without quotes)"
 }
+
+output "_06_address_header" {
+  value = "You must make sure that the CloudFront distribution passes the  CloudFront-Viewer-Address header to the load balancer, for example by using the Managed-AllViewerAndCloudFrontHeaders-2022-06 origin request policy"
+}
