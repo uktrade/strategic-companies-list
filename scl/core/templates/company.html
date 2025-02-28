@@ -33,6 +33,7 @@
               <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
             </ul>
           </div>
+          {% if is_owner == 'true' %}
           <div class="card card--private">
             <h2 class="govuk-heading-m">Company current issues and priorities</h2>
             <ol class="govuk-list govuk-list--number">
@@ -49,6 +50,7 @@
                 <li><b>Growing capabilities.</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
               </ol>
           </div>
+          {% endif %}
         </section>
       {% if is_owner == 'true' %}
         <aside class="govuk-grid-column-one-third" role="complementary">
