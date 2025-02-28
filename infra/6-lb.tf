@@ -2,6 +2,89 @@ resource "aws_lb" "main" {
   name            = "${var.prefix}-${var.suffix}"
   subnets         = aws_subnet.public.*.id
   security_groups = ["${aws_security_group.lb.id}"]
+
+  connection_logs {
+    bucket  = aws_s3_bucket.lb_connection_logs.id
+    enabled = true
+  }
+
+  access_logs {
+    bucket  = aws_s3_bucket.lb_access_logs.id
+    enabled = true
+  }
+
+  depends_on = [
+    aws_s3_bucket_policy.lb_connection_logs,
+    aws_s3_bucket_policy.lb_access_logs,
+  ]
+}
+
+resource "aws_s3_bucket" "lb_connection_logs" {
+  bucket = "${var.prefix}-lb-connection-logs-${var.suffix}"
+}
+
+resource "aws_s3_bucket_policy" "lb_connection_logs" {
+  bucket = aws_s3_bucket.lb_connection_logs.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::${var.aws_lb_account_id}:root"
+        },
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.lb_connection_logs.arn}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_s3_bucket" "lb_access_logs" {
+  bucket = "${var.prefix}-lb-access-logs-${var.suffix}"
+}
+
+resource "aws_s3_bucket_policy" "lb_access_logs" {
+  bucket = aws_s3_bucket.lb_access_logs.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::${var.aws_lb_account_id}:root"
+        },
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.lb_access_logs.arn}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "main_lb_connection_logs" {
+  bucket = aws_s3_bucket.lb_connection_logs.id
+
+  rule {
+    id     = "delete-after-ten-years"
+    status = "Enabled"
+    expiration {
+      # This is how CloudWatch defines 10 years
+      days = 3653
+    }
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "main_lb_access_logs" {
+  bucket = aws_s3_bucket.lb_access_logs.id
+
+  rule {
+    id     = "delete-after-ten-years"
+    status = "Enabled"
+    expiration {
+      # This is how CloudWatch defines 10 years
+      days = 3653
+    }
+  }
 }
 
 resource "aws_security_group" "lb" {
