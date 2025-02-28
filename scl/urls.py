@@ -17,13 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from scl.core.views import index, engagement, aws_credentials
+from scl.core.views import index, aws_credentials
 from scl.core.views import index, company
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", index),
-    path("engagement", engagement),
     path("company-briefing", company, name='company-briefing'),
     path("api/v1/aws-credentials", aws_credentials),
 ]
