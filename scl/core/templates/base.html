@@ -309,12 +309,18 @@
       text-align: right;
       border-top: 1px solid #d4d4d4;
       padding-top: 15px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
     }
 
     .content-header__last-updated p {
       margin-bottom: 0;
       text-align: left;
       font-size: 1rem;
+    }
+
+    .content-header__last-updated button {
+      max-width: 100px;
     }
 
     .card {
@@ -332,6 +338,17 @@
       margin: -15px -15px 0;
       padding: 5px;
       background-color: #e88978;
+    }
+
+    .editable section .card {
+      border: 1px solid #1aca1a;
+      background: #f6f6f6;
+    }
+
+    .editable section .card li {
+      border: 1px solid #c6c5c5;
+      padding: 5px;
+      background: white;
     }
 
 
