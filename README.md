@@ -26,11 +26,11 @@ Visit http://localhost:8000/
 ## Provisioning infrastructure
 
 > [!IMPORTANT]
-> The instructions below use Terraform to provision the infrastructure for Strategic Companies List, the "entry-point" of which is an internet-facing Application Load Balancer (ALB). However, it is assumed this ALB is the origin of a CloudFront distribution, but this CloudFront distribution, as well as the DNS records for it and the ABL, are currently _not_ defined in the Terraform, and so must be provisioned separately. While potentially awkard when setting up each environment, it allows for flexibility. For example, they can be setup in another AWS account by other users.
+> The instructions below use Terraform to provision infrastructure for Strategic Companies List environments (dev, prod, etc), the "entry-point" of each is an internet-facing Application Load Balancer (ALB). However, for flexibility, especially in multi-account setups, there are manual steps needed after the Terraform has run to make this ALB actually acessible. Be sure to run `terraform output strategic_companies_list` after provisioning the environment to find what these steps are.
 >
-> In future versions it is possible that the CloudFront distribution and DNS records are provisioned using the Terraform in this repository.
+> In future versions it is possible that these steps are incorportated into the Terraform.
 
-AWS infrastructure for running the strategic-companies-list is defined through Terraform in [infra/](./infra/), although each environment (dev, prod, etc) needs manual bootstrapping. There are various options, but one possibility:
+AWS infrastructure for running the strategic-companies-list is defined through Terraform in [infra/](./infra/), although each environment needs manual bootstrapping. There are various options, but one possibility:
 
 1. Create or get access to an AWS account for running the infrastructure.
 
@@ -71,6 +71,9 @@ AWS infrastructure for running the strategic-companies-list is defined through T
 
     module "strategic_companies_list" {
       source = "../../strategic-companies-list/infra"
+
+      external_domain_name = "scl.my-domain.gov.uk"        # The user-facing domain
+      internal_domain_name = "scl.prod.my-domain.digital"  # The domain of the ALB
     }
 
     output "strategic_companies_list" {
@@ -97,7 +100,13 @@ AWS infrastructure for running the strategic-companies-list is defined through T
    AWS_PROFILE=my-profile-name terraform apply
    ```
 
-10. (Optional) Use [direnv](https://direnv.net/) to avoid having to use `AWS_PROFILE=my-profile-name` for future terraform commands.
+10. Find the manual steps needed:
+
+   ```bash
+   AWS_PROFILE=my-profile-name terraform output strategic_companies_list
+   ```
+
+11. (Optional) Use [direnv](https://direnv.net/) to avoid having to use `AWS_PROFILE=my-profile-name` for future terraform commands.
 
 
 ## Licenses and attributions
