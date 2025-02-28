@@ -103,3 +103,27 @@ resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
 }
+
+resource "aws_s3_bucket" "flow_log" {
+  bucket = "${var.prefix}-flow-log-${var.suffix}"
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "flow_log" {
+  bucket = aws_s3_bucket.flow_log.id
+
+  rule {
+    id     = "delete-after-ten-years"
+    status = "Enabled"
+    expiration {
+      # This is how CloudWatch defines 10 years
+      days = 3653
+    }
+  }
+}
+
+resource "aws_flow_log" "main" {
+  log_destination      = aws_s3_bucket.flow_log.arn
+  log_destination_type = "s3"
+  traffic_type         = "ALL"
+  vpc_id               = aws_vpc.main.id
+}
