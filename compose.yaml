@@ -1,8 +1,13 @@
 services:
   web:
     restart: always
-    build: .
+    build:
+      context: .
+      target: dev
     ports:
       - "8000:8000"
+    environment:
+      DEBUG: "True"
     volumes:
        - ./scl/core/templates:/app/scl/core/templates
+       - ./scl/core/static:/app/scl/core/static

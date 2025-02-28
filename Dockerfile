@@ -8,7 +8,8 @@ RUN npm ci
 COPY webpack.config.js browser.js .
 RUN npm run build
 
-FROM python:3.13-slim-bookworm
+
+FROM python:3.13-slim-bookworm AS common
 
 RUN \
     apt-get update && \
@@ -24,18 +25,35 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY start.sh manage.py .
+COPY manage.py .
 COPY scl ./scl
 
 # Copy in assets (images and fonts), stylesheets and JavaScript files to where they're expected
-COPY --from=static-resources /app/bundle.js ./scl/core/static/bundle.js
-COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/assets ./scl/core/static
-COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.* ./scl/core/static
+COPY --from=static-resources /app/bundle.js ./scl/static/static/bundle.js
+COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/assets ./scl/static/static
+COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.* ./scl/static/static
 RUN \
     python manage.py collectstatic && \
     find /app/assets/ -type f -exec gzip -k -9 {} \;
 
 RUN useradd -m scl
+
+
+FROM common AS dev
+
+# Disable nginx serving of static assets, so Django serves them without collect static
+RUN sed -i 's/assets/__dummy/' /etc/nginx/nginx.conf
+COPY start-dev.sh .
+
+USER scl
+
+CMD ["./start-dev.sh"]
+
+
+FROM common AS prod
+
+COPY start.sh .
+
 USER scl
 
 CMD ["./start.sh"]
