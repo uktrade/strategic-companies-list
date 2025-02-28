@@ -16,7 +16,7 @@ from django.core.management.utils import get_random_secret_key
 
 # General settings
 
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', '') == 'True'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'scl.core',
+    'scl.static',
 ]
 
 MIDDLEWARE = [
@@ -130,7 +131,6 @@ STORAGES = {
 # GOV.UK Design System expects assets in assets/
 STATIC_ROOT = '/app/assets/'
 STATIC_URL = 'assets/'
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
