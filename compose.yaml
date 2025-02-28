@@ -1,5 +1,5 @@
 services:
-  web:
+  web-dev:
     restart: always
     build:
       context: .
@@ -11,3 +11,10 @@ services:
     volumes:
        - ./scl/core/templates:/app/scl/core/templates
        - ./scl/core/static:/app/scl/core/static
+    profiles: ['']
+  web-prod:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    profiles: ['prod']
