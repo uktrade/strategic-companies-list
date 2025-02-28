@@ -149,6 +149,7 @@
       padding-right: 10px;
       margin-right: 15px;
       flex-grow: 1;
+      display: block;
       text-wrap: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -179,6 +180,47 @@
       .scl-inline-record-button {
         margin-right: 0;
       }
+    }
+
+    /* Slightly messy overrides for "multiline" list */
+    .scl-mobile-list-multiline {
+      border-top: none;
+      font-size: 14px;
+    }
+    .scl-mobile-list-multiline a {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      margin-top: 3px;
+    }
+    .scl-mobile-list-multiline a:focus {
+      text-decoration-line: none;
+    }
+    .scl-mobile-list-multiline li {
+      border-bottom: none;
+    }
+    .scl-mobile-list-multiline .scl-date-tag {
+      font-size: 11px;
+      padding: 2px 0 0 0;
+      width: 85px;
+    }
+    .scl-small {
+      font-size: 14px;
+    }
+    @media (min-width: 40.0625em) {
+      .scl-mobile-list-multiline a {
+        margin-right: -5px;
+        margin-left: -5px;
+      }
+    }
+
+    .scl-link-no-underline {
+      text-decoration-line: none;
+    }
+    .scl-link-no-underline:hover {
+      text-decoration-line: underline;
+    }
+    .scl-link-no-underline:focus {
+      text-decoration-line: none;
     }
 
     .scl-input-with-search-icon {
