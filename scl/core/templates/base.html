@@ -308,18 +308,8 @@
       width: auto;
     }
     
-    @media (min-width: 40.0625em) {
 
-    }
-
-    .card {
-      border: 1px solid #e9e9e9;
-      padding: 15px;
-      margin-bottom: 20px;
-      position: relative;
-    }
-
-    .card--private::before {
+    .separator--privileged::before {
       font-family: GDS Transport,arial,sans-serif;
       display: block;
       float: right;
@@ -329,17 +319,22 @@
       background-color: #e88978;
     }
 
-    .editable section .card {
-      border: 1px solid #1aca1a;
-      background: #f6f6f6;
-    }
-
-    .editable section .card li {
-      border: 1px solid #c6c5c5;
+    .editing .editable {
       padding: 5px;
-      background: white;
     }
 
+    [contenteditable]:focus {
+    outline: 0px solid transparent;
+}
+
+    .editing .editable li {
+      border: 1px dashed #0b0c0c;
+      padding: 5px;
+    }
+
+    .govuk-header__security-classification > .scl-privileged {
+      margin-top: -1px;
+    }
 
   </style>
 </head>
