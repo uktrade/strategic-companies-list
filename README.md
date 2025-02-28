@@ -24,6 +24,11 @@ docker compose down && docker compose up --build
 
 Visit http://localhost:8000/
 
+The above uses a development config, which has differences to production especially around static assets. To use a config  closer to production run:
+
+```bash
+docker compose down && docker compose --profile prod up --build
+```
 
 ## Infrastructure naming
 
