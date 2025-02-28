@@ -299,28 +299,17 @@
     }
 
     .content-header {
-      display: grid;
-      grid-template-columns: 1fr 100px;
-
+      display: flex;
     }
-
-    .content-header__last-updated {
-      grid-column: span 2;
-      text-align: right;
-      border-top: 1px solid #d4d4d4;
-      padding-top: 15px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .scl-content-header-heading {
+      flex-grow: 1;
     }
-
-    .content-header__last-updated p {
-      margin-bottom: 0;
-      text-align: left;
-      font-size: 1rem;
+    .scl-content-header-button {
+      width: auto;
     }
+    
+    @media (min-width: 40.0625em) {
 
-    .content-header__last-updated button {
-      max-width: 100px;
     }
 
     .card {
