@@ -286,7 +286,7 @@
       outline-offset: -3px;
     }
 
-  /* --- company briefing styles ---- */http://localhost:8000/#
+  /* --- company briefing styles ---- */
 
     @media print {
       header,
@@ -301,6 +301,38 @@
     .content-header {
       display: grid;
       grid-template-columns: 1fr 100px;
+
+    }
+
+    .content-header__last-updated {
+      grid-column: span 2;
+      text-align: right;
+      border-top: 1px solid #d4d4d4;
+      padding-top: 15px;
+    }
+
+    .content-header__last-updated p {
+      margin-bottom: 0;
+      text-align: left;
+      font-size: 1rem;
+    }
+
+    .card {
+      border: 1px solid #e9e9e9;
+      padding: 15px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .card--private::before {
+      font-family: GDS Transport,arial,sans-serif;
+      display: block;
+      content: "Privileged";
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 5px;
+      background-color: #e88978;
     }
 
 

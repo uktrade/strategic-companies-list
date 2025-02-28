@@ -10,50 +10,65 @@
             <h1 class="govuk-heading-l">{{company_name}}</h1>
           </div>
           <button class="govuk-button" data-module="govuk-button" onclick="window.print()">Print</button>
+          <div class="content-header__last-updated">
+            <p class="govuk-body">Last updated: 28 Feb. 2025</p>
+          </div>
         </div>
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
       </div>
     </div>
     <div class="govuk-grid-row">
         <section class="govuk-grid-column-two-thirds">
-          <h2 class="govuk-heading-m">Key facts</h2>
-          <ul class="govuk-list govuk-list--bullet">
-            <li>Largest UK company in the health sector.</li>
-            <li>The company employs around 1000 in the UK and 7000 globally.</li>
-            <li>Their activities in developing the skills of their workforce include: Science, Technology, Engineering and Math.</li>
-          </ul>
-          <h2 class="govuk-heading-m">Key people</h2>
-          <ul class="govuk-list govuk-list--bullet">
-            <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
-            <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
-          </ul>
-          <h2 class="govuk-heading-m">Account managers</h2>
-          <ul class="govuk-list govuk-list--bullet">
-            <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
-            <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
-          </ul>
-          <h2 class="govuk-heading-m">Company current issues and priorities</h2>
-          <ol class="govuk-list govuk-list--number">
-            <li><b>Support key exports</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
-            <li><b>Support programme.</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
-            <li><b>International partnerships.</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
-          </ol>
-        <h2 class="govuk-heading-m">HMG priorities for engagement</h2>
-          <ol class="govuk-list govuk-list--number">
-            <li><b>Growing exports</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
-            <li><b>Building support programmes</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
-            <li><b>Growing capabilities.</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
-          </ol>
+          <div class="card">
+            <h2 class="govuk-heading-m">Key facts</h2>
+            <ul class="govuk-list govuk-list--bullet">
+              <li>Largest UK company in the health sector.</li>
+              <li>The company employs around 1000 in the UK and 7000 globally.</li>
+              <li>Their activities in developing the skills of their workforce include: Science, Technology, Engineering and Math.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2 class="govuk-heading-m">Key people</h2>
+            <ul class="govuk-list govuk-list--bullet">
+              <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
+              <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
+            </ul>
+          </div>
+          <div class="card card--private">
+            <h2 class="govuk-heading-m">Company current issues and priorities</h2>
+            <ol class="govuk-list govuk-list--number">
+              <li><b>Support key exports</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
+              <li><b>Support programme.</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
+              <li><b>International partnerships.</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
+            </ol>
+          </div>
+          <div class="card card--private">
+            <h2 class="govuk-heading-m">HMG priorities for engagement</h2>
+              <ol class="govuk-list govuk-list--number">
+                <li><b>Growing exports</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
+                <li><b>Building support programmes</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
+                <li><b>Growing capabilities.</b> <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div></li>
+              </ol>
+          </div>
         </section>
       {% if is_owner == 'true' %}
         <aside class="govuk-grid-column-one-third" role="complementary">
-          <h2 class="govuk-heading-m">Recent HMG interactions (does not include working-level engagement)</h2>
-          <ul class="govuk-list govuk-list--bullet">
-            <li><a href="">UK manufacturing round table 01/02/2025</a></li>
-            <li><a href="">France meeting 23/01/2025</a></li>
-            <li><a href="">Italy meeting 10/12/2024</a></li>
-            <li><a href="">Aerospace round table 15/11/2024</a></li>
-          </ul>
+          <div class="card card--private">
+            <h2 class="govuk-heading-m">Recent HMG interactions (does not include working-level engagement)</h2>
+            <ul class="govuk-list govuk-list--bullet">
+              <li><a href="" class="govuk-link">UK manufacturing round table 01/02/2025</a></li>
+              <li><a href="" class="govuk-link">France meeting 23/01/2025</a></li>
+              <li><a href="" class="govuk-link">Italy meeting 10/12/2024</a></li>
+              <li><a href="" class="govuk-link">Aerospace round table 15/11/2024</a></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2 class="govuk-heading-m">Account managers</h2>
+            <ul class="govuk-list govuk-list--bullet">
+              <li><a href="#" class="govuk-link">Joe Smith</a></li>
+              <li><a href="#" class="govuk-link">Cara miller</a></li>
+              <li><a href="#" class="govuk-link">Loiuse Adams</a></li>
+            </ul>
+          </div>
         </aside>
       {% endif %}
     </div>
