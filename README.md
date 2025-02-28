@@ -9,6 +9,8 @@
 ### Contents
 
 - [Running locally](#running-locally)
+- [Infrastructure naming](#infrastructure-naming)
+- [Logs](#logs)
 - [Provisioning infrastructure](#provisioning-infrastructure)
 - [Licenses and attributions](#licenses-and-attributions)
 
@@ -21,6 +23,33 @@ docker compose down && docker compose up --build
 ```
 
 Visit http://localhost:8000/
+
+
+## Infrastructure naming
+
+All infrastructure is named in the pattern `<prefix>-<name>-<suffix>`.
+
+  - `<prefix>` is the name of the service, by default `strategic-companies-list`
+  - `<name>` is an optional descriptive name for the specific piece of infrastructure
+  - `<suffix>` is the name of the environment, for example `prod`
+
+For example, the name of the production ECS cluster would be `strategic-companies-list-prod`.
+
+
+## Logs
+
+There are 7 types of logs, sent to 5 locations:
+
+- VPC flow log, saved to the S3 bucket: `<prefix>-vpc-flow-log-<suffix>`
+- ALB connection logs, saved to the S3 bucket `<prefix>-lb-connection-logs-<suffix>`
+- ALB access logs sent, ot the S3 bucket `<prefix>-lb-access-logs-<suffix>`
+- Logs from standard out and standard error of the ECS task itself, saved to the CloudWatch log group  `<prefix>-ecs-task-<suffix>`. These contain:
+  - nginx logs, configured to use the CloudFront-Viewer-Address header for its IP address
+  - Web server logs
+  - Django logs
+- Logs from CodeBuild, saved to the CloudWatch log group `<prefix>-codebuild-<suffix>`
+
+Both CloudWatch and S3 logs have a retention of 3653 days (~10 years).
 
 
 ## Provisioning infrastructure
