@@ -263,7 +263,25 @@
       border-right: 2px solid #1d70b8;
     }
 
-  /* --- company briefing styles ---- */
+    .scl-date-tag {
+      font-size: 13px;
+      margin-right: 8px;
+      position: relative;
+      top: -2px;
+      font-weight: bold;
+      padding: 2px 5px;
+      display: inline-block;
+      width: 85px;
+      text-align: center;
+    }
+    .scl-list-header-link:focus .scl-date-tag {
+      background: transparent;
+      outline: 2px dotted #0b0c0c;
+      /* Still a touch close to the left on Desktop */
+      outline-offset: -3px;
+    }
+
+  /* --- company briefing styles ---- */http://localhost:8000/#
 
     @media print {
       header,
