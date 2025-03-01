@@ -4,6 +4,8 @@ services:
     build:
       context: .
       target: dev
+      args:
+        - GIT_COMMIT=to-be-set-by-codebuild
     ports:
       - "8000:8000"
     environment:
@@ -15,6 +17,8 @@ services:
   web-prod:
     build:
       context: .
+      args:
+        - GIT_COMMIT=to-be-set-by-codebuild
     ports:
       - "8000:8000"
     profiles: ['prod']

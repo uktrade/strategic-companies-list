@@ -45,6 +45,8 @@ FROM common AS dev
 RUN sed -i 's/assets/__dummy/' /etc/nginx/nginx.conf
 COPY start-dev.sh .
 
+ARG GIT_COMMIT
+ENV GIT_COMMIT=${GIT_COMMIT}
 USER scl
 
 CMD ["./start-dev.sh"]
@@ -54,6 +56,8 @@ FROM common AS prod
 
 COPY start.sh .
 
+ARG GIT_COMMIT
+ENV GIT_COMMIT=${GIT_COMMIT}
 USER scl
 
 CMD ["./start.sh"]
