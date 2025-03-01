@@ -113,3 +113,17 @@
 
 .scl-button--transcribe {
 }
+
+.scl-editable[contenteditable] {
+  padding: 5px;
+}
+.scl-editable[contenteditable]:focus {
+  /* Override default browser styles */
+  outline: 0px solid transparent;
+}
+/* This is not BEM, but neither is the GOV.UK Design System on li, and it makes editing easier
+   because we don't care about classes on newly constucted elements */
+.scl-editable[contenteditable] > li {
+  border: 1px dashed #0b0c0c;
+  padding: 5px;
+}
