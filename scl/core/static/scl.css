@@ -10,6 +10,15 @@
    For now at least, we're not using SASS, but BEM is quite SASS-friendly for if/when
 */
 
+.scl-template {
+}
+@media print {
+    /* Override grey bottom background from govuk-template */
+    .scl-template {
+        background: none;
+    }
+}
+
 .scl-header {
 }
 
