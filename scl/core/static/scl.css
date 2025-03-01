@@ -19,13 +19,37 @@
     }
 }
 
-.scl-header {
-}
-
+/* Our logo is 5px taller than the GOV.UK Crown that the design system is tailored for. But it's
+/  only sort of "peeking" beyond the edges so we don't allocate more space for it in the page.
+/  The X-GOVUK site doing a very similar thing with its logo I think for a similar reason */
 .scl-header__logotype {
+  margin-bottom: -5px;
+  padding-right: 12px;
+  border-right: 2px solid white;
+  width: 33px;
 }
-
+.scl-header__logotype-text {
+  display: none;
+}
+.scl-header__logo {
+  padding-right: 0;
+}
+.scl-header__link:focus .scl-header__logotype {
+  border-right: 2px solid #0b0c0c;
+}
 .scl-header__product-name {
+  line-height: 30px;
+  margin-top: 0;
+}
+@media (min-width: 48.0625em) {
+  /* Show full departmental crest on desktop. Note there are Safari/Chrome differences in handling
+     overflow on SVGs, so this is done by both controlling width and showing the text */q
+  .scl-header__logotype {
+    width: auto;
+  }
+  .scl-header__logotype-text {
+    display: block;
+  }
 }
 
 .scl-footer {
