@@ -1,0 +1,68 @@
+/* There are 3 very-almost rules in this file:
+
+   1. Adhere to BEM https://getbem.com/
+   2. Class names should be prefixed with the 'scl-' namespace
+   3. Use min-width CSS instead of max-width (so mobile-first and then overridden for Desktop)
+
+   These are for ~consistency with the GDS Design System, which uses BEM, and for general neatness
+   See also https://design-system.service.gov.uk/get-started/extending-and-modifying-components/
+
+   For now at least, we're not using SASS, but BEM is quite SASS-friendly for if/when
+*/
+
+.scl-header {
+}
+
+.scl-header__logotype {
+}
+
+.scl-header__product-name {
+}
+
+.scl-tag {
+}
+
+.scl-tag--hanging-under-govuk-section-break {
+}
+
+.scl-tag--security {
+}
+
+.scl-tag--date {
+}
+
+.scl-key-info {
+}
+
+.scl-key-info__panel {
+}
+
+.scl-key-info__list {
+}
+
+.scl-sidebar {
+}
+
+.scl-sidebar__list {
+}
+
+.scl-content-header {
+}
+
+.scl-content-header__heading {
+}
+
+.scl-content-header__buttons {
+}
+
+.scl-input {
+}
+
+.scl-input--search {
+}
+
+.scl-button {
+}
+
+.scl-button--transcribe {
+}
