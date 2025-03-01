@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="govuk-template">
+<html lang="en" class="govuk-template scl-template">
 
 <head>
   <meta charset="utf-8">
@@ -319,27 +319,6 @@
 
   /* --- company briefing styles ---- */
 
-    @media print {
-      header,
-      footer {
-        display: none !important;
-      }
-      .content-header button {
-        visibility: hidden;
-      }
-    }
-
-    .content-header {
-      display: flex;
-    }
-    .scl-content-header-heading {
-      flex-grow: 1;
-    }
-    .scl-content-header-button {
-      width: auto;
-    }
-    
-
     .separator--privileged::before {
       font-family: GDS Transport,arial,sans-serif;
       display: block;
@@ -396,7 +375,7 @@
  
   {% block content %}{% endblock %}
 
-  <footer class="govuk-footer">
+  <footer class="govuk-footer scl-footer">
     <div class="govuk-width-container">
       <div class="govuk-footer__meta">
         <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
