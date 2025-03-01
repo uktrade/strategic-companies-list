@@ -7,8 +7,9 @@
           <h1 class="govuk-heading-l scl-content-header__heading govuk-!-margin-bottom-2">{{company_name}}</h1>
           <div>
             <button
-              id="edit-button"
               class="govuk-button scl-content-header__button govuk-!-margin-bottom-2"
+              data-module="scl-edit-button"
+              data-scl-edit-button-target=".scl-editable"
             >
               Edit
             </button>
@@ -152,28 +153,24 @@
 </div>
 <script>
   (() => {
-    document.addEventListener("DOMContentLoaded", () => {
-      const editButton = document.getElementById("edit-button");
-      const editableSection = Array.from(document.querySelectorAll('.scl-editable'));
+    const registerEditButton = (editButton) => {
+      const editableSection = Array.from(document.querySelectorAll(editButton.getAttribute("data-scl-edit-button-target")));
 
       let isEditable = false
 
       const toggleEdit = () => {
         isEditable = !isEditable;
-        if (isEditable) {
-          editButton.innerHTML = "Save"
-          editableSection.map((item) => {
-            item.setAttribute('contenteditable', true)
-          })
-        } else {
-          editButton.innerHTML = "Edit"
-          editableSection.map((item) => {
-            item.removeAttribute('contenteditable')
-          })
-        }
+        editButton.innerHTML = (isEditable) ? "Save" : "Edit";
+        editableSection.map((item) => {
+          item.toggleAttribute('contenteditable', isEditable)
+        });
       };
 
       editButton.addEventListener("click", toggleEdit);
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll('[data-module="scl-edit-button"]').forEach(registerEditButton);
     });
   })();
 </script>
