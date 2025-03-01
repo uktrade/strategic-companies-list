@@ -51,6 +51,21 @@
     display: block;
   }
 }
+.scl-header__security-classification {
+  float: right;
+  margin: 4px 0 0 0;
+}
+.scl-header__security-classification--long {
+  display: none;
+}
+@media (min-width: 48.0625em) {
+  .scl-header__security-classification--long {
+    display: inline;
+  }
+  .scl-header__security-classification--short {
+    display: none;
+  }
+}
 
 .scl-footer {
 }
@@ -61,12 +76,21 @@
 }
 
 .scl-tag {
+  /* A bit smaller than GOV.UK's, but since we capitalise them, it doesn't look smaller */
+  padding: 0 7px 0 7px;
+  font-weight: bold;
+  line-height: 22px;
+  font-size: 0.8rem;
 }
-
-.scl-tag--hanging-under-govuk-section-break {
-}
-
 .scl-tag--security {
+  /* A bit darker than GOV.UK's red so it looks less pink, especially when in the header against
+     a dark background, but it's still AAA-compliant contrast-wise */
+  background: #e88978;
+}
+.scl-tag--hanging {
+  float: right;
+  margin-top: -1px;
+  margin-bottom: 1px; /* So text doesn't get too close underneath */
 }
 
 .scl-tag--date {

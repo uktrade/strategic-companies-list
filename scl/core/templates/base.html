@@ -15,31 +15,6 @@
   <link rel="stylesheet" href="{% static 'govuk-frontend.min.css' %}">
   <link rel="stylesheet" href="{% static 'scl.css' %}">
   <style>
-    .govuk-header__security-classification > .govuk-tag {
-      margin: 4px 0 0 0;
-      padding: 0 7px 0 7px;
-      font-weight: bold;
-      float: right;
-      line-height: 22px;
-      font-size: 0.8rem; /* A bit smaller, but since it's capitalised, so doesn't look smaller */
-      background: #e88978; /* A bit darker than default so it looks red in black background */
-    }
-
-    .govuk-header__security-classification__long {
-      display: none;
-    }
-    .govuk-header__security-classification__short {
-      display: inline;
-    }
-    @media (min-width: 40.0625em) {
-      .govuk-header__security-classification__long {
-        display: inline;
-      }
-      .govuk-header__security-classification__short {
-        display: none;
-      }
-    }
-
     .govuk-header__container,
     .govuk-header--full-width-border {
       border-bottom: 8px solid #e52d13; /* The red is fairly strong, so we make it thinner */
@@ -317,12 +292,12 @@
             Strategic Companies List
           </span>
         </a>
-        <span class="govuk-header__security-classification govuk-header__security-classification__long"><strong class="govuk-tag govuk-tag--red">
+        <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-header__security-classification scl-header__security-classification--long">
           OFFICIAL-SENSITIVE
-        </strong></span>
-        <span class="govuk-header__security-classification govuk-header__security-classification__short"><strong class="govuk-tag govuk-tag--red">
+        </strong>
+        <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-header__security-classification scl-header__security-classification--short">
           OFF-SEN
-        </strong></span>
+        </strong>
       </div>
     </div>
   </header>
