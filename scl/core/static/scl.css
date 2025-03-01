@@ -55,10 +55,9 @@
 .scl-content-header__buttons {
 }
 
-.scl-input {
-}
-
 .scl-input--search {
+   padding-left: 30px;
+   background: url('/assets/icon-search.svg') no-repeat -5px center;
 }
 
 .scl-button {
