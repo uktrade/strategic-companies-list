@@ -25,6 +25,7 @@ resource "aws_codebuild_project" "main" {
             - docker buildx create --use --name builder --driver docker-container
             - |
               docker buildx build --builder builder \
+                --build-arg GIT_COMMIT=$${CODEBUILD_SOURCE_VERSION} \
                 --push -t ${aws_ecr_repository.main.repository_url}:latest \
                 --cache-from type=registry,ref=${aws_ecr_repository.main.repository_url}:cache \
                 --cache-to mode=max,image-manifest=true,oci-mediatypes=true,type=registry,ref=${aws_ecr_repository.main.repository_url}:cache \
