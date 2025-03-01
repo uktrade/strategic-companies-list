@@ -1,3 +1,5 @@
+name: scl
+
 services:
   web-dev:
     restart: always
