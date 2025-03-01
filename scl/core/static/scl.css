@@ -115,7 +115,7 @@
 }
 
 .scl-editable[contenteditable] {
-  padding: 5px;
+  padding-left: 0;
 }
 .scl-editable[contenteditable]:focus {
   /* Override default browser styles */
