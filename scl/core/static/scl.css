@@ -19,6 +19,14 @@
 .scl-header__product-name {
 }
 
+.scl-footer {
+}
+@media print {
+    .scl-footer {
+        display: none;
+    }
+}
+
 .scl-tag {
 }
 
@@ -47,12 +55,21 @@
 }
 
 .scl-content-header {
+   display: flex;
 }
 
 .scl-content-header__heading {
+   flex-grow: 1;
 }
 
-.scl-content-header__buttons {
+.scl-content-header__button {
+   /* Overrides width: 100% from govuk-button on mobile */
+   width: auto;
+}
+@media print {
+    .scl-content-header__button {
+        display: none;
+    }
 }
 
 .scl-input--search {
