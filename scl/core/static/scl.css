@@ -76,7 +76,8 @@
 }
 
 .scl-tag {
-  /* A bit smaller than GOV.UK's, but since we capitalise them, it doesn't look smaller */
+  /* A bit smaller than GOV.UK's, but since we capitalise them, it doesn't look smaller. Note
+     that OFFICIAL-SENSITIVE should be capitalised, so we capitalise in-text, not via CSS */
   padding: 0 7px 0 7px;
   font-weight: bold;
   line-height: 22px;
