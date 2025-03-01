@@ -28,7 +28,7 @@
       <section class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
         <h2 class="govuk-heading-m">Key facts</h2>
-        <ul class="govuk-list govuk-list--bullet editable">
+        <ul class="govuk-list govuk-list--bullet scl-editable">
           <li>Largest UK company in the health sector.</li>
           <li>
             The company employs around 1000 in the UK and 7000 globally.
@@ -39,7 +39,7 @@
           </li>
         </ul>
         <h2 class="govuk-heading-m">Key people</h2>
-        <ul class="govuk-list govuk-list--bullet editable">
+        <ul class="govuk-list govuk-list--bullet scl-editable">
           <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
           <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
         </ul>
@@ -49,7 +49,7 @@
           PRIVILEGED
         </strong></span>
         <h2 class="govuk-heading-m govuk-!-margin-top-3">Company current issues and priorities</h2>
-        <ol class="govuk-list govuk-list--number editable">
+        <ol class="govuk-list govuk-list--number scl-editable">
           <li>
             <b>Support key exports</b>
             <div>
@@ -73,7 +73,7 @@
           </li>
         </ol>
         <h2 class="govuk-heading-m">HMG priorities for engagement</h2>
-        <ol class="govuk-list govuk-list--number editable">
+        <ol class="govuk-list govuk-list--number scl-editable">
           <li>
             <b>Growing exports</b>
             <div>
@@ -154,28 +154,26 @@
   (() => {
     document.addEventListener("DOMContentLoaded", () => {
       const editButton = document.getElementById("edit-button");
-      const editableSection = Array.from(document.querySelectorAll('.editable'));
-      const main = document.querySelector('main');
+      const editableSection = Array.from(document.querySelectorAll('.scl-editable'));
+
+      let isEditable = false
 
       const toggleEdit = () => {
-        main.classList.toggle("editing")
-        const isEditable = Boolean(document.querySelector('.editing'))
-        
-        if(isEditable){
+        isEditable = !isEditable;
+        if (isEditable) {
           editButton.innerHTML = "Save"
-          editableSection.map((item)=>{
+          editableSection.map((item) => {
             item.setAttribute('contenteditable', true)
           })
-        }else{
+        } else {
           editButton.innerHTML = "Edit"
-          editableSection.map((item)=>{
+          editableSection.map((item) => {
             item.removeAttribute('contenteditable')
           })
         }
       };
 
       editButton.addEventListener("click", toggleEdit);
-
     });
   })();
 </script>
