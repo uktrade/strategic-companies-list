@@ -155,7 +155,7 @@
   position: relative;
   top: -2px;
 }
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .scl-key-list {
     margin-bottom: 20px;
   }
@@ -189,7 +189,7 @@
 .scl-multiline-list__link:focus {
   text-decoration-line: none;
 }
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .scl-multiline-list__link {
     padding: 5px;
     margin: 0 -5px 2px -5px;
