@@ -311,7 +311,8 @@
   display: none;
 }
 
-.scl-body--small {
+.scl-body--small,
+.scl-list--small {
   font-size: 14px;
 }
 .scl-body--hide-on-mobile {
