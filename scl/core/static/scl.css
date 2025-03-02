@@ -310,3 +310,15 @@
 .scl-filter-list-with-results {
   display: none;
 }
+
+.scl-body--small {
+  font-size: 14px;
+}
+.scl-body--hide-on-mobile {
+  display: none;
+}
+@media (min-width: 40.0625em) {
+  .scl-body--hide-on-mobile {
+    display: block;
+  }
+}
