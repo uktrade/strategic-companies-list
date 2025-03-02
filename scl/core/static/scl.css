@@ -19,6 +19,24 @@
     }
 }
 
+/* A copy of _some_ of the styles on govuk-width-container, but avoiding margin on mobile.
+   Probably needs to be improved to handle notches and rounded corners of the device */
+.scl-width-container--max-width-mobile {
+  margin: 0;
+}
+@media (min-width: 40.0625em) {
+  .scl-width-container--max-width-mobile {
+    margin-left: 30px;
+    margin-right: 30px;
+  }
+}
+@media (min-width: 1020px) {
+  .scl-width-container--max-width-mobile {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 /* Make the border red, and since it's strong, a bit thinner than the default 10px */
 .scl-header__container,
 .scl-header--full-width-border {
