@@ -33,8 +33,8 @@ import { Readable } from 'readable-stream'
     var stream = null;
 
     function setClasses() {
-      recordButton.classList.toggle('scl-ready-to-record', !isRecording);
-      recordButton.classList.toggle('scl-recording', isRecording);
+      recordButton.classList.toggle('scl-button--recording-paused', !isRecording);
+      recordButton.classList.toggle('scl-button--recording-active', isRecording);
       partialOutput.classList.toggle('scl-recording', isRecording);
     }
 
