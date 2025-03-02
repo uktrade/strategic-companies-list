@@ -15,24 +15,6 @@
   <link rel="stylesheet" href="{% static 'govuk-frontend.min.css' %}">
   <link rel="stylesheet" href="{% static 'scl.css' %}">
   <style>
-    .scl-inline-record-button {
-      margin: 0;
-      border-radius: 20px;
-      height: 40px;
-      width: auto;
-      margin-right: 15px;
-      margin-left: 5px;
-      background: #1d70b8;
-    }
-    .scl-inline-record-button:hover {
-      background: #16568e;
-    }
-    @media (min-width: 40.0625em) {
-      .scl-inline-record-button {
-        margin-right: 0;
-      }
-    }
-
     .scl-transcription-target {
       display: none;
       padding: 0 15px;
@@ -46,32 +28,6 @@
         display: none;
         padding: 0;
       }
-    }
-
-    .scl-inline-record-button > .scl-microphone,
-    .scl-inline-record-button > .scl-recording-animation,
-    .scl-record-button > .scl-microphone,
-    .scl-record-button > .scl-recording-animation {
-      display: none;
-    }
-
-    .scl-ready-to-record > .scl-microphone,
-    .scl-recording > .scl-recording-animation {
-      display: flex;
-      height: 22px;
-      width: 15px;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .scl-record-button > .scl-start-text,
-    .scl-record-button > .scl-stop-text {
-      display: none;
-    }
-
-    .scl-ready-to-record > .scl-start-text,
-    .scl-recording > .scl-stop-text {
-      display: inline-block;
     }
 
     .partial-output {
