@@ -323,3 +323,13 @@
     display: block;
   }
 }
+
+.scl-link--no-underline {
+  text-decoration-line: none;
+}
+.scl-link--no-underline:hover {
+  text-decoration-line: underline;
+}
+.scl-link--no-underline:focus {
+  text-decoration-line: none;
+}
