@@ -115,9 +115,9 @@
       <input class="govuk-input scl-input--search" data-module="scl-filter-list" data-scl-filter-list-target="#scl-company-list" data-scl-filter-list-no-results="#scl-company-search-no-results" name="companyName" type="text">
     </div>
 
-    <p id="scl-company-search-no-results" class="govuk-body scl-company-search-no-results-element scl-company-search-has-results">No companies found</p>
+    <p id="scl-company-search-no-results" class="govuk-body scl-with-results">No companies found</p>
 
-    <ul class="govuk-list scl-company-list" id="scl-company-list">
+    <ul class="govuk-list scl-list--multi-column" id="scl-company-list">
       <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing?company=Apex Group&owned=true">Apex Group</a></li>
       <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing?company=Apex Dynamics&owned=false">Apex Dynamics</a></li>
       <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing?company=Apex Industries&owned=false">Apex Industries</a></li>
@@ -194,7 +194,7 @@
           child.style.display = allWordsMatch ? null : 'none';
           if (allWordsMatch) totalMatched += 1;
         });
-        noResults.classList.toggle('scl-filter-list-no-results', !totalMatched);
+        noResults.classList.toggle('scl-filter-list-with-results', totalMatched);
       });
     };
 
