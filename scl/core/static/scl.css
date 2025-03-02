@@ -110,7 +110,7 @@
   line-height: 22px;
   font-size: 0.8rem;
 }
-:focus .scl-tag {
+:focus > .scl-tag {
   background: transparent;
   outline: 2px dotted #0b0c0c;
   /* Still a touch close to the left on Desktop */
@@ -215,6 +215,9 @@
 }
 .scl-multiline-list__link:focus {
   text-decoration-line: none;
+}
+.scl-multiline-list__link_text {
+  display: block;
 }
 @media (min-width: 40.0625em) {
   .scl-multiline-list__link {
