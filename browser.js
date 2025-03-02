@@ -25,9 +25,9 @@ import { Readable } from 'readable-stream'
   const registerTranscriptionButton = (recordButton) => {
     const target = document.querySelector(recordButton.getAttribute("data-scl-transcription-target"));
 
-    target.replaceChildren(...htmlToNodes('<span class="final-output"></span><span class="partial-output">&nbsp;</span>'))
-    const finalOutput = target.querySelector('.final-output');
-    const partialOutput = target.querySelector('.partial-output');
+    target.replaceChildren(...htmlToNodes('<span class="scl-transcription-target__final-output"></span><span class="scl-transcription-target__partial-output">&nbsp;</span>'))
+    const finalOutput = target.querySelector('.scl-transcription-target__final-output');
+    const partialOutput = target.querySelector('.scl-transcription-target__partial-output');
 
     let isRecording = false;
     var stream = null;
@@ -35,7 +35,7 @@ import { Readable } from 'readable-stream'
     function setClasses() {
       recordButton.classList.toggle('scl-button--recording-paused', !isRecording);
       recordButton.classList.toggle('scl-button--recording-active', isRecording);
-      partialOutput.classList.toggle('scl-recording', isRecording);
+      partialOutput.classList.toggle('scl-transcription-target__partial-output--recording', isRecording);
     }
 
     async function stopRecording() {
@@ -48,7 +48,7 @@ import { Readable } from 'readable-stream'
     async function startRecording() {
       isRecording = true;
       setClasses();
-      target.classList.add('scl-transcription-with-content');
+      target.classList.add('scl-transcription-target--with-content');
 
       const audioContext = new AudioContext({sampleRate: 16000});
       stream = await navigator.mediaDevices.getUserMedia({
@@ -103,7 +103,7 @@ import { Readable } from 'readable-stream'
               partialOutput.innerText = '';
             }
             if (transcript != '') {
-              partialOutput.classList.add("scl-with-text");
+              partialOutput.classList.add("scl-transcription-target__partial-output--with-text");
             }
           });
         }
