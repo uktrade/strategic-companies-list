@@ -242,3 +242,17 @@
   border: 1px dashed #0b0c0c;
   padding: 5px;
 }
+
+.scl-list--multi-column {
+  display: flex;
+  flex-wrap: wrap;
+}
+/* This is not BEM, but neither is the GOV.UK Design System on li */
+.scl-list--multi-column > li {
+  flex: 0 0 33.33333%;
+  padding-bottom: 3px;
+}
+
+.scl-filter-list-with-results {
+  display: none;
+}
