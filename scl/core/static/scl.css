@@ -295,8 +295,13 @@
 }
 /* This is not BEM, but neither is the GOV.UK Design System on li */
 .scl-list--multi-column > li {
-  flex: 0 0 33.33333%;
+  flex: 0 0 50%;
   padding-bottom: 3px;
+}
+@media (min-width: 40.0625em) {
+  .scl-list--multi-column > li {
+    flex: 0 0 33.33333%;
+  }
 }
 
 .scl-filter-list-with-results {
