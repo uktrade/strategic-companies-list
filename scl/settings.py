@@ -79,8 +79,13 @@ WSGI_APPLICATION = 'scl.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/home/scl/db.sqlite3',
+        # Credentials are set by libpq-compatible environment variables, and so don't need to be
+        # explicitly referenced https://www.postgresql.org/docs/current/libpq-envars.html
+        # The exception is the database name, which Django requires to be set explicitly. But we
+        # allow a default of the empty string to allow collectstatic to run without error, which
+        # is run during Docker container build, without a connection to the database
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('PGDATABASE', ''),
     }
 }
 

@@ -2,6 +2,15 @@
 
 set -e
 
+echo "Waiting for PostrgreSQL"
+while ! pg_isready --quiet
+do
+    sleep 0.5
+done
+echo "PostrgreSQL ready"
+
+python manage.py migrate
+
 exec parallel --will-cite --line-buffer --jobs 2 --halt now,done=1 ::: \
     "python manage.py runserver 0.0.0.0:8001" \
     "nginx -p /home/scl"
