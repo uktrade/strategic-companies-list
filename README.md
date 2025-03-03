@@ -43,7 +43,7 @@ For example, the name of the production ECS cluster would be `strategic-companie
 
 ## Logs
 
-There are 7 types of logs, sent to 5 locations:
+There are 9 types of logs, sent to 7 locations:
 
 - VPC flow log, saved to the S3 bucket: `<prefix>-vpc-flow-log-<suffix>`
 - ALB connection logs, saved to the S3 bucket `<prefix>-lb-connection-logs-<suffix>`
@@ -53,6 +53,8 @@ There are 7 types of logs, sent to 5 locations:
   - Web server logs
   - Django logs
 - Logs from CodeBuild, saved to the CloudWatch log group `<prefix>-codebuild-<suffix>`
+- PostgreSQL logs for the PostgreSQL database, saved to the CloudWatch log group `/aws/rds/instance/<prefix>-<suffix>/postgresql`
+- Upgrade logs for the PostgreSQL database, saved to the CloudWatch log group `/aws/rds/instance/<prefix>-<suffix>/postgresql`
 
 Both CloudWatch and S3 logs have a retention of 3653 days (~10 years).
 
