@@ -52,9 +52,9 @@ There are 9 types of logs, sent to 7 locations:
   - nginx logs, configured to use the CloudFront-Viewer-Address header for its IP address
   - Web server logs
   - Django logs
-- Logs from CodeBuild, saved to the CloudWatch log group `<prefix>-codebuild-<suffix>`
 - PostgreSQL logs for the PostgreSQL database, saved to the CloudWatch log group `/aws/rds/instance/<prefix>-<suffix>/postgresql`
-- Upgrade logs for the PostgreSQL database, saved to the CloudWatch log group `/aws/rds/instance/<prefix>-<suffix>/postgresql`
+- Upgrade logs for the PostgreSQL database, saved to the CloudWatch log group `/aws/rds/instance/<prefix>-<suffix>/upgrade`
+- Logs from CodeBuild, saved to the CloudWatch log group `<prefix>-codebuild-<suffix>`
 
 Both CloudWatch and S3 logs have a retention of 3653 days (~10 years).
 
