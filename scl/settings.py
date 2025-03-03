@@ -79,8 +79,12 @@ WSGI_APPLICATION = 'scl.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/home/scl/db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'scl',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+        'HOST': 'postgres',
+        'PORT': '5432',
     }
 }
 
