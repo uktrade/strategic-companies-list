@@ -44,12 +44,32 @@ resource "aws_ecs_task_definition" "main" {
         {
           name  = "AWS_TRANSCRIBE_ROLE_ARN"
           value = aws_iam_role.transcribe.arn
+        },
+        {
+          name  = "PGHOST"
+          value = aws_db_instance.main.address
+        },
+        {
+          name  = "PGPORT"
+          value = aws_db_instance.main.port
+        },
+        {
+          name  = "PGDATABASE"
+          value = aws_db_instance.main.db_name
+        },
+        {
+          name  = "PGUSER"
+          value = aws_db_instance.main.username
         }
       ],
       secrets = [
         {
           valueFrom = aws_secretsmanager_secret_version.django_secret_key.arn
           name      = "DJANGO_SECRET_KEY"
+        },
+        {
+          valueFrom = aws_secretsmanager_secret_version.main_db_password.arn
+          name      = "PGPASSWORD"
         }
       ],
       logConfiguration = {
@@ -180,6 +200,15 @@ resource "aws_vpc_security_group_egress_rule" "lb_to_ecs_service" {
   to_port     = var.container_port
 }
 
+resource "aws_vpc_security_group_egress_rule" "ecs_service_to_main_db" {
+  security_group_id            = aws_security_group.ecs_service.id
+  referenced_security_group_id = aws_security_group.main_db.id
+
+  ip_protocol = "tcp"
+  from_port   = aws_db_instance.main.port
+  to_port     = aws_db_instance.main.port
+}
+
 resource "aws_vpc_security_group_ingress_rule" "ecs_service_from_lb" {
   security_group_id            = aws_security_group.ecs_service.id
   referenced_security_group_id = aws_security_group.lb.id
@@ -232,4 +261,59 @@ resource "aws_iam_role_policy" "transcribe" {
       },
     ]
   })
+}
+
+resource "aws_db_instance" "main" {
+  identifier             = "${var.prefix}-${var.suffix}"
+  allocated_storage      = 10
+  db_name                = "scl"
+  engine                 = "postgres"
+  engine_version         = "16.3"
+  instance_class         = "db.t3.small"
+  username               = "master"
+  password               = random_password.main_db_password.result
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+  vpc_security_group_ids = [aws_security_group.main_db.id]
+}
+
+resource "random_password" "main_db_password" {
+  length  = 64
+  special = false
+}
+
+resource "aws_db_subnet_group" "main" {
+  name       = "${var.prefix}-${var.suffix}"
+  subnet_ids = aws_subnet.private[*].id
+
+  tags = {
+    Name = "${var.prefix}-${var.suffix}"
+  }
+}
+
+resource "aws_security_group" "main_db" {
+  name        = "${var.prefix}-main-db-${var.suffix}"
+  description = "${var.prefix}-main-db-${var.suffix}"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.prefix}-main-db-${var.suffix}"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "main_db_from_ecs_service" {
+  security_group_id            = aws_security_group.main_db.id
+  referenced_security_group_id = aws_security_group.ecs_service.id
+
+  ip_protocol = "tcp"
+  from_port   = aws_db_instance.main.port
+  to_port     = aws_db_instance.main.port
+}
+
+resource "aws_secretsmanager_secret" "main_db_password" {
+  name = "${var.prefix}-main-db-password-${var.suffix}"
+}
+
+resource "aws_secretsmanager_secret_version" "main_db_password" {
+  secret_id     = aws_secretsmanager_secret.main_db_password.id
+  secret_string = random_password.main_db_password.result
 }
