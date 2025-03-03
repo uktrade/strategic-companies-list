@@ -34,6 +34,8 @@ services:
        - ./scl/core/static:/app/scl/core/static
     profiles: ['']
   web-prod:
+    networks:
+      - scl
     build:
       context: .
       args:
