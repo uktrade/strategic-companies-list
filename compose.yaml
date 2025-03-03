@@ -6,9 +6,9 @@ services:
     networks:
       - scl
     environment:
+      - POSTGRES_DB=scl
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=scl
     volumes:
       - scl:/var/lib/postgresql/data
   web-dev:
@@ -24,11 +24,11 @@ services:
       - "8000:8000"
     environment:
       DEBUG: "True"
-      PGHOST: postgres
-      PGDATABASE: postgres
-      PGPORT: 5432
+      PGDATABASE: scl
       PGUSER: postgres
       PGPASSWORD: password
+      PGHOST: postgres
+      PGPORT: 5432
     volumes:
        - ./scl/core/templates:/app/scl/core/templates
        - ./scl/core/static:/app/scl/core/static
@@ -41,11 +41,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      PGHOST: postgres
-      PGDATABASE: postgres
-      PGPORT: 5432
+      PGDATABASE: scl
       PGUSER: postgres
       PGPASSWORD: password
+      PGHOST: postgres
+      PGPORT: 5432
     profiles: ['prod']
 
 networks:
