@@ -148,7 +148,10 @@ resource "aws_iam_role_policy" "ecs_task_main_execution" {
           "secretsmanager:DescribeSecret",
           "secretsmanager:ListSecretVersionIds"
         ],
-        Resource = aws_secretsmanager_secret.django_secret_key.arn
+        Resource = [
+          aws_secretsmanager_secret.django_secret_key.arn,
+          aws_secretsmanager_secret.main_db_password.arn,
+        ]
       }
     ]
   })
