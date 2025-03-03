@@ -16,7 +16,8 @@ RUN \
     apt-get install -y --no-install-recommends \
         nginx \
         nginx-extras \
-        parallel && \
+        parallel \
+        postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

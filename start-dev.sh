@@ -2,16 +2,12 @@
 
 set -e
 
-if [ "$DATABASE" = "scl" ]
-then
-        echo "Wating for postgres..."
-
-        while ! nc -z $DB_HOST $DB_PORT; do
-                sleep 0.1
-        done
-
-        echo "POSTGRESQL started"
-fi
+echo "Waiting for PostrgreSQL"
+while ! pg_isready --quiet
+do
+    sleep 0.5
+done
+echo "PostrgreSQL ready"
 
 python manage.py migrate
 
