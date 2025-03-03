@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "main" {
         },
         {
           name  = "PGPORT"
-          value = aws_db_instance.main.port
+          value = tostring(aws_db_instance.main.port)
         },
         {
           name  = "PGDATABASE"
