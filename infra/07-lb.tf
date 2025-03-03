@@ -97,6 +97,15 @@ resource "aws_security_group" "lb" {
   }
 }
 
+resource "aws_vpc_security_group_ingress_rule" "lb_from_cloudfront" {
+  security_group_id = aws_security_group.lb.id
+  prefix_list_id    = data.aws_ec2_managed_prefix_list.cloudfront.id
+
+  ip_protocol = "tcp"
+  from_port   = "443"
+  to_port     = "443"
+}
+
 resource "aws_lb_listener" "main" {
   load_balancer_arn = aws_lb.main.arn
   port              = "443"

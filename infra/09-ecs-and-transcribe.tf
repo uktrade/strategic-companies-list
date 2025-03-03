@@ -175,15 +175,6 @@ resource "aws_iam_role" "ecs_task_main_service" {
   })
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ecs_service_from_cloudwatch" {
-  security_group_id = aws_security_group.lb.id
-  prefix_list_id    = data.aws_ec2_managed_prefix_list.cloudfront.id
-
-  ip_protocol = "tcp"
-  from_port   = "443"
-  to_port     = "443"
-}
-
 resource "aws_security_group" "ecs_service" {
   name        = "${var.prefix}-ecs-service-${var.suffix}"
   description = "${var.prefix}-ecs-service-${var.suffix}"
@@ -203,6 +194,15 @@ resource "aws_vpc_security_group_egress_rule" "lb_to_ecs_service" {
   to_port     = var.container_port
 }
 
+resource "aws_vpc_security_group_ingress_rule" "ecs_service_from_lb" {
+  security_group_id            = aws_security_group.ecs_service.id
+  referenced_security_group_id = aws_security_group.lb.id
+
+  ip_protocol = "tcp"
+  from_port   = var.container_port
+  to_port     = var.container_port
+}
+
 resource "aws_vpc_security_group_egress_rule" "ecs_service_to_main_db" {
   security_group_id            = aws_security_group.ecs_service.id
   referenced_security_group_id = aws_security_group.main_db.id
@@ -212,13 +212,13 @@ resource "aws_vpc_security_group_egress_rule" "ecs_service_to_main_db" {
   to_port     = aws_db_instance.main.port
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ecs_service_from_lb" {
-  security_group_id            = aws_security_group.ecs_service.id
-  referenced_security_group_id = aws_security_group.lb.id
+resource "aws_vpc_security_group_ingress_rule" "main_db_from_ecs_service" {
+  security_group_id            = aws_security_group.main_db.id
+  referenced_security_group_id = aws_security_group.ecs_service.id
 
   ip_protocol = "tcp"
-  from_port   = var.container_port
-  to_port     = var.container_port
+  from_port   = aws_db_instance.main.port
+  to_port     = aws_db_instance.main.port
 }
 
 # Should be tighter - only needed to pull images from ECR
@@ -264,82 +264,4 @@ resource "aws_iam_role_policy" "transcribe" {
       },
     ]
   })
-}
-
-locals {
-  main_db_identifier = "${var.prefix}-${var.suffix}"
-}
-
-resource "aws_db_instance" "main" {
-  identifier             = local.main_db_identifier
-  allocated_storage      = 10
-  db_name                = "scl"
-  engine                 = "postgres"
-  engine_version         = "16.3"
-  instance_class         = "db.t3.small"
-  username               = "master"
-  password               = random_password.main_db_password.result
-  db_subnet_group_name   = aws_db_subnet_group.main.name
-  vpc_security_group_ids = [aws_security_group.main_db.id]
-
-  # In most AWS resource, we configure with an explicit log group, but in this case AWS specifies
-  # the log group. And in order to set retention, we need to make sure they're created before the
-  # database
-  enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
-  depends_on = [
-    aws_cloudwatch_log_group.main_db_postgresql,
-    aws_cloudwatch_log_group.main_db_upgrade,
-  ]
-}
-
-resource "aws_cloudwatch_log_group" "main_db_postgresql" {
-  name              = "/aws/rds/instance/${local.main_db_identifier}/postgresql"
-  retention_in_days = "3653"
-}
-
-resource "aws_cloudwatch_log_group" "main_db_upgrade" {
-  name              = "/aws/rds/instance/${local.main_db_identifier}/upgrade"
-  retention_in_days = "3653"
-}
-
-resource "random_password" "main_db_password" {
-  length  = 64
-  special = false
-}
-
-resource "aws_db_subnet_group" "main" {
-  name       = "${var.prefix}-${var.suffix}"
-  subnet_ids = aws_subnet.private[*].id
-
-  tags = {
-    Name = "${var.prefix}-${var.suffix}"
-  }
-}
-
-resource "aws_security_group" "main_db" {
-  name        = "${var.prefix}-main-db-${var.suffix}"
-  description = "${var.prefix}-main-db-${var.suffix}"
-  vpc_id      = aws_vpc.main.id
-
-  tags = {
-    Name = "${var.prefix}-main-db-${var.suffix}"
-  }
-}
-
-resource "aws_vpc_security_group_ingress_rule" "main_db_from_ecs_service" {
-  security_group_id            = aws_security_group.main_db.id
-  referenced_security_group_id = aws_security_group.ecs_service.id
-
-  ip_protocol = "tcp"
-  from_port   = aws_db_instance.main.port
-  to_port     = aws_db_instance.main.port
-}
-
-resource "aws_secretsmanager_secret" "main_db_password" {
-  name = "${var.prefix}-main-db-password-${var.suffix}"
-}
-
-resource "aws_secretsmanager_secret_version" "main_db_password" {
-  secret_id     = aws_secretsmanager_secret.main_db_password.id
-  secret_string = random_password.main_db_password.result
 }
