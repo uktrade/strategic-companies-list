@@ -4,20 +4,17 @@ services:
   postgres:
     image: postgres:16
     networks:
-      - scl-network
+      - scl
     environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=password
       - POSTGRES_DB=scl
-    ports:
-      - "5432:5432"
     volumes:
-      - scldata:/var/lib/postgresql/data
+      - scl:/var/lib/postgresql/data
   web-dev:
     restart: always
     networks:
-      - scl-network
+      - scl
     build:
       context: .
       target: dev
@@ -27,6 +24,11 @@ services:
       - "8000:8000"
     environment:
       DEBUG: "True"
+      PGHOST: postgres
+      PGDATABASE: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: password
     volumes:
        - ./scl/core/templates:/app/scl/core/templates
        - ./scl/core/static:/app/scl/core/static
@@ -38,12 +40,17 @@ services:
         - GIT_COMMIT=to-be-set-by-codebuild
     ports:
       - "8000:8000"
+    environment:
+      PGHOST: postgres
+      PGDATABASE: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: password
     profiles: ['prod']
 
 networks:
-  scl-network:
-    name: scl-network
-    driver: bridge
+  scl:
+    name: scl
 
 volumes:
-    scldata:
+    scl:
