@@ -28,6 +28,8 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', get_random_secret_key())
 # here, which also allows requests from the ALB itself as part of its healthcheck
 ALLOWED_HOSTS = ["*"]
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
