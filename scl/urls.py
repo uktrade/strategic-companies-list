@@ -18,14 +18,15 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 from scl.core.views import index, aws_credentials
 from scl.core.views import index, company
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", index),
+    path("", index, name="home-page"),
     path("company-briefing", company, name='company-briefing'),
     path("api/v1/aws-credentials", aws_credentials),
+    path('auth/', include('authbroker_client.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

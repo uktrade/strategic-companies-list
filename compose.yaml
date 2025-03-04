@@ -11,10 +11,24 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - scl:/var/lib/postgresql/data
+  sso:
+    build: https://github.com/uktrade/mock-sso.git
+    networks:
+      - scl
+    ports:
+      - "8001:8001"
+    environment:
+      MOCK_SSO_PORT: 8001
+      MOCK_SSO_USER_EMAIL: local.user@businessandtrade.gov.uk
+      MOCK_SSO_TOKEN: local.token
+      MOCK_SSO_CODE: local.code
   web-dev:
     restart: always
     networks:
       - scl
+    depends_on:
+      - postgres
+      - sso
     build:
       context: .
       target: dev
@@ -29,13 +43,22 @@ services:
       PGPASSWORD: password
       PGHOST: postgres
       PGPORT: 5432
+      OAUTHLIB_INSECURE_TRANSPORT: 1
+      AUTHBROKER_URL: 'http://localhost:8001/'
+      AUTHBROKER_INTERNAL_URL: 'http://sso:8001/'
+      AUTHBROKER_CLIENT_ID: 'any'
+      AUTHBROKER_CLIENT_SECRET: 'any'
     volumes:
        - ./scl/core/templates:/app/scl/core/templates
+       - ./scl/core/migrations:/app/scl/core/migrations
        - ./scl/core/static:/app/scl/core/static
     profiles: ['']
   web-prod:
     networks:
       - scl
+    depends_on:
+      - postgres
+      - sso
     build:
       context: .
       args:
@@ -48,6 +71,11 @@ services:
       PGPASSWORD: password
       PGHOST: postgres
       PGPORT: 5432
+      OAUTHLIB_INSECURE_TRANSPORT: 1
+      AUTHBROKER_URL: 'http://localhost:8001/'
+      AUTHBROKER_INTERNAL_URL: 'http://sso:8001/'
+      AUTHBROKER_CLIENT_ID: 'any'
+      AUTHBROKER_CLIENT_SECRET: 'any'
     profiles: ['prod']
 
 networks:

@@ -14,6 +14,7 @@ FROM python:3.13-slim-bookworm AS common
 RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends \
+        git \
         nginx \
         nginx-extras \
         parallel \

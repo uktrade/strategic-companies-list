@@ -12,7 +12,7 @@ import os
 from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
-
+from django.urls import reverse_lazy
 
 # General settings
 
@@ -28,6 +28,36 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', get_random_secret_key())
 # here, which also allows requests from the ALB itself as part of its healthcheck
 ALLOWED_HOSTS = ["*"]
 
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
+
+# Staff SSO / Authentication
+
+AUTHBROKER_URL = os.environ.get('AUTHBROKER_URL', '')
+AUTHBROKER_INTERNAL_URL = os.environ.get('AUTHBROKER_INTERNAL_URL', '')
+
+AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
+AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
+AUTHBROKER_STAFF_SSO_SCOPE = 'read write'
+AUTHBROKER_ANONYMOUS_PATHS = []
+AUTHBROKER_ANONYMOUS_URL_NAMES = []
+
+# Avoids (un-rectifiable) personal data in the user ID, as well as a reference to trade.gov.uk,
+# which is the domain for DIT, not DBT
+AUTHBROKER_USE_USER_ID_GUID = True
+
+AUTHENTICATION_BACKENDS = [
+    'authbroker_client.backends.AuthbrokerBackend',
+]
+
+AUTH_USER_MODEL = "core.User"
+
+LOGIN_URL = reverse_lazy('authbroker_client:login')
+
+LOGIN_REDIRECT_URL = reverse_lazy('home-page')
+
 
 # Application definition
 
@@ -39,6 +69,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'authbroker_client',
     'scl.core',
     'scl.static',
 ]
@@ -51,6 +82,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'authbroker_client.middleware.ProtectAllViewsMiddleware',
 ]
 
 ROOT_URLCONF = 'scl.urls'
@@ -88,25 +120,6 @@ DATABASES = {
         'NAME': os.environ.get('PGDATABASE', ''),
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
 
 
 # Internationalization

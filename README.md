@@ -30,6 +30,13 @@ The above uses a development config, which has differences to production especia
 docker compose down && docker compose --profile prod up --build
 ```
 
+## Creating migrations
+
+```bash
+docker compose run web-dev python manage.py makemigrations
+```
+
+
 ## Infrastructure naming
 
 All infrastructure is named in the pattern `<prefix>-<name>-<suffix>`.
@@ -63,6 +70,8 @@ Both CloudWatch and S3 logs have a retention of 3653 days (~10 years).
 
 > [!IMPORTANT]
 > The instructions below use Terraform to provision infrastructure for Strategic Companies List environments (dev, prod, etc), the "entry-point" of each is an internet-facing Application Load Balancer (ALB). However, for flexibility, especially in multi-account setups, there are manual steps needed after the Terraform has run to make this ALB actually acessible. Be sure to run `terraform output strategic_companies_list` after provisioning the environment to find what these steps are.
+>
+> Note that manual changes to secrets in AWS Secrets manager typically feed a forced deployment of the ECS service to take effect.
 >
 > In future versions it is possible that these steps are incorportated into the Terraform.
 
@@ -110,6 +119,9 @@ AWS infrastructure for running the strategic-companies-list is defined through T
 
       external_domain_name = "scl.my-domain.gov.uk"        # The user-facing domain
       internal_domain_name = "scl.prod.my-domain.digital"  # The domain of the ALB
+
+      authbroker_url       = "https://sso-domain.gov.uk"   # The URL of Staff SSO
+      authbroker_client_id = "12345abcdef"                 # The Client ID of the app in Staff SSO
     }
 
     output "strategic_companies_list" {
