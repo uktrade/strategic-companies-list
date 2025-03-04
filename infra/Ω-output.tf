@@ -21,3 +21,7 @@ output "_05_cdn_header" {
 output "_06_address_header" {
   value = "You must make sure that the CloudFront distribution passes the  CloudFront-Viewer-Address header to the load balancer, for example by using the Managed-AllViewerAndCloudFrontHeaders-2022-06 origin request policy"
 }
+
+output "_07_authbroker_client_secret" {
+  value = "You must manually set the authbroker client secret in ${aws_secretsmanager_secret.authbroker_client_secret.id} via the AWS Console"
+}

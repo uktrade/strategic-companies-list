@@ -60,6 +60,14 @@ resource "aws_ecs_task_definition" "main" {
         {
           name  = "PGUSER"
           value = aws_db_instance.main.username
+        },
+        {
+          name  = "AUTHBROKER_URL"
+          value = var.authbroker_url
+        },
+        {
+          name  = "AUTHBROKER_CLIENT_ID"
+          value = var.authbroker_client_id
         }
       ],
       secrets = [
@@ -70,6 +78,10 @@ resource "aws_ecs_task_definition" "main" {
         {
           valueFrom = aws_secretsmanager_secret_version.main_db_password.arn
           name      = "PGPASSWORD"
+        },
+        {
+          valueFrom = aws_secretsmanager_secret_version.authbroker_client_secret.arn
+          name      = "AUTHBROKER_CLIENT_SECRET"
         }
       ],
       logConfiguration = {
@@ -151,6 +163,7 @@ resource "aws_iam_role_policy" "ecs_task_main_execution" {
         Resource = [
           aws_secretsmanager_secret.django_secret_key.arn,
           aws_secretsmanager_secret.main_db_password.arn,
+          aws_secretsmanager_secret.authbroker_client_secret.arn,
         ]
       }
     ]
@@ -264,4 +277,17 @@ resource "aws_iam_role_policy" "transcribe" {
       },
     ]
   })
+}
+
+resource "aws_secretsmanager_secret" "authbroker_client_secret" {
+  name = "${var.prefix}-authbroker-client-secret-${var.suffix}"
+}
+
+resource "aws_secretsmanager_secret_version" "authbroker_client_secret" {
+  secret_id     = aws_secretsmanager_secret.authbroker_client_secret.id
+  secret_string = "to-replace-in-aws-console"
+
+  lifecycle {
+    ignore_changes = ["secret_string"]
+  }
 }

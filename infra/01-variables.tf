@@ -85,3 +85,11 @@ variable "external_domain_name" {
 variable "internal_domain_name" {
   type = string
 }
+
+variable "authbroker_url" {
+  type = string
+}
+
+variable "authbroker_client_id" {
+  type = string
+}
