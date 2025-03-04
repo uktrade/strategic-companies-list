@@ -5,6 +5,7 @@ locals {
 resource "aws_db_instance" "main" {
   identifier             = local.main_db_identifier
   allocated_storage      = 10
+  storage_encrypted      = true
   db_name                = "scl"
   engine                 = "postgres"
   engine_version         = "16.3"
@@ -13,6 +14,8 @@ resource "aws_db_instance" "main" {
   password               = random_password.main_db_password.result
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.main_db.id]
+
+  backup_retention_period = 35
 
   # In most AWS resource, we configure with an explicit log group, but in this case AWS specifies
   # the log group. And in order to set retention, we need to make sure they're created before the
