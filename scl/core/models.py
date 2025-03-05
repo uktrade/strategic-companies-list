@@ -19,9 +19,8 @@ class Company(models.Model):
     duns_number = models.CharField(blank=False, null=False, max_length=9, verbose_name='DUNS number')
 
     # Optional
-    key_facts = models.TextField(blank=True, null=False, default='')
-    issues = models.TextField(blank=True, null=False, default='')
-    priorities = models.TextField(blank=True, null=False, default='')
+    company_priorities = models.TextField(blank=True, null=False, default='')
+    hmg_priorities = models.TextField(blank=True, null=False, default='', verbose_name='HMG priorities')
 
     def __str__(self):
         return self.name
