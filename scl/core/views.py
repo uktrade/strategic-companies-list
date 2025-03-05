@@ -9,8 +9,6 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from .models import Company
 
-from .models import Company
-
 logger = logging.getLogger().warning
 
 
