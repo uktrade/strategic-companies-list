@@ -193,7 +193,7 @@
       const issues = document.querySelector('[data-scl-editable-content="issues"]').innerHTML
       const priorities = document.querySelector('[data-scl-editable-content="priorities"]').innerHTML
 
-      await fetch("/company/{{company.id}}", {
+      await fetch("/api/v1/company/{{company.duns_number}}", {
         headers: {
           "Content-Type": "application/json",
           "X-CSRFToken": "{{csrf_token}}",

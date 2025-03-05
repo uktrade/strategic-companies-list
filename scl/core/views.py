@@ -1,4 +1,3 @@
-import json
 import time
 import uuid
 import logging
@@ -75,11 +74,6 @@ def company(request, duns_number=None):
 
 def company_briefing(request, duns_number):
     company = Company.objects.get(duns_number=duns_number)
-    if request.method == 'PATCH':
-        data = json.loads(request.body)
-        company.issues = data.get('issues')
-        company.priorities = data.get('priorities')
-        company.save()
     context = {
         "company": company
     }
