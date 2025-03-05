@@ -4,4 +4,4 @@ django_extensions
 git+https://github.com/uktrade/django-staff-sso-client@feat/internal-url
 sentry-sdk
 uvicorn
-psycopg[binary]
+psycopg[binary,pool]

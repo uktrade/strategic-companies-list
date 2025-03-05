@@ -39,9 +39,11 @@ jmespath==1.0.1
     #   botocore
 oauthlib==3.2.2
     # via requests-oauthlib
-psycopg[binary]==3.2.5
+psycopg[binary,pool]==3.2.5
     # via -r requirements.in
 psycopg-binary==3.2.5
+    # via psycopg
+psycopg-pool==3.2.6
     # via psycopg
 python-dateutil==2.9.0.post0
     # via botocore
@@ -57,6 +59,8 @@ six==1.17.0
     # via python-dateutil
 sqlparse==0.5.3
     # via django
+typing-extensions==4.12.2
+    # via psycopg-pool
 urllib3==2.3.0
     # via
     #   botocore
