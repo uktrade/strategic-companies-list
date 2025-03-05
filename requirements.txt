@@ -27,7 +27,7 @@ django==5.1.6
     #   django-staff-sso-client
 django-extensions==3.2.3
     # via -r requirements.in
-django-staff-sso-client @ git+https://github.com/uktrade/django-staff-sso-client@feat/internal-url
+django-staff-sso-client==4.3.0
     # via -r requirements.in
 h11==0.14.0
     # via uvicorn
