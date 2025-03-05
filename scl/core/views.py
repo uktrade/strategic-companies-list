@@ -9,8 +9,6 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from .models import Company
 
-from .models import Company
-
 logger = logging.getLogger().warning
 
 
@@ -71,8 +69,8 @@ def company(request):
     return render(request, "company.html", context)
 
 
-def company_briefing(request, company_uuid):
-    company = Company.objects.get(id=company_uuid)
+def company_briefing(request, duns_number):
+    company = Company.objects.get(duns_number=duns_number)
     if request.method == 'PATCH':
         data = json.loads(request.body)
         company.issues = data.get('issues')
