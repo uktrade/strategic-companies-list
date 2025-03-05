@@ -167,6 +167,10 @@
         editableSection.map((item) => {
           item.toggleAttribute('contenteditable', isEditable)
         });
+
+        // Only try to save it it's not editable, i.e. we're saving
+        if (isEditable) return;
+
         const data = {}
         editableSection.forEach((item) => {
           data[item.getAttribute('data-scl-editable-field')] = item.innerHTML
