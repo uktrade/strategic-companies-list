@@ -72,13 +72,5 @@ def company(request, duns_number=None):
     return render(request, "company.html", context)
 
 
-def company_briefing(request, duns_number):
-    company = Company.objects.get(duns_number=duns_number)
-    context = {
-        "company": company
-    }
-    return render(request, "company_briefing.html", context)
-
-
 def engagement(request):
     return render(request, "engagements.html")
