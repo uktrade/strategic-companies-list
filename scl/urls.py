@@ -22,12 +22,14 @@ from django.urls import include, path
 
 from scl.core.views import index, aws_credentials
 from scl.core.views import index, company, company_briefing
+from scl.core.api.v1.company import company_api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", index, name="home-page"),
     path("company-briefing", company, name='company-briefing'),
     path("company/<int:duns_number>", company_briefing, name='company'),
+    path("api/v1/company/<int:duns_number>", company_api),
     path("api/v1/aws-credentials", aws_credentials),
     path('auth/', include('authbroker_client.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
