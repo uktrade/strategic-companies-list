@@ -69,13 +69,15 @@ def company(request):
     return render(request, "company.html", context)
 
 
+def company_api(request, duns_number):
+    data = json.loads(request.body)
+    company.issues = data.get('issues')
+    company.priorities = data.get('priorities')
+    company.save()
+
+
 def company_briefing(request, duns_number):
     company = Company.objects.get(duns_number=duns_number)
-    if request.method == 'PATCH':
-        data = json.loads(request.body)
-        company.issues = data.get('issues')
-        company.priorities = data.get('priorities')
-        company.save()
     context = {
         "company": company
     }
