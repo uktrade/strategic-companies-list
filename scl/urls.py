@@ -27,7 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", index, name="home-page"),
     path("company-briefing", company, name='company-briefing'),
-    path("company/<uuid:company_uuid>", company_briefing, name='company'),
+    path("company/<int:duns_number>", company_briefing, name='company'),
     path("api/v1/aws-credentials", aws_credentials),
     path('auth/', include('authbroker_client.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
