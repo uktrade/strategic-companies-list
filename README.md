@@ -33,7 +33,7 @@ docker compose down && docker compose --profile prod up --build
 ## Creating migrations
 
 ```bash
-docker compose run web-dev python manage.py makemigrations
+docker compose run --build web-dev python manage.py makemigrations
 ```
 
 
