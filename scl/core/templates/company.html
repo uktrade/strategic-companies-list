@@ -15,8 +15,7 @@
             </button>
             <button
               class="govuk-button scl-content-header__button govuk-!-margin-left-1 govuk-!-margin-bottom-2"
-              data-module="govuk-button"
-              onclick="window.print()"
+              data-module="scl-print-button"
             >
               Print
             </button>
@@ -228,6 +227,16 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll('[data-module="scl-edit-button"]').forEach(registerEditButton);
+    });
+  })();
+
+  (() => {
+    const registerPrintButton = (printButton) => {
+      printButton.addEventListener("click", () => window.print());
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll('[data-module="scl-print-button"]').forEach(registerPrintButton);
     });
   })();
 </script>
