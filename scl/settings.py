@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'csp',
     'authbroker_client',
+    'reversion',
     'scl.core',
     'scl.static',
 ]

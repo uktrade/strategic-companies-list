@@ -25,10 +25,13 @@ django==5.1.6
     #   -r requirements.in
     #   django-csp
     #   django-extensions
+    #   django-reversion
     #   django-staff-sso-client
 django-csp==3.8
     # via -r requirements.in
 django-extensions==3.2.3
+    # via -r requirements.in
+django-reversion==5.1.0
     # via -r requirements.in
 django-staff-sso-client==4.4.0
     # via -r requirements.in
