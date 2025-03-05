@@ -36,6 +36,7 @@ SESSION_COOKIE_AGE = 60 * 60 * 8
 SESSION_COOKIE_NAME = 'scl-session-id'
 
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_NAME = 'scl-csrf-token'
 
 
 # Staff SSO / Authentication
