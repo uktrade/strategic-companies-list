@@ -1,11 +1,13 @@
+import json
 import time
 import uuid
-
+import logging
 import boto3
+
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
-import logging
+from .models import Company
 
 logger = logging.getLogger().warning
 
@@ -56,3 +58,16 @@ def company(request):
         "is_owner": is_owner
     }
     return render(request, "company.html", context)
+
+
+def company_briefing(request, company_uuid):
+    company = Company.objects.get(id=company_uuid)
+    if request.method == 'PATCH':
+        data = json.loads(request.body)
+        company.issues = data.get('issues')
+        company.priorities = data.get('priorities')
+        company.save()
+    context = {
+        "company": company
+    }
+    return render(request, "company_briefing.html", context)

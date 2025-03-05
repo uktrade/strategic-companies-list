@@ -1,0 +1,239 @@
+ {% extends "base.html" %} {% block content %}
+ <div class="govuk-width-container">
+  <main class="govuk-main-wrapper" id="main-content">
+    <div class="govuk-grid-row">
+          <div class="govuk-grid-column-full">
+            <div class="scl-content-header">
+              <h1
+                class="govuk-heading-l scl-content-header__heading govuk-!-margin-bottom-2"
+              >
+                {{company.name}}
+              </h1>
+              <div>
+                <button
+                  class="govuk-button scl-content-header__button govuk-!-margin-bottom-2" data-module="scl-edit-button"
+                  data-scl-edit-button-target=".scl-editable"
+                >Edit
+                </button>
+              </div>
+            </div>
+            <p class="govuk-body govuk-body-s">
+              Last updated: {{company.last_updated}}
+            </p>
+          </div>
+        </div>
+        <div class="govuk-grid-row">
+          <section class="govuk-grid-column-two-thirds">
+            <hr
+              class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0"
+            />
+            <h2 class="govuk-heading-m">Key facts</h2>
+            <ul class="govuk-list govuk-list--bullet">
+              {{company.key_facts|safe}}
+            </ul>
+            <h2 class="govuk-heading-m">Key people</h2>
+            <ul class="govuk-list govuk-list--bullet">
+              <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
+              <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
+            </ul>
+            <hr
+              class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--visible govuk-!-margin-top-7 govuk-!-margin-bottom-0"
+            />
+            <strong
+              class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging"
+              >PRIVILEGED</strong
+            >
+            <h2 class="govuk-heading-m govuk-!-margin-top-3">
+              Company current issues and priorities
+            </h2>
+            <ol
+              class="govuk-list govuk-list--number scl-editable"
+              data-scl-editable-content="issues"
+            >
+              {{company.issues|safe}}
+            </ol>
+            <h2 class="govuk-heading-m">HMG priorities for engagement</h2>
+            <ol class="govuk-list govuk-list--number scl-editable" data-scl-editable-content="priorities">
+              {{company.priorities|safe}}
+            </ol>
+          </section>
+          <aside class="govuk-grid-column-one-third" role="complementary">
+            <hr
+              class="govuk-section-break govuk-section-break--m govuk-!-margin-top-0 govuk-section-break--visible govuk-!-margin-bottom-0"
+            />
+            <strong
+              class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging"
+              >PRIVILEGED</strong
+            >
+            <h2
+              class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-2"
+            >
+              Recent top-level engagements across HMG
+            </h2>
+            <ul class="scl-multiline-list govuk-!-margin-bottom-2">
+              <li>
+                <a
+                  href="#"
+                  class="govuk-link govuk-link--no-visited-state scl-multiline-list__link"
+                >
+                  <strong
+                    class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date"
+                    >1 Feb. 2025</strong
+                  >
+                  <span class="scl-multiline-list__link_text"
+                    >UK manufacturing round table</span
+                  >
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="govuk-link govuk-link--no-visited-state scl-multiline-list__link"
+                >
+                  <strong
+                    class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date"
+                    >23 Jun. 2025</strong
+                  >
+                  <span class="scl-multiline-list__link_text">France meeting</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="govuk-link govuk-link--no-visited-state scl-multiline-list__link"
+                >
+                  <strong
+                    class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date"
+                    >10 Dec. 2024</strong
+                  >
+                  <span class="scl-multiline-list__link_text">Italy meeting</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="govuk-link govuk-link--no-visited-state scl-multiline-list__link"
+                >
+                  <strong
+                    class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date"
+                    >15 Nov. 2024</strong
+                  >
+                  <span class="scl-multiline-list__link_text"
+                    >Aerospace round table</span
+                  >
+                </a>
+              </li>
+            </ul>
+
+            <hr
+              class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-1 govuk-!-margin-bottom-1"
+            />
+            <p
+              class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small"
+            >
+              <a
+                href="#"
+                class="govuk-link govuk-link--no-visited-state scl-link--no-underline"
+                >View working-level engagements</a
+              >
+            </p>
+            <hr
+              class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-5 govuk-!-margin-bottom-2"
+            />
+            <h2
+              class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-margin-top-{% if is_owner == 'true' %}2{% else %}4{% endif %}"
+            >
+              Account managers
+            </h2>
+            <ul class="govuk-list scl-list--small">
+              <li>
+                <a
+                  href="#"
+                  class="govuk-link govuk-link--no-visited-state scl-link--no-underline"
+                  >Joe Smith</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="govuk-link govuk-link--no-visited-state scl-link--no-underline"
+                  >Cara miller</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="govuk-link govuk-link--no-visited-state scl-link--no-underline"
+                  >Loiuse Adams</a
+                >
+              </li>
+            </ul>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </main>
+</div>
+<script nonce="{{request.csp_nonce}}">
+  (() => {
+    
+    let isEditable = false;
+
+    const setHTMLContent = (selector, placeholderHTML)=> {
+      element = document.querySelector(selector);
+      isEmpty = Boolean(element.innerHTML.replaceAll(/\s/g,'').length == 0);
+
+      if(isEmpty){
+        element.innerHTML = placeholderHTML
+        return
+      }
+    }
+
+    const updateContent = async () => {
+      const issues = document.querySelector('[data-scl-editable-content="issues"]').innerHTML
+      const priorities = document.querySelector('[data-scl-editable-content="priorities"]').innerHTML
+
+      await fetch("/company/{{company.id}}", {
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{csrf_token}}",
+        },
+        method: "PATCH",
+        body: JSON.stringify({
+          issues,
+          priorities
+        }),
+      });
+    };
+
+    const registerEditButton = (editButton) => {
+      const editableSection = Array.from(
+        document.querySelectorAll(
+          editButton.getAttribute("data-scl-edit-button-target")
+        )
+      );
+
+      const toggleEdit = () => {
+        isEditable = !isEditable;
+        editButton.innerHTML = isEditable ? "Save" : "Edit";
+        if (editButton.innerHTML == "Edit") {
+          updateContent();
+        }
+        editableSection.map((item) => {
+          item.toggleAttribute("contenteditable", isEditable);
+        });
+      };
+
+      editButton.addEventListener("click", toggleEdit);
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setHTMLContent('[data-scl-editable-content="issues"]', '<li></li>')
+      setHTMLContent('[data-scl-editable-content="priorities"]', '<li></li>')
+      document
+        .querySelectorAll('[data-module="scl-edit-button"]')
+        .forEach(registerEditButton);
+    });
+  })();
+</script>
+{% endblock %}
