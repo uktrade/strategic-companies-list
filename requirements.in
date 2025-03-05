@@ -2,6 +2,7 @@ boto3
 django
 django-csp
 django_extensions
+django-reversion
 django-staff-sso-client
 sentry-sdk
 uvicorn
