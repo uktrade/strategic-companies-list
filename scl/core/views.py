@@ -7,11 +7,22 @@ from django.http import JsonResponse
 from django.shortcuts import render
 import logging
 
+from .models import Company
+
 logger = logging.getLogger().warning
 
 
 def index(request):
-    return render(request, "index.html")
+    companies = list(Company.objects.all().order_by('name'))
+    # Dummy way so we can preserve some owner/non owner view
+    companies_with_is_owner = [
+        (company, i < len(companies)/2)
+        for i, company in enumerate(companies)
+    ]
+
+    return render(request, "index.html", {
+        "companies_with_is_owner": companies_with_is_owner,
+    })
 
 
 def engagement(request):
