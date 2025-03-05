@@ -78,3 +78,7 @@ def company_briefing(request, duns_number):
         "company": company
     }
     return render(request, "company_briefing.html", context)
+
+
+def engagement(request):
+    return render(request, "engagements.html")
