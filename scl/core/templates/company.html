@@ -4,7 +4,7 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
         <div class="scl-content-header">
-          <h1 class="govuk-heading-l scl-content-header__heading govuk-!-margin-bottom-2">{{company_name}}</h1>
+          <h1 class="govuk-heading-l scl-content-header__heading govuk-!-margin-bottom-2">{{ company.name }}</h1>
           <div>
             <button
               class="govuk-button scl-content-header__button govuk-!-margin-bottom-2"
@@ -29,7 +29,7 @@
       <section class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
         <h2 class="govuk-heading-m">Key facts</h2>
-        <ul class="govuk-list govuk-list--bullet scl-editable">
+        <ul class="govuk-list govuk-list--bullet">
           <li>Largest UK company in the health sector.</li>
           <li>
             The company employs around 1000 in the UK and 7000 globally.
@@ -40,7 +40,7 @@
           </li>
         </ul>
         <h2 class="govuk-heading-m">Key people</h2>
-        <ul class="govuk-list govuk-list--bullet scl-editable">
+        <ul class="govuk-list govuk-list--bullet">
           <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
           <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
         </ul>
@@ -48,7 +48,10 @@
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--visible govuk-!-margin-top-7 govuk-!-margin-bottom-0">
         <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
         <h2 class="govuk-heading-m govuk-!-margin-top-3">Company current issues and priorities</h2>
-        <ol class="govuk-list govuk-list--number scl-editable">
+        <ol class="govuk-list govuk-list--number scl-editable" data-scl-editable-field="company_priorities">
+          {% if company.company_priorities %}
+            {{ company.company_priorities | safe }}
+          {% else %}
           <li>
             <b>Support key exports</b>
             <div>
@@ -70,9 +73,13 @@
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </div>
           </li>
+          {% endif %}
         </ol>
         <h2 class="govuk-heading-m">HMG priorities for engagement</h2>
-        <ol class="govuk-list govuk-list--number scl-editable">
+        <ol class="govuk-list govuk-list--number scl-editable" data-scl-editable-field="hmg_priorities">
+          {% if company.hmg_priorities %}
+            {{ company.hmg_priorities | safe }}
+          {% else %}
           <li>
             <b>Growing exports</b>
             <div>
@@ -94,6 +101,7 @@
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </div>
           </li>
+          {% endif %}
         </ol>
         {% endif %}
       </section>
@@ -153,11 +161,23 @@
 
       let isEditable = false
 
-      const toggleEdit = () => {
+      const toggleEdit = async () => {
         isEditable = !isEditable;
         editButton.innerHTML = (isEditable) ? "Save" : "Edit";
         editableSection.map((item) => {
           item.toggleAttribute('contenteditable', isEditable)
+        });
+        const data = {}
+        editableSection.forEach((item) => {
+          data[item.getAttribute('data-scl-editable-field')] = item.innerHTML
+        });
+        await fetch("/api/v1/company/{{ company.duns_number }}", {
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          method: "PATCH",
+          body: JSON.stringify(data),
         });
       };
 

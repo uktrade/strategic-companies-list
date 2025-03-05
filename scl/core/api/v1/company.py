@@ -7,8 +7,8 @@ def company_api(request, duns_number):
     data = json.loads(request.body)
     company = Company.objects.get(duns_number=duns_number)
     if request.method == 'PATCH':
-        company.issues = data.get('issues')
-        company.priorities = data.get('priorities')
+        company.hmg_priorities = data.get('hmg_priorities')
+        company.company_priorities = data.get('company_priorities')
         company.save()
 
     return JsonResponse(
