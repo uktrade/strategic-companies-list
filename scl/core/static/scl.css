@@ -241,6 +241,9 @@
 .scl-key-info__panel-header {
   padding: 15px 15px 0 15px;
 }
+.scl-key-info__panel-header-minilink {
+  float: right;
+}
 @media (min-width: 40.0625em) {
   .scl-key-info {
     border-bottom: 1px solid #b1b4b6;
@@ -301,6 +304,13 @@
   width: 15px;
   justify-content: center;
   align-items: flex-start;
+}
+.scl-button__icon {
+  overflow: visible;
+}
+.scl-button__icon--recording-animation {
+  position: relative;
+  top: 2px;
 }
 
 .scl-transcription-target {
