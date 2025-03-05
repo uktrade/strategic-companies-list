@@ -1,5 +1,6 @@
 boto3
 django
+django-csp
 django_extensions
 django-staff-sso-client
 sentry-sdk

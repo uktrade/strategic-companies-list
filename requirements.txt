@@ -23,8 +23,11 @@ click==8.1.8
 django==5.1.6
     # via
     #   -r requirements.in
+    #   django-csp
     #   django-extensions
     #   django-staff-sso-client
+django-csp==3.8
+    # via -r requirements.in
 django-extensions==3.2.3
     # via -r requirements.in
 django-staff-sso-client==4.4.0

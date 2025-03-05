@@ -38,6 +38,15 @@ SESSION_COOKIE_NAME = 'scl-session-id'
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_NAME = 'scl-csrf-token'
 
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": ("'self'",),
+        "connect": ("'self'", "transcribestreaming.eu-west-2.amazonaws.com:*",),
+        "frame-ancestors": ('none',),
+        "form-action": ("'self'",),
+    },
+}
+
 
 # Staff SSO / Authentication
 
@@ -75,6 +84,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'csp',
     'authbroker_client',
     'scl.core',
     'scl.static',
@@ -88,6 +98,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
     'authbroker_client.middleware.ProtectAllViewsMiddleware',
 ]
 

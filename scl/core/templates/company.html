@@ -146,7 +146,7 @@
     </div>
   </main>
 </div>
-<script>
+<script nonce="{{request.csp_nonce}}">
   (() => {
     const registerEditButton = (editButton) => {
       const editableSection = Array.from(document.querySelectorAll(editButton.getAttribute("data-scl-edit-button-target")));
