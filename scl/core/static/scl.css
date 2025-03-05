@@ -70,7 +70,7 @@
 }
 @media (min-width: 48.0625em) {
   /* Show full departmental crest on desktop. Note there are Safari/Chrome differences in handling
-     overflow on SVGs, so this is done by both controlling width and showing the text */q
+     overflow on SVGs, so this is done by both controlling width and showing the text */
   .scl-header__logotype {
     width: auto;
   }
