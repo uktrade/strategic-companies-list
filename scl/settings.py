@@ -39,7 +39,7 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_NAME = 'scl-csrf-token'
 
 CSP_DEFAULT_SRC = ("'self'",)
-CSP_CONNECT_SRC = ("'self'", "transcribestreaming.eu-west-2.amazonaws.com:*",)
+CSP_CONNECT_SRC = ("'self'", "wss://transcribestreaming.eu-west-2.amazonaws.com:8443",)
 CSP_FRAME_ANCESTORS = ("'none'",)
 CSP_FORM_ACTION = ("'self'",)
 
