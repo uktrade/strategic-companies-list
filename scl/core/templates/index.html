@@ -119,7 +119,7 @@
 
     <ul class="govuk-list scl-list--multi-column" id="scl-company-list">
       {% for company, is_owner in companies_with_is_owner %}
-          <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing?company={{ company.name }}&owned={{ is_owner|yesno:'true,false' }}">{{ company.name }}</a></li>
+          <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing/{{ company.duns_number }}?company={{ company.name }}&owned={{ is_owner|yesno:'true,false' }}">{{ company.name }}</a></li>
       {% endfor %}
     </ul>
   </main>

@@ -59,11 +59,15 @@ def aws_credentials(request):
     )
 
 
-def company(request):
-    company_name = request.GET.get('company')
+def company(request, duns_number=None):
+    # While we move more to duns-number based routing
+    if duns_number:
+        company = Company.objects.get(duns_number=duns_number)
+    else:
+        company = Company.objects.get(name=request.GET.get('company'))
     is_owner = request.GET.get('owned')
     context = {
-        "company_name": company_name,
+        "company_name": company.name,
         "is_owner": is_owner
     }
     return render(request, "company.html", context)
