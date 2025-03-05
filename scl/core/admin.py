@@ -8,6 +8,7 @@ admin.site.register(User, UserAdmin)
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "name",
-        "key_facts",
+        "duns_number",
     )

@@ -53,6 +53,7 @@ services:
        - ./scl/core/migrations:/app/scl/core/migrations
        - ./scl/core/static:/app/scl/core/static
        - ./scl/core/views.py:/app/scl/core/views.py
+       - ./scl/core/models.py:/app/scl/core/models.py
     profiles: ['']
   web-prod:
     networks:
