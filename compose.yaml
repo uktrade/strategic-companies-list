@@ -54,6 +54,7 @@ services:
        - ./scl/core/static:/app/scl/core/static
        - ./scl/core/views.py:/app/scl/core/views.py
        - ./scl/core/models.py:/app/scl/core/models.py
+       - ./scl/core/urls.py:/app/scl/core/urls.py
     profiles: ['']
   web-prod:
     networks:
