@@ -1,13 +1,11 @@
-import json
 import time
 import uuid
-import logging
-import boto3
 
+import boto3
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
-from .models import Company
+import logging
 
 logger = logging.getLogger().warning
 
@@ -50,15 +48,11 @@ def aws_credentials(request):
     )
 
 
-def company(request, company_uuid):
-    company = Company.objects.get(id=company_uuid)
-    if request.method == 'PATCH':
-        data = json.loads(request.body)
-        company.issues = data.get('issues')
-        company.priorities = data.get('priorities')
-        company.save()
+def company(request):
+    company_name = request.GET.get('company')
+    is_owner = request.GET.get('owned')
     context = {
-        "company": company,
-        "is_owner": 'true'
+        "company_name": company_name,
+        "is_owner": is_owner
     }
     return render(request, "company.html", context)
