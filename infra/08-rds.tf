@@ -25,6 +25,10 @@ resource "aws_db_instance" "main" {
     aws_cloudwatch_log_group.main_db_postgresql,
     aws_cloudwatch_log_group.main_db_upgrade,
   ]
+
+  lifecycle {
+    ignore_changes = ["engine_version"]
+  }
 }
 
 resource "random_password" "main_db_password" {
