@@ -13,6 +13,7 @@ from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
 from django.urls import reverse_lazy
+from psycopg_pool import ConnectionPool
 
 # General settings
 
@@ -122,6 +123,12 @@ DATABASES = {
         # is run during Docker container build, without a connection to the database
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('PGDATABASE', ''),
+        "OPTIONS": {
+            # Note that Django enforces its own defaults on top of psycopg's defaults. Specifically
+            # it sets "check" to check connection when retrieving from the pool, which in most
+            # cases is a good thing
+            "pool": True
+        },
     }
 }
 
