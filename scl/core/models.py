@@ -10,13 +10,18 @@ class User(AbstractUser):
 
 
 class Company(models.Model):
+    # Auto generated
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(blank=False, null=False, max_length=128)
-    duns_number = models.CharField(blank=True, null=False, max_length=128)
-    key_facts = models.TextField(blank=False, null=False)
-    issues = models.TextField(blank=False, null=True)
-    priorities = models.TextField(blank=False, null=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    # Required
+    name = models.CharField(blank=False, null=False, max_length=128)
+    duns_number = models.CharField(blank=False, null=False, max_length=9, verbose_name='DUNS number')
+
+    # Optional
+    key_facts = models.TextField(blank=True, null=False, default='')
+    issues = models.TextField(blank=True, null=False, default='')
+    priorities = models.TextField(blank=True, null=False, default='')
 
     def __str__(self):
         return self.name
