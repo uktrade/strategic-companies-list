@@ -38,15 +38,10 @@ SESSION_COOKIE_NAME = 'scl-session-id'
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_NAME = 'scl-csrf-token'
 
-CONTENT_SECURITY_POLICY = {
-    "DIRECTIVES": {
-        "default-src": ("'self'",),
-        "connect": ("'self'", "transcribestreaming.eu-west-2.amazonaws.com:*",),
-        "frame-ancestors": ('none',),
-        "form-action": ("'self'",),
-    },
-}
-
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_CONNECT_SRC = ("'self'", "transcribestreaming.eu-west-2.amazonaws.com:*",)
+CSP_FRAME_ANCESTORS = ("'none'",)
+CSP_FORM_ACTION = ("'self'",)
 
 # Staff SSO / Authentication
 
