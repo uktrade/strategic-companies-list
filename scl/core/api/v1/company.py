@@ -12,8 +12,8 @@ def company_api(request, duns_number):
 
     if request.method == 'PATCH':
         with reversion.create_revision():
-            company.hmg_priorities = data.get('hmg_priorities')
-            company.company_priorities = data.get('company_priorities')
+            company.hmg_priorities = data.get('hmg_priorities').strip()
+            company.company_priorities = data.get('company_priorities').strip()
             company.save()
 
             reversion.set_user(request.user)
