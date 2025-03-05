@@ -162,4 +162,9 @@ resource "aws_lb_target_group" "main" {
   port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"
+
+  # The health check is on /, which redirects to SSO since the load balance is not logged in
+  health_check {
+    matcher = "302"
+  }
 }
