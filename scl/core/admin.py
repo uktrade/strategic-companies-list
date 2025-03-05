@@ -10,6 +10,6 @@ class CompanyAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "key_facts",
-        "Issues",
-        "Priorities",
+        "issues",
+        "priorities",
     )
