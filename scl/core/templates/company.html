@@ -125,8 +125,8 @@
           Recent top-level engagements across HMG
         </h2>
         <ul class="scl-multiline-list govuk-!-margin-bottom-2">
-        {% if engagements %}
-          {% for engagement in engagements %}
+        {% if past_engagements %}
+          {% for engagement in past_engagements %}
             <li>
               <a href="/engagement/{{engagement.id}}" class="govuk-link govuk-link--no-visited-state scl-multiline-list__link">
                 <strong class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date">{{engagement.date}}</strong>
