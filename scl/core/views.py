@@ -2,6 +2,7 @@ import time
 import uuid
 import logging
 import boto3
+from datetime import date
 
 from django.conf import settings
 from django.http import JsonResponse
@@ -14,12 +15,16 @@ logger = logging.getLogger().warning
 
 
 def index(request):
+    today = date.today()
+
     all_companies = list(Company.objects.all())
     your_companies = list(request.user.managed_companies.all())
+    your_future_enagements = list(Engagement.objects.filter(company__in=your_companies, date__gte=today))
 
     return render(request, "index.html", {
         "all_companies": all_companies,
         "your_companies": your_companies,
+        "your_future_enagements": your_future_enagements,
     })
 
 
@@ -58,9 +63,11 @@ def aws_credentials(request):
 
 
 def company_briefing(request, duns_number):
+    today = date.today()
+
     company = Company.objects.get(duns_number=duns_number)
     account_managers = list(company.account_manager.all())
-    engagements = list(company.engagements.all())
+    past_engagements = list(company.engagements.filter(date__lte=today))
     is_privileged = request.user in account_managers
 
     versions = Version.objects.get_for_object(company)
@@ -68,7 +75,7 @@ def company_briefing(request, duns_number):
 
     context = {
         "company": company,
-        "engagements": engagements,
+        "past_engagements": past_engagements,
         "is_privileged": is_privileged,
         "account_managers": account_managers,
         "current_version": current_version,
