@@ -46,15 +46,17 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+        <p class="govuk-body scl-body--small">Engagement created {{ engagement_first_version.revision.date_created }} by <a class="govuk-link govuk-link--no-visited-state" href="#">{{ engagement_first_version.revision.user.first_name }} {{ engagement_first_version.revision.user.last_name }}</a></p>
         <div data-scl-editable-field="engagement_details" class="scl-editable scl-editable--paragraphs">
            {{ engagement.details | ensure_p | bleach | safe }}
         </div>
       </div>
     </div>
-    {% for note in engagement.notes.all %}
+    {% for note, note_first_version in notes_versions %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-4">
+        <p class="govuk-body scl-body--small">Note created {{ note_first_version.revision.date_created }} by <a class="govuk-link govuk-link--no-visited-state" href="#">{{ note_first_version.revision.user.first_name }} {{ note_first_version.revision.user.last_name }}</a></p>
         {{ note.contents | ensure_p | bleach | safe }}
     {% endfor %}
   </main>

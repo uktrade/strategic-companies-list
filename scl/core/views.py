@@ -85,4 +85,17 @@ def company_briefing(request, duns_number):
 
 def engagement(request, engagement_id):
     engagement = Engagement.objects.get(id=engagement_id)
-    return render(request, "engagements.html", {"engagement": engagement})
+    versions = Version.objects.get_for_object(engagement)
+    engagement_first_version = versions.last()
+
+    notes = engagement.notes.all()
+    notes_versions = [
+        (note, Version.objects.get_for_object(engagement).last())
+        for note in notes
+    ]
+
+    return render(request, "engagements.html", {
+        "engagement": engagement,
+        "engagement_first_version": engagement_first_version,
+        "notes_versions": notes_versions
+    })
