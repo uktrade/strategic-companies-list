@@ -345,11 +345,17 @@
 }
 /* This is not BEM, but neither is the GOV.UK Design System on li, and it makes editing easier
    because we don't care about classes on newly constucted elements */
-h1.scl-editable[contenteditable], 
-.scl-editable[contenteditable] > p, 
-.scl-editable[contenteditable] > li {
+.scl-editable[contenteditable] > li,
+.scl-editable--paragraphs[contenteditable],
+h1.scl-editable[contenteditable] {
   border: 1px dashed #0b0c0c;
   padding: 5px;
+}
+.scl-editable--paragraphs[contenteditable] > p:last-child {
+  margin-bottom: 0;
+}
+.scl-editable--paragraphs[contenteditable] {
+  margin-bottom: 20px;
 }
 
 .scl-list--multi-column {
