@@ -6,6 +6,8 @@ import boto3
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
+from reversion.models import Version
+
 from .models import Company
 
 logger = logging.getLogger().warning
@@ -60,10 +62,14 @@ def company_briefing(request, duns_number):
     account_managers = list(company.account_manager.all())
     is_privileged = request.user in account_managers
 
+    versions = Version.objects.get_for_object(company)
+    current_version = versions.first()
+
     context = {
         "company": company,
         "is_privileged": is_privileged,
         "account_managers": account_managers,
+        "current_version": current_version,
     }
     return render(request, "company.html", context)
 
