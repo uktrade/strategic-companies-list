@@ -2,6 +2,8 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from .constants import COUNTRIES_AND_TERRITORIES
+
 import reversion
 
 
@@ -30,6 +32,11 @@ class Company(models.Model):
     company_priorities = models.TextField(blank=True, null=False, default='')
     hmg_priorities = models.TextField(
         blank=True, null=False, default='', verbose_name='HMG priorities')
+
+    global_hq_name = models.CharField(max_length=128, blank=True, null=False, default='', verbose_name="Global HQ name")
+    global_hq_country = models.CharField(max_length=5, null=True, blank=True, choices=COUNTRIES_AND_TERRITORIES, verbose_name="Global HQ country")
+    global_turnover_millions_usd = models.BigIntegerField(null=True, blank=True, verbose_name="Global turnover (millions USD)")
+    global_number_of_employees = models.BigIntegerField(null=True, blank=True, verbose_name="Global number of employees")
 
     account_manager = models.ManyToManyField(
         User,
