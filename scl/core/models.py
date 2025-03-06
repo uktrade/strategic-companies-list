@@ -22,11 +22,13 @@ class Company(models.Model):
 
     # Required
     name = models.CharField(blank=False, null=False, max_length=128)
-    duns_number = models.CharField(blank=False, null=False, max_length=9, verbose_name='DUNS number')
+    duns_number = models.CharField(
+        blank=False, null=False, max_length=9, verbose_name='DUNS number')
 
     # Optional
     company_priorities = models.TextField(blank=True, null=False, default='')
-    hmg_priorities = models.TextField(blank=True, null=False, default='', verbose_name='HMG priorities')
+    hmg_priorities = models.TextField(
+        blank=True, null=False, default='', verbose_name='HMG priorities')
 
     account_manager = models.ManyToManyField(
         User,
@@ -52,9 +54,30 @@ class CompanyAccountManager(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['company', 'account_manager'], name="company_account_manager")
+            models.UniqueConstraint(
+                fields=['company', 'account_manager'], name="company_account_manager")
         ]
 
     class Meta:
         verbose_name = "account manager"
         verbose_name_plural = "account managers"
+
+
+@reversion.register()
+class Engagement(models.Model):
+    # Auto generated
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    # Required
+    title = models.CharField(blank=False, null=False, max_length=128)
+    date = models.DateTimeField(null=True, blank=False)
+
+    company = models.OneToOneField(
+        Company, on_delete=models.CASCADE, related_name="engagement")
+    details = models.TextField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'company'], name="company_account_manager")
+        ]
