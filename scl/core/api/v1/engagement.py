@@ -10,6 +10,11 @@ def engagement_api(request, engagement_id):
     data = json.loads(request.body)
     engagement = Engagement.objects.get(id=engagement_id)
 
+    account_managers = engagement.company.account_manager.all()
+    is_privileged = request.user in account_managers
+    if not is_privileged:
+        return JsonReponse(403, {})
+
     if request.method == 'PATCH':
         with reversion.create_revision():
             engagement.title = data.get('engagement_title').strip()
