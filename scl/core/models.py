@@ -7,7 +7,8 @@ import reversion
 
 @reversion.register()
 class User(AbstractUser):
-    pass
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"
 
 
 @reversion.register()
@@ -24,8 +25,32 @@ class Company(models.Model):
     company_priorities = models.TextField(blank=True, null=False, default='')
     hmg_priorities = models.TextField(blank=True, null=False, default='', verbose_name='HMG priorities')
 
+    account_manager = models.ManyToManyField(
+        User,
+        through="CompanyAccountManager",
+        through_fields=("company", "account_manager"),
+        related_name="managed_companies",
+    )
+
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name_plural = "companies"
+
+
+@reversion.register()
+class CompanyAccountManager(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    account_manager = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['company', 'account_manager'], name="company_account_manager")
+        ]
+
+    class Meta:
+        verbose_name = "account manager"
+        verbose_name_plural = "account managers"

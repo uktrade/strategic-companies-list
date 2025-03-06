@@ -7,7 +7,12 @@ from reversion.admin import VersionAdmin
 
 @admin.register(User)
 class UserAdminWithVersion(UserAdmin, VersionAdmin):
-	pass
+    pass
+
+
+class CompanyAccountManagerInline(admin.TabularInline):
+    model = Company.account_manager.through
+    extra = 1
 
 
 @admin.register(Company)
@@ -17,3 +22,4 @@ class CompanyAdmin(VersionAdmin):
         "name",
         "id",
     )
+    inlines = (CompanyAccountManagerInline,)
