@@ -201,7 +201,7 @@ AWS_TRANSCRIBE_ROLE_ARN = os.environ.get('AWS_TRANSCRIBE_ROLE_ARN')
 
 # Cleaning up HTML
 
-BLEACH_ALLOWED_TAGS = ['li', 'p', 'b', 'i', 'u', 'em', 'strong']
+BLEACH_ALLOWED_TAGS = ['li', 'br', 'p', 'b', 'i', 'u', 'em', 'strong']
 BLEACH_ALLOWED_ATTRIBUTES = ['class']
 BLEACH_ALLOWED_STYLES = []
 BLEACH_ALLOWED_PROTOCOLS = []
