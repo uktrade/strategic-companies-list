@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load bleach_tags %}
+{% load scl_html %}
 
 {% block content %}
 <div class="govuk-width-container">
@@ -36,7 +37,7 @@
       <div class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
         <div data-scl-editable-field="engagement_details" class="scl-editable">
-            <p class="govuk-body">{{ engagement.details | bleach | safe }}</p>
+           {{ engagement.details | ensure_p | bleach | safe }}
         </div>
       </div>
     </div>
@@ -44,7 +45,7 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
-        {{ note.contents | bleach | safe }}
+        {{ note.contents | ensure_p | bleach | safe }}
     {% endfor %}
   </main>
 </div>
