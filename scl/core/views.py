@@ -85,6 +85,11 @@ def company_briefing(request, duns_number):
 
 def engagement(request, engagement_id):
     engagement = Engagement.objects.get(id=engagement_id)
+
+    is_privileged = request.user in engagement.company.account_manager.all()
+    if not is_privileged:
+        return JsonReponse(403, {})
+
     versions = Version.objects.get_for_object(engagement)
     engagement_first_version = versions.last()
 
