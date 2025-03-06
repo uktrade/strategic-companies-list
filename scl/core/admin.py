@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Company, Engagement
+from .models import User, Company, Engagement, EngagementNote
 
 from reversion.admin import VersionAdmin
 
@@ -26,6 +26,11 @@ class CompanyAdmin(VersionAdmin):
     inlines = (CompanyAccountManagerInline,)
 
 
+class EngagementNoteManagerInline(admin.TabularInline):
+    model = EngagementNote
+    extra = 1
+
+
 @admin.register(Engagement)
 class EngagementAdmin(VersionAdmin):
     list_display = (
@@ -33,3 +38,4 @@ class EngagementAdmin(VersionAdmin):
         "title",
         "company",
     )
+    inlines = (EngagementNoteManagerInline,)
