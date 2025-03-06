@@ -24,6 +24,14 @@
             >
               Print
             </button>
+
+            {% if is_privileged %}
+            <a
+              href="#" role="button" draggable="false" class="govuk-button scl-content-header__button govuk-!-margin-left-4 govuk-!-margin-bottom-2"
+            >
+              Add engagement
+            </a>
+            {% endif %}
           </div>
         </div>
         <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">D-U-N-S: {{ company.duns_number }}{% if company.global_hq_name %}, {{ company.global_hq_name}}{% endif %}</p>
