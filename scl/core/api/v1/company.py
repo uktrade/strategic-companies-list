@@ -17,13 +17,14 @@ def company_api(request, duns_number):
 
     if request.method == 'PATCH':
         with reversion.create_revision():
+            company.key_people = data.get('key_people').strip()
             company.hmg_priorities = data.get('hmg_priorities').strip()
             company.company_priorities = data.get('company_priorities').strip()
             company.save()
 
             reversion.set_user(request.user)
             reversion.set_comment(
-                "Updated hmg_priorities and company_priorities via API "
+                "Updated key_people, hmg_priorities, and company_priorities via API "
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 

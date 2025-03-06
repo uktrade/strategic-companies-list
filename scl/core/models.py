@@ -26,6 +26,7 @@ class Company(models.Model):
         blank=False, null=False, max_length=9, verbose_name='DUNS number')
 
     # Optional
+    key_people = models.TextField(blank=True, null=False, default='')
     company_priorities = models.TextField(blank=True, null=False, default='')
     hmg_priorities = models.TextField(
         blank=True, null=False, default='', verbose_name='HMG priorities')

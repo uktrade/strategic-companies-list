@@ -42,9 +42,13 @@
           </li>
         </ul>
         <h2 class="govuk-heading-m">Key people</h2>
-        <ul class="govuk-list govuk-list--bullet">
+        <ul class="govuk-list govuk-list--bullet scl-editable" data-scl-editable-field="key_people">
+          {% if company.key_people %}
+            {{ company.key_people | safe }}
+          {% else %}
           <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
           <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
+          {% endif %}
         </ul>
         {% if is_privileged %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--visible govuk-!-margin-top-7 govuk-!-margin-bottom-0">
