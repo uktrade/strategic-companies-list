@@ -43,7 +43,7 @@
           <li>Has global turnover of {% if company.global_turnover_millions_usd > 1000 %}${{ company.global_turnover_billions_usd |floatformat:1|intcomma }} billion{% else %}${{ company.global_turnover_millions_usd |intcomma }} million{% endif %}</li>
           {% endif %}
           {% if company.global_number_of_employees %}
-          <li>Employs {{ company.global_number_of_employees }} people globally</li>
+          <li>Employs {{ company.global_number_of_employees|intcomma }} people globally</li>
           {% endif %}
         </ul>
         {% endif %}
