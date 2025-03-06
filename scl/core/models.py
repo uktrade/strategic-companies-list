@@ -10,6 +10,9 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
 
+    class Meta:
+        ordering = ["last_name", "first_name", "email", "id"]
+
 
 @reversion.register()
 class Company(models.Model):
@@ -37,6 +40,7 @@ class Company(models.Model):
 
     class Meta:
         verbose_name_plural = "companies"
+        ordering = ["name", "duns_number", "id"]
 
 
 @reversion.register()
