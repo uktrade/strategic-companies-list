@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load bleach_tags %}
 {% load humanize %}
+{% load scl_html %}
 
 {% block content %}
 <div class="govuk-width-container">
@@ -60,7 +61,7 @@
         <h2 class="govuk-heading-m">Key people</h2>
         <ul class="govuk-list govuk-list--bullet scl-editable" data-scl-editable-field="key_people">
           {% if company.key_people %}
-            {{ company.key_people | bleach | safe }}
+            {{ company.key_people | ensure_li | bleach | safe }}
           {% else %}
           <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
           <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
@@ -72,7 +73,7 @@
         <h2 class="govuk-heading-m govuk-!-margin-top-3">Company current issues and priorities</h2>
         <ol class="govuk-list govuk-list--number scl-editable" data-scl-editable-field="company_priorities">
           {% if company.company_priorities %}
-            {{ company.company_priorities | bleach | safe }}
+            {{ company.company_priorities | ensure_li | bleach | safe }}
           {% else %}
           <li>
             <b>Support key exports</b>
@@ -100,7 +101,7 @@
         <h2 class="govuk-heading-m">HMG priorities for engagement</h2>
         <ol class="govuk-list govuk-list--number scl-editable" data-scl-editable-field="hmg_priorities">
           {% if company.hmg_priorities %}
-            {{ company.hmg_priorities | bleach | safe }}
+            {{ company.hmg_priorities | ensure_li | bleach | safe }}
           {% else %}
           <li>
             <b>Growing exports</b>
