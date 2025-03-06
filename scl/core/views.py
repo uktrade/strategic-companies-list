@@ -12,15 +12,12 @@ logger = logging.getLogger().warning
 
 
 def index(request):
-    companies = list(Company.objects.all().order_by('name'))
-    # Dummy way so we can preserve some owner/non owner view
-    companies_with_is_owner = [
-        (company, i < len(companies)/2)
-        for i, company in enumerate(companies)
-    ]
+    all_companies = list(Company.objects.all())
+    your_companies = list(request.user.managed_companies.all())
 
     return render(request, "index.html", {
-        "companies_with_is_owner": companies_with_is_owner,
+        "all_companies": all_companies,
+        "your_companies": your_companies,
     })
 
 
@@ -59,17 +56,13 @@ def aws_credentials(request):
 
 
 def company(request, duns_number=None):
-    # While we move more to duns-number based routing
-    if duns_number:
-        company = Company.objects.get(duns_number=duns_number)
-    else:
-        company = Company.objects.get(name=request.GET.get('company'))
+    company = Company.objects.get(duns_number=duns_number)
+    account_managers = list(company.account_manager.all())
+    is_privileged = request.user in account_managers
 
-    account_managers = company.account_manager.all()
-    is_owner = request.GET.get('owned')
     context = {
         "company": company,
-        "is_owner": is_owner,
+        "is_privileged": is_privileged,
         "account_managers": account_managers,
     }
     return render(request, "company.html", context)

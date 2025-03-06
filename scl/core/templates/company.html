@@ -43,7 +43,7 @@
           <li>Engineer: Mrs Jane Doe, appointed November 2022.</li>
           <li>Data Analyst: Mr John Smith, appointed October 2023.</li>
         </ul>
-        {% if is_owner == 'true' %}
+        {% if is_privileged %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--visible govuk-!-margin-top-7 govuk-!-margin-bottom-0">
         <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
         <h2 class="govuk-heading-m govuk-!-margin-top-3">Company current issues and priorities</h2>
@@ -106,7 +106,7 @@
       </section>
       <aside class="govuk-grid-column-one-third" role="complementary">
         <hr class="govuk-section-break govuk-section-break--m govuk-!-margin-top-0 govuk-section-break--visible govuk-!-margin-bottom-0">
-        {% if is_owner == 'true' %}
+        {% if is_privileged %}
         <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
         <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-2">
           Recent top-level engagements across HMG
@@ -143,7 +143,7 @@
         <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small"><a href="#" class="govuk-link govuk-link--no-visited-state scl-link--no-underline">View working-level engagements</a></p>
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-5 govuk-!-margin-bottom-2">
         {% endif %}
-        <h2 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-margin-top-{% if is_owner == 'true' %}2{% else %}4{% endif %}">Account managers</h2>
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-margin-top-{% if is_privileged %}2{% else %}4{% endif %}">Account managers</h2>
         {% if account_managers %}
           <ul class="govuk-list scl-list--small">
           {% for account_manager in account_managers %}

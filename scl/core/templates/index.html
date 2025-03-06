@@ -2,6 +2,7 @@
 
 {% block content %}
 
+{% if your_companies %}
 <div class="scl-key-info">
   <div class="govuk-width-container scl-width-container--max-width-mobile">
     <div class="govuk-grid-row scl-no-grid-mobile">
@@ -75,32 +76,21 @@
             <p class="govuk-body scl-body--hide-on-mobile">These are the companies you have been granted privileged access to.</p>
           </div>
           <ul class="scl-key-list">
+            {% for company in your_companies %}
             <li class="scl-key-list__item">
               <div class="scl-mobile-list-header">
-                <a class="govuk-link govuk-link--no-visited-state scl-key-list__link" href="/company-briefing?company=Apex Industries&owned=true">Apex Industries</a>
+                <a class="govuk-link govuk-link--no-visited-state scl-key-list__link" href="/company-briefing/{{ company.duns_number }}">{{ company.name }}</a>
               </div>
             </li>
-            <li class="scl-key-list__item">
-              <div class="scl-mobile-list-header">
-                <a class="govuk-link govuk-link--no-visited-state scl-key-list__link" href="/company-briefing?company=Infinity Innovations&owned=true">Infinity Innovations</a>
-              </div>
-            </li>
-            <li class="scl-key-list__item">
-              <div class="scl-mobile-list-header">
-                <a class="govuk-link govuk-link--no-visited-state scl-key-list__link" href="/company-briefing?company=Synergy Group&owned=true">Synergy Group</a>
-              </div>
-            </li>
-            <li class="scl-key-list__item">
-              <div class="scl-mobile-list-header">
-                <a class="govuk-link govuk-link--no-visited-state scl-key-list__link" href="/company-briefing?company=Zenith Dynamics&owned=true">Zenith Dynamics</a>
-              </div>
-            </li>
+            {% endfor %}
           </ul>
         </div>
       </div>
     </div>
   </div>
 </div>
+{% endif %}
+
 <div class="govuk-width-container">
   <main class="govuk-main-wrapper" id="main-content">
     <h1 class="govuk-heading-m">All companies on the Strategic Companies List</h1>
@@ -118,8 +108,8 @@
     <p id="scl-company-search-no-results" class="govuk-body scl-filter-list-with-results">No companies found</p>
 
     <ul class="govuk-list scl-list--multi-column" id="scl-company-list">
-      {% for company, is_owner in companies_with_is_owner %}
-          <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing/{{ company.duns_number }}?owned={{ is_owner|yesno:'true,false' }}">{{ company.name }}</a></li>
+      {% for company in all_companies %}
+          <li><a class="govuk-link govuk-link--no-visited-state" href="/company-briefing/{{ company.duns_number }}">{{ company.name }}</a></li>
       {% endfor %}
     </ul>
   </main>
