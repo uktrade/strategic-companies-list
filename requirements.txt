@@ -6,6 +6,8 @@
 #
 asgiref==3.8.1
     # via django
+bleach[css]==5.0.1
+    # via django-bleach
 boto3==1.37.1
     # via -r requirements.in
 botocore==1.37.1
@@ -23,10 +25,13 @@ click==8.1.8
 django==5.1.6
     # via
     #   -r requirements.in
+    #   django-bleach
     #   django-csp
     #   django-extensions
     #   django-reversion
     #   django-staff-sso-client
+django-bleach==3.1.0
+    # via -r requirements.in
 django-csp==3.8
     # via -r requirements.in
 django-extensions==3.2.3
@@ -62,9 +67,13 @@ s3transfer==0.11.2
 sentry-sdk==2.22.0
     # via -r requirements.in
 six==1.17.0
-    # via python-dateutil
+    # via
+    #   bleach
+    #   python-dateutil
 sqlparse==0.5.3
     # via django
+tinycss2==1.1.1
+    # via bleach
 typing-extensions==4.12.2
     # via psycopg-pool
 urllib3==2.3.0
@@ -74,3 +83,7 @@ urllib3==2.3.0
     #   sentry-sdk
 uvicorn==0.34.0
     # via -r requirements.in
+webencodings==0.5.1
+    # via
+    #   bleach
+    #   tinycss2
