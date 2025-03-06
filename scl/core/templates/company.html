@@ -46,8 +46,8 @@
           <li>Employs {{ company.global_number_of_employees }} people globally</li>
           {% endif %}
         </ul>
-        <h2 class="govuk-heading-m">Key people</h2>
         {% endif %}
+        <h2 class="govuk-heading-m">Key people</h2>
         <ul class="govuk-list govuk-list--bullet scl-editable" data-scl-editable-field="key_people">
           {% if company.key_people %}
             {{ company.key_people | safe }}
