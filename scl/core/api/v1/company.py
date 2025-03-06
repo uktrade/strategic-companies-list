@@ -10,6 +10,11 @@ def company_api(request, duns_number):
     data = json.loads(request.body)
     company = Company.objects.get(duns_number=duns_number)
 
+    account_managers = list(company.account_manager.all())
+    is_privileged = request.user in account_managers
+    if not is_privileged:
+        return JsonReponse(403, {})
+
     if request.method == 'PATCH':
         with reversion.create_revision():
             company.hmg_priorities = data.get('hmg_priorities').strip()
