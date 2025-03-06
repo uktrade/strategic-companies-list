@@ -80,12 +80,6 @@ class Engagement(models.Model):
     title = models.CharField(blank=False, null=False, max_length=128)
     date = models.DateField(null=True, blank=False)
 
-    company = models.OneToOneField(
-        Company, on_delete=models.CASCADE, related_name="engagement")
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="engagements")
     details = models.TextField(null=True, blank=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['title', 'company'], name="company_engagement")
-        ]

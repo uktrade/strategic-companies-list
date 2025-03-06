@@ -5,8 +5,8 @@
       <div class="govuk-grid-column-full">
         <div class="scl-content-header">
              <div class="scl-content-header__heading">
-                <h1 class="govuk-heading-l govuk-!-margin-bottom-1">UK manufacturing round table</h1>
-                <h2 class="govuk-heading-m"><a href="/company-briefing?company=Apex%20Industries&owned=true" class="govuk-link govuk-link--no-visited-state">Apex Industries</a></h2>
+                <h1 class="govuk-heading-l govuk-!-margin-bottom-1">{{engagement.title}}</h1>
+                <h2 class="govuk-heading-m"><a href="/company-briefing/{{engagement.company.duns_number}}" class="govuk-link govuk-link--no-visited-state">{{engagement.company.name}}</a></h2>
             </div>
           <div>
             <button
@@ -25,7 +25,7 @@
             </button>
           </div>
         </div>
-        <p class="govuk-body govuk-body-s">1 Feb. 2025</p>
+        <p class="govuk-body govuk-body-s">{{engagement.date}}</p>
       </div>
     </div>
     <div class="govuk-grid-row">
