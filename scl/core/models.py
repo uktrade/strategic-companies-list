@@ -87,3 +87,11 @@ class Engagement(models.Model):
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, related_name="engagements")
     details = models.TextField(null=True, blank=True)
+
+
+@reversion.register()
+class EngagementNote(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    engagement = models.ForeignKey(Engagement, on_delete=models.CASCADE, related_name="notes")
+    contents = models.TextField(null=False, blank=True, default='')
