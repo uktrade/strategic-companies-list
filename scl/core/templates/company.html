@@ -1,4 +1,7 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
 <div class="govuk-width-container">
   <main class="govuk-main-wrapper" id="main-content">
     <div class="govuk-grid-row">
@@ -23,25 +26,28 @@
             </button>
           </div>
         </div>
-        <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">D-U-N-S: {{ company.duns_number }}</p>
+        <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">D-U-N-S: {{ company.duns_number }}{% if company.global_hq_name %}, {{ company.global_hq_name}}{% endif %}</p>
         <p class="govuk-body govuk-body-s">Last updated: {{ current_version.revision.date_created }}</p>
       </div>
     </div>
     <div class="govuk-grid-row">
       <section class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+        {% if company.global_hq_country or company.global_turnover_millions_usd or global_number_of_employees.global_number_of_employees %}
         <h2 class="govuk-heading-m">Key facts</h2>
         <ul class="govuk-list govuk-list--bullet">
-          <li>Largest UK company in the health sector.</li>
-          <li>
-            The company employs around 1000 in the UK and 7000 globally.
-          </li>
-          <li>
-            Their activities in developing the skills of their workforce
-            include: Science, Technology, Engineering and Math.
-          </li>
+          {% if company.global_hq_country %}
+          <li>Headquartered in {{ company.get_global_hq_country_display }}</li>
+          {% endif %}
+          {% if company.global_turnover_millions_usd %}
+          <li>Has global turnover of {% if company.global_turnover_millions_usd > 1000 %}${{ company.global_turnover_billions_usd |floatformat:1|intcomma }} billion{% else %}${{ company.global_turnover_millions_usd |intcomma }} million{% endif %}</li>
+          {% endif %}
+          {% if company.global_number_of_employees %}
+          <li>Employs {{ company.global_number_of_employees }} people globally</li>
+          {% endif %}
         </ul>
         <h2 class="govuk-heading-m">Key people</h2>
+        {% endif %}
         <ul class="govuk-list govuk-list--bullet scl-editable" data-scl-editable-field="key_people">
           {% if company.key_people %}
             {{ company.key_people | safe }}

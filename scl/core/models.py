@@ -48,6 +48,10 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def global_turnover_billions_usd(self):
+        return self.global_turnover_millions_usd / 1000
+
     class Meta:
         verbose_name_plural = "companies"
         ordering = ["name", "duns_number", "id"]
