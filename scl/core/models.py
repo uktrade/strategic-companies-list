@@ -70,7 +70,7 @@ class Engagement(models.Model):
 
     # Required
     title = models.CharField(blank=False, null=False, max_length=128)
-    date = models.DateTimeField(null=True, blank=False)
+    date = models.DateField(null=True, blank=False)
 
     company = models.OneToOneField(
         Company, on_delete=models.CASCADE, related_name="engagement")
@@ -79,5 +79,5 @@ class Engagement(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['title', 'company'], name="company_account_manager")
+                fields=['title', 'company'], name="company_engagement")
         ]
