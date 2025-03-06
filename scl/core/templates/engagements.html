@@ -37,6 +37,12 @@
         </div>
       </div>
     </div>
+    {% for note in engagement.notes.all %}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+        {{ note.contents|safe }}
+    {% endfor %}
   </main>
 </div>
 {% endblock %}
