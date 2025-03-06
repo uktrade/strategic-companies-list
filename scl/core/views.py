@@ -55,7 +55,7 @@ def aws_credentials(request):
     )
 
 
-def company(request, duns_number=None):
+def company_briefing(request, duns_number):
     company = Company.objects.get(duns_number=duns_number)
     account_managers = list(company.account_manager.all())
     is_privileged = request.user in account_managers
@@ -66,14 +66,6 @@ def company(request, duns_number=None):
         "account_managers": account_managers,
     }
     return render(request, "company.html", context)
-
-
-def company_briefing(request, duns_number):
-    company = Company.objects.get(duns_number=duns_number)
-    context = {
-        "company": company
-    }
-    return render(request, "company_briefing.html", context)
 
 
 def engagement(request):
