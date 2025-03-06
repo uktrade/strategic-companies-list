@@ -68,10 +68,13 @@ def company(request, duns_number=None):
         company = Company.objects.get(duns_number=duns_number)
     else:
         company = Company.objects.get(name=request.GET.get('company'))
+
+    account_managers = company.account_manager.all()
     is_owner = request.GET.get('owned')
     context = {
         "company": company,
-        "is_owner": is_owner
+        "is_owner": is_owner,
+        "account_managers": account_managers,
     }
     return render(request, "company.html", context)
 

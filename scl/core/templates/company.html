@@ -144,11 +144,15 @@
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-5 govuk-!-margin-bottom-2">
         {% endif %}
         <h2 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-margin-top-{% if is_owner == 'true' %}2{% else %}4{% endif %}">Account managers</h2>
-        <ul class="govuk-list scl-list--small">
-          <li><a href="#" class="govuk-link govuk-link--no-visited-state scl-link--no-underline">Joe Smith</a></li>
-          <li><a href="#" class="govuk-link govuk-link--no-visited-state scl-link--no-underline">Cara miller</a></li>
-          <li><a href="#" class="govuk-link govuk-link--no-visited-state scl-link--no-underline">Loiuse Adams</a></li>
-        </ul>
+        {% if account_managers %}
+          <ul class="govuk-list scl-list--small">
+          {% for account_manager in account_managers %}
+              <li><a class="govuk-link govuk-link--no-visited-state" href="##">{{ account_manager.first_name }} {{ account_manager.last_name }}</a></li>
+          {% endfor %}
+          </ul>
+        {% else %}
+            <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small">No account managers</p>
+        {% endif %}
       </aside>
     </div>
   </main>
