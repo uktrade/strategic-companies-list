@@ -1,5 +1,6 @@
 boto3
 django
+django-bleach
 django-csp
 django_extensions
 django-reversion
