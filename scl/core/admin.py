@@ -13,6 +13,7 @@ class UserAdminWithVersion(UserAdmin, VersionAdmin):
 class CompanyAccountManagerInline(admin.TabularInline):
     model = Company.account_manager.through
     extra = 1
+    autocomplete_fields = ["account_manager"]
 
 
 @admin.register(Company)
