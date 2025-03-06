@@ -147,7 +147,7 @@
         {% if account_managers %}
           <ul class="govuk-list scl-list--small">
           {% for account_manager in account_managers %}
-              <li><a class="govuk-link govuk-link--no-visited-state" href="##">{{ account_manager.first_name }} {{ account_manager.last_name }}</a></li>
+              <li><a class="govuk-link govuk-link--no-visited-state scl-link--no-underline" href="##">{{ account_manager.first_name }} {{ account_manager.last_name }}</a></li>
           {% endfor %}
           </ul>
         {% else %}
