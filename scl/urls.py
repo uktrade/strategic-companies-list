@@ -29,7 +29,7 @@ urlpatterns = [
     path("", index, name="home-page"),
     path("company-briefing/<str:duns_number>",
          company_briefing, name='company-briefing'),
-    path("engagement", engagement, name='engagement'),
+    path("engagement/<uuid:engagement_id>", engagement, name='engagement'),
     path("api/v1/company/<str:duns_number>", company_api),
     path("api/v1/aws-credentials", aws_credentials),
     path('auth/', include('authbroker_client.urls'))

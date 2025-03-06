@@ -125,31 +125,19 @@
           Recent top-level engagements across HMG
         </h2>
         <ul class="scl-multiline-list govuk-!-margin-bottom-2">
-          <li>
-            <a href="/engagement" class="govuk-link govuk-link--no-visited-state scl-multiline-list__link">
-              <strong class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date">1 Feb. 2025</strong>
-              <span class="scl-multiline-list__link_text">UK manufacturing round table</span>
-            </a
-            >
-          </li>
-          <li>
-            <a href="/engagement" class="govuk-link govuk-link--no-visited-state scl-multiline-list__link">
-              <strong class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date">23 Jun. 2025</strong>
-              <span class="scl-multiline-list__link_text">France meeting</span>
-            </a>
-          </li>
-          <li>
-            <a href="/engagement" class="govuk-link govuk-link--no-visited-state scl-multiline-list__link">
-              <strong class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date">10 Dec. 2024</strong>
-              <span class="scl-multiline-list__link_text">Italy meeting</span>
-            </a>
-          </li>
-          <li>
-            <a href="/engagement" class="govuk-link govuk-link--no-visited-state scl-multiline-list__link">
-              <strong class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date">15 Nov. 2024</strong>
-              <span class="scl-multiline-list__link_text">Aerospace round table</span>
-            </a>
-          </li>
+        {% if engagements %}
+          {% for engagement in engagements %}
+            <li>
+              <a href="/engagement/{{engagement.id}}" class="govuk-link govuk-link--no-visited-state scl-multiline-list__link">
+                <strong class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date">{{engagement.date}}</strong>
+                <span class="scl-multiline-list__link_text">{{engagement.title}}</span>
+              </a
+              >
+            </li>
+            {% endfor %}
+          {% else %}
+          <p class="govuk-body">No current engagements.</p>
+          {% endif %}
         </ul>
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-1 govuk-!-margin-bottom-1">

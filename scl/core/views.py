@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from reversion.models import Version
 
-from .models import Company
+from .models import Company, Engagement
 
 logger = logging.getLogger().warning
 
@@ -64,6 +64,7 @@ def aws_credentials(request):
 def company_briefing(request, duns_number):
     company = Company.objects.get(duns_number=duns_number)
     account_managers = list(company.account_manager.all())
+    engagements = list(company.engagements.all())
     is_privileged = request.user in account_managers
 
     versions = Version.objects.get_for_object(company)
@@ -71,6 +72,7 @@ def company_briefing(request, duns_number):
 
     context = {
         "company": company,
+        "engagements": engagements,
         "is_privileged": is_privileged,
         "account_managers": account_managers,
         "current_version": current_version,
@@ -78,5 +80,6 @@ def company_briefing(request, duns_number):
     return render(request, "company.html", context)
 
 
-def engagement(request):
-    return render(request, "engagements.html")
+def engagement(request, engagement_id):
+    engagement = Engagement.objects.get(id=engagement_id)
+    return render(request, "engagements.html", {"engagement": engagement})
