@@ -5,7 +5,7 @@
       <div class="govuk-grid-column-full">
         <div class="scl-content-header">
              <div class="scl-content-header__heading">
-                <h1 class="govuk-heading-l govuk-!-margin-bottom-1">{{engagement.title}}</h1>
+                <h1 data-scl-editable-field="engagement_title" class="govuk-heading-l govuk-!-margin-bottom-1 scl-editable">{{engagement.title}}</h1>
                 <h2 class="govuk-heading-m"><a href="/company-briefing/{{engagement.company.duns_number}}" class="govuk-link govuk-link--no-visited-state">{{engagement.company.name}}</a></h2>
             </div>
           <div>
@@ -13,6 +13,7 @@
               class="govuk-button scl-content-header__button govuk-!-margin-bottom-2"
               data-module="scl-edit-button"
               data-scl-edit-button-target=".scl-editable"
+              data-scl-endpoint="/api/v1/engagement/{{ engagement.id }}"
             >
               Edit
             </button>
@@ -31,9 +32,9 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
-        <p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        <p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        <p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <div data-scl-editable-field="engagement_details" class="scl-editable">
+            <p class="govuk-body">{{engagement.details|safe}}</p>
+        </div>
       </div>
     </div>
   </main>
