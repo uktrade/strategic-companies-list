@@ -34,7 +34,7 @@ def IPFilterMiddleware(get_response):
         else:
             return render(request, '403_ip_filter.html', {
                 'request_id': request.headers.get('X-Amzn-Trace-Id'),
-                'request_ip_address': global_network in allowed_ip_networks,
+                'request_ip_address': request_ip_address,
                 'request_url': request.build_absolute_uri()
             }, status=403)
 
