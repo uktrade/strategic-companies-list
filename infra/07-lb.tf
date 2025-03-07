@@ -187,5 +187,6 @@ resource "aws_lb_target_group" "main" {
   # The health check is on /, which redirects to SSO since the load balance is not logged in
   health_check {
     matcher = "200,302"
+    path = "/lb-healthcheck"
   }
 }
