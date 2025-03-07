@@ -82,6 +82,10 @@ resource "aws_ecs_task_definition" "main" {
         {
           valueFrom = aws_secretsmanager_secret_version.authbroker_client_secret.arn
           name      = "AUTHBROKER_CLIENT_SECRET"
+        },
+        {
+          valueFrom = aws_secretsmanager_secret_version.ip_filter_allowed_networks.arn
+          name      = "IP_FILTER_ALLOWED_NETWORKS"
         }
       ],
       logConfiguration = {
@@ -164,6 +168,7 @@ resource "aws_iam_role_policy" "ecs_task_main_execution" {
           aws_secretsmanager_secret.django_secret_key.arn,
           aws_secretsmanager_secret.main_db_password.arn,
           aws_secretsmanager_secret.authbroker_client_secret.arn,
+          aws_secretsmanager_secret.ip_filter_allowed_networks.arn,
         ]
       }
     ]
@@ -286,6 +291,19 @@ resource "aws_secretsmanager_secret" "authbroker_client_secret" {
 resource "aws_secretsmanager_secret_version" "authbroker_client_secret" {
   secret_id     = aws_secretsmanager_secret.authbroker_client_secret.id
   secret_string = "to-replace-in-aws-console"
+
+  lifecycle {
+    ignore_changes = ["secret_string"]
+  }
+}
+
+resource "aws_secretsmanager_secret" "ip_filter_allowed_networks" {
+  name = "${var.prefix}-ip-filter-allowed-networks-${var.suffix}"
+}
+
+resource "aws_secretsmanager_secret_version" "ip_filter_allowed_networks" {
+  secret_id     = aws_secretsmanager_secret.ip_filter_allowed_networks.id
+  secret_string = "{\"to-replace-in-aws-console\":[]}"
 
   lifecycle {
     ignore_changes = ["secret_string"]
