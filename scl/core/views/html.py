@@ -1,13 +1,10 @@
-import time
-import uuid
 import logging
-import boto3
 from datetime import date
 
-from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from reversion.models import Version
 
+from scl.core.forms import EngagementForm
 from scl.core.models import Company, Engagement
 
 logger = logging.getLogger().warning
@@ -18,7 +15,8 @@ def index(request):
 
     all_companies = list(Company.objects.all())
     your_companies = list(request.user.managed_companies.all())
-    your_future_enagements = list(Engagement.objects.filter(company__in=your_companies, date__gte=today))
+    your_future_enagements = list(Engagement.objects.filter(
+        company__in=your_companies, date__gte=today))
 
     return render(request, "index.html", {
         "all_companies": all_companies,
@@ -68,4 +66,26 @@ def engagement(request, engagement_id):
         "engagement": engagement,
         "engagement_first_version": engagement_first_version,
         "notes_versions": notes_versions
+    })
+
+
+def engagement_add(request, duns_number):
+    company = Company.objects.get(duns_number=duns_number)
+    if request.method == 'POST':
+        form = EngagementForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            date = form.cleaned_data['date']
+            details = form.cleaned_data['details']
+            Engagement.objects.create(
+                company_id=company.id,
+                title=title, date=date, details=details)
+            return redirect(f'/company-briefing/{company.duns_number}?success=1')
+
+    else:
+        form = EngagementForm()
+
+    return render(request, "add_engagements.html", {
+        "company": company,
+        "form": form
     })

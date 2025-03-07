@@ -6,6 +6,20 @@
 {% block content %}
 <div class="govuk-width-container">
   <main class="govuk-main-wrapper" id="main-content">
+  {% if request.GET.success %}
+    <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+            Success
+          </h2>
+        </div>
+        <div class="govuk-notification-banner__content">
+          <p class="govuk-notification-banner__heading">
+            Your changes have been saved
+          </p>
+        </div>
+      </div>
+    {% endif %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
         <div class="scl-content-header">
@@ -30,7 +44,7 @@
 
             {% if is_privileged %}
             <a
-              href="#" role="button" draggable="false" class="govuk-button scl-content-header__button govuk-!-margin-left-4 govuk-!-margin-bottom-2"
+              href="/company-briefing/{{ company.duns_number }}/add-engagement" role="button" draggable="false" class="govuk-button scl-content-header__button govuk-!-margin-left-4 govuk-!-margin-bottom-2"
             >
               Add engagement
             </a>

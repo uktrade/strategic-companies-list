@@ -40,14 +40,16 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_NAME = 'scl-csrf-token'
 
 CSP_DEFAULT_SRC = ("'self'",)
-CSP_CONNECT_SRC = ("'self'", "wss://transcribestreaming.eu-west-2.amazonaws.com:8443",)
+CSP_CONNECT_SRC = (
+    "'self'", "wss://transcribestreaming.eu-west-2.amazonaws.com:8443",)
 CSP_FRAME_ANCESTORS = ("'none'",)
 CSP_FORM_ACTION = ("'self'",)
 
 # Staff SSO / Authentication
 
 AUTHBROKER_URL = os.environ.get('AUTHBROKER_URL', '')
-AUTHBROKER_INTERNAL_URL = os.environ.get('AUTHBROKER_INTERNAL_URL', AUTHBROKER_URL)
+AUTHBROKER_INTERNAL_URL = os.environ.get(
+    'AUTHBROKER_INTERNAL_URL', AUTHBROKER_URL)
 
 AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
 AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
@@ -70,13 +72,15 @@ LOGIN_URL = reverse_lazy('authbroker_client:login')
 LOGIN_REDIRECT_URL = reverse_lazy('home-page')
 
 # IP Filter
-IP_FILTER_ALLOWED_NETWORKS = json.loads(os.environ.get('IP_FILTER_ALLOWED_NETWORKS', '{}'))
+IP_FILTER_ALLOWED_NETWORKS = json.loads(
+    os.environ.get('IP_FILTER_ALLOWED_NETWORKS', '{}'))
 IP_FILTER_EXCLUDE_PATHS = ['/lb-healthcheck']
 
 # Basic access group: configures BasicAccessMiddleware that requires all users to have this access
 # This allows the app itself to be quite open in terms of SSO, but access is managed within
 BASIC_ACCESS_GROUP = 'Basic access'
-BASIC_ACCESS_EXCLUDE_PATHS = ['/lb-healthcheck', reverse_lazy('authbroker_client:login'), reverse_lazy('authbroker_client:callback'),]
+BASIC_ACCESS_EXCLUDE_PATHS = ['/lb-healthcheck', reverse_lazy(
+    'authbroker_client:login'), reverse_lazy('authbroker_client:callback'),]
 
 
 # Application definition
