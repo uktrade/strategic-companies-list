@@ -270,6 +270,3 @@ COUNTRIES_AND_TERRITORIES = (
     ("ZM","Zambia"),
     ("ZW","Zimbabwe"),
 )
-
-
-BASIC_ACCESS_GROUP = 'Basic access'
