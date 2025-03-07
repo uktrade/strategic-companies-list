@@ -22,9 +22,9 @@
 docker compose down && docker compose up --build
 ```
 
-Visit http://localhost:8000/. Note that on every start of the application, the (mock) SSO user you access the site with will be configured with access to the site through the Django group 'Basic access', as well as staff and superuser access.
+Visit http://localhost:8000/. Note that on every start of the application, a (mock) SSO user is created or updated with access to the site through the Django group 'Basic access', as well as staff and superuser access, and this user is automatically logged in.
 
-The above uses a development config, which has differences to production especially around static assets. To use a config  closer to production run:
+The above uses a development config, which has differences to production around this user setup and around static assets. To use a config closer to production run:
 
 ```bash
 docker compose down && docker compose --profile prod up --build
