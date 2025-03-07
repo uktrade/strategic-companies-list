@@ -16,7 +16,7 @@ def IPFilterMiddleware(get_response):
 
     def middleware(request):
         try:
-            request_ip_address = ip_address(request.headers['CloudFront-Viewer-Address'])
+            request_ip_address = ip_address(request.headers['CloudFront-Viewer-Address'].split(':')[0])
         except (KeyError, ValueError):
             request_ip_address = None
 
