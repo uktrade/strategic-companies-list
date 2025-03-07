@@ -8,6 +8,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import json
 import os
 from pathlib import Path
 
@@ -68,6 +69,9 @@ LOGIN_URL = reverse_lazy('authbroker_client:login')
 
 LOGIN_REDIRECT_URL = reverse_lazy('home-page')
 
+# IP Filter
+IP_FILTER_ALLOWED_NETWORKS = json.loads(os.environ.get('IP_FILTER_ALLOWED_NETWORKS', '{}'))
+
 
 # Application definition
 
@@ -97,6 +101,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',
+    'scl.core.middleware.IPFilterMiddleware',
     'authbroker_client.middleware.ProtectAllViewsMiddleware',
 ]
 
