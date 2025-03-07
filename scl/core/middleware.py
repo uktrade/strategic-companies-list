@@ -10,6 +10,7 @@ def IPFilterMiddleware(get_response):
         for ip_range_list in settings.IP_FILTER_ALLOWED_NETWORKS.values()
         for ip_range in ip_range_list
     ]
+    exclude_paths = getattr(settings, 'IP_FILTER_EXCLUDE_PATHS', [])
 
     global_network = ip_network("0.0.0.0/0")
 
@@ -24,6 +25,7 @@ def IPFilterMiddleware(get_response):
         # address is in one of the allowed networks. Note this is only safe if we have mechanisms
         # to prevent something that isn't CloudFront from connecting to the application
         allowed = \
+            True if request.path in exclude_paths else \
             global_network in allowed_ip_networks if request_ip_address is None else \
             any(request_ip_address in allowed_ip_network for allowed_ip_network in allowed_ip_networks)
 

@@ -20,12 +20,13 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from scl.core.views import index, aws_credentials
+from scl.core.views import lb_healthcheck, index, aws_credentials
 from scl.core.views import index, company_briefing, engagement
 from scl.core.api.v1.company import company_api
 from scl.core.api.v1.engagement import engagement_api
 
 urlpatterns = [
+    path('lb-healthcheck', lb_healthcheck),
     path('admin/', admin.site.urls),
     path("", index, name="home-page"),
     path("company-briefing/<str:duns_number>",

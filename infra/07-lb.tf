@@ -133,9 +133,30 @@ resource "random_bytes" "cdn_header_value" {
   length = 64
 }
 
-resource "aws_lb_listener_rule" "main" {
+resource "aws_lb_listener_rule" "lb_healthcheck" {
+  # Forbid external requests to /lb-healthcheck, which is not behind SSO or the IP filter
   listener_arn = aws_lb_listener.main.arn
   priority     = 100
+
+  action {
+    type = "fixed-response"
+
+    fixed_response {
+      status_code  = "403"
+      content_type = "text/plain"
+    }
+  }
+
+  condition {
+    path_pattern {
+      values = ["/lb-healthcheck"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "main" {
+  listener_arn = aws_lb_listener.main.arn
+  priority     = 200
 
   action {
     type             = "forward"
@@ -165,6 +186,6 @@ resource "aws_lb_target_group" "main" {
 
   # The health check is on /, which redirects to SSO since the load balance is not logged in
   health_check {
-    matcher = "302"
+    matcher = "200,302"
   }
 }

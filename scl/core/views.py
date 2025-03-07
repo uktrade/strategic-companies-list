@@ -5,13 +5,17 @@ import boto3
 from datetime import date
 
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from reversion.models import Version
 
 from .models import Company, Engagement
 
 logger = logging.getLogger().warning
+
+
+def lb_healthcheck(request):
+    return HttpResponse("OK")
 
 
 def index(request):
