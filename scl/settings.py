@@ -52,7 +52,7 @@ AUTHBROKER_INTERNAL_URL = os.environ.get('AUTHBROKER_INTERNAL_URL', AUTHBROKER_U
 AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
 AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
 AUTHBROKER_STAFF_SSO_SCOPE = 'read write'
-AUTHBROKER_ANONYMOUS_PATHS = []
+AUTHBROKER_ANONYMOUS_PATHS = ['/lb-healthcheck']
 AUTHBROKER_ANONYMOUS_URL_NAMES = []
 
 # Avoids (un-rectifiable) personal data in the user ID, as well as a reference to trade.gov.uk,
@@ -71,6 +71,7 @@ LOGIN_REDIRECT_URL = reverse_lazy('home-page')
 
 # IP Filter
 IP_FILTER_ALLOWED_NETWORKS = json.loads(os.environ.get('IP_FILTER_ALLOWED_NETWORKS', '{}'))
+IP_FILTER_EXCLUDE_PATHS = ['/lb-healthcheck']
 
 
 # Application definition
