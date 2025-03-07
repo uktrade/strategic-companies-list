@@ -11,6 +11,7 @@ echo "PostrgreSQL ready"
 
 python manage.py migrate
 python manage.py createinitialrevisions
+python manage.py creategroups
 
 exec parallel --will-cite --line-buffer --jobs 2 --halt now,done=1 ::: \
     "python manage.py runserver 0.0.0.0:8001" \
