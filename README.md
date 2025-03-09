@@ -9,6 +9,8 @@
 ### Contents
 
 - [Running locally](#running-locally)
+- [Creating migrations](#creating-migrations)
+- [Architecture (network) diagram](#architecture-network-diagram)
 - [Infrastructure naming](#infrastructure-naming)
 - [Logs](#logs)
 - [Provisioning infrastructure](#provisioning-infrastructure)
@@ -35,6 +37,13 @@ docker compose down && docker compose --profile prod up --build
 ```bash
 docker compose run --build web-dev python manage.py makemigrations
 ```
+
+
+## Architecture (network) diagram
+
+How the infrastructure components are connected together can be seen in the following network diagram.
+
+![Strategic Companies List network diagram](./.assets/scl-network-diagram.svg)
 
 
 ## Infrastructure naming
