@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from scl.core.views.html import index, company_briefing, engagement, engagement_add, engagements
+from scl.core.views.html import index, company_briefing, engagement, add_engagement, company_engagements, your_engagements
 from scl.core.views.api import aws_credentials_api, company_api, engagement_api
 from scl.core.views.healthcheck import lb_healthcheck
 
@@ -37,10 +37,11 @@ urlpatterns = [
     path("company-briefing/<str:duns_number>",
          company_briefing, name='company-briefing'),
     path("engagement/<uuid:engagement_id>", engagement, name='engagement'),
+    path("your-engagements", your_engagements, name='your-engagements'),
     path("company-briefing/<str:duns_number>/add-engagement",
-         engagement_add, name='add-engagement'),
+         add_engagement, name='add-engagement'),
     path("company-briefing/<str:duns_number>/engagements",
-         engagements, name='engagements'),
+         company_engagements, name='company-engagements'),
 
     # API
     path("api/v1/company/<str:duns_number>", company_api),
