@@ -1,5 +1,5 @@
 import logging
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from django.shortcuts import render, redirect
 from reversion.models import Version
@@ -87,11 +87,12 @@ def your_engagements(request):
 
 
 def company_engagements(request, duns_number):
-    today = date.today()
+    today = datetime.now().date()
+    yesterday = datetime.now() - timedelta(days=1)
 
     company = Company.objects.get(duns_number=duns_number)
     past_engagements = list(company.engagements.filter(
-        date__lte=today).order_by('-date'))[1:]
+        date__lte=yesterday).order_by('-date'))
     engagements = list(company.engagements.filter(
         date__gte=today).order_by('-date'))
 
