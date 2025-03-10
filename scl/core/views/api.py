@@ -1,7 +1,10 @@
+import reversion
 import json
+import time
+import uuid
 
 import boto3
-import reversion
+from django.conf import settings
 from django.http import JsonResponse
 
 from scl.core.models import Company, Engagement
@@ -44,7 +47,7 @@ def company_api(request, duns_number):
     account_managers = list(company.account_manager.all())
     is_privileged = request.user in account_managers
     if not is_privileged:
-        return JsonReponse(403, {})
+        return JsonResponse(403, safe=False)
 
     if request.method == 'PATCH':
         with reversion.create_revision():
@@ -75,7 +78,7 @@ def engagement_api(request, engagement_id):
     account_managers = engagement.company.account_manager.all()
     is_privileged = request.user in account_managers
     if not is_privileged:
-        return JsonReponse(403, {})
+        return JsonResponse(403, safe=False)
 
     if request.method == 'PATCH':
         with reversion.create_revision():
