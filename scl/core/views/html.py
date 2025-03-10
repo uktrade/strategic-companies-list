@@ -71,7 +71,22 @@ def engagement(request, engagement_id):
     })
 
 
-def engagements(request, duns_number):
+def your_engagements(request):
+    companies = list(Company.objects.filter(account_manager=request.user))
+
+    your_companies = []
+    for company in companies:
+        your_companies.append({
+            'name': company.name,
+            'engagements': company.engagements.all().order_by('-date'),
+        })
+
+    return render(request, "your_engagements.html", {
+        "your_companies": your_companies,
+    })
+
+
+def company_engagements(request, duns_number):
     today = date.today()
 
     company = Company.objects.get(duns_number=duns_number)
@@ -84,7 +99,7 @@ def engagements(request, duns_number):
     if not is_privileged:
         return JsonResponse(403, safe=False)
 
-    return render(request, "all_engagements.html", {
+    return render(request, "company_engagements.html", {
         "company": company,
         "engagements": engagements,
         "past_engagements": past_engagements,
@@ -92,7 +107,7 @@ def engagements(request, duns_number):
     })
 
 
-def engagement_add(request, duns_number):
+def add_engagement(request, duns_number):
     company = Company.objects.get(duns_number=duns_number)
     is_privileged = request.user in company.account_manager.all()
 
