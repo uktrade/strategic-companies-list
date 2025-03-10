@@ -76,7 +76,7 @@ def engagements(request, duns_number):
 
     company = Company.objects.get(duns_number=duns_number)
     past_engagements = list(company.engagements.filter(
-        date__lte=today).order_by('-date'))
+        date__lte=today).order_by('-date'))[1:]
     engagements = list(company.engagements.filter(
         date__gte=today).order_by('-date'))
 
