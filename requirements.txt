@@ -22,7 +22,7 @@ charset-normalizer==3.4.1
     # via requests
 click==8.1.8
     # via uvicorn
-django==5.1.6
+django==5.1.7
     # via
     #   -r requirements.in
     #   django-bleach
