@@ -1,0 +1,56 @@
+name: scl
+
+services:
+  postgres:
+    network_mode: host
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=scl
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - scl:/var/lib/postgresql/data
+  sso:
+    network_mode: host
+    build: https://github.com/uktrade/mock-sso.git
+    environment:
+      MOCK_SSO_PORT: 8001
+      MOCK_SSO_USER_EMAIL: local.user@businessandtrade.gov.uk
+      MOCK_SSO_TOKEN: local.token
+      MOCK_SSO_CODE: local.code
+  web-dev:
+    network_mode: host
+    restart: always
+    depends_on:
+      - postgres
+      - sso
+    build:
+      context: .
+      target: vde
+      args:
+        - GIT_COMMIT=to-be-set-by-codebuild
+    environment:
+      DEBUG: "True"
+      PGDATABASE: scl
+      PGUSER: postgres
+      PGPASSWORD: password
+      PGHOST: localhost
+      PGPORT: 5432
+      OAUTHLIB_INSECURE_TRANSPORT: 1
+      AUTHBROKER_URL: 'http://localhost:8001/'
+      AUTHBROKER_INTERNAL_URL: 'http://localhost:8001/'
+      AUTHBROKER_CLIENT_ID: 'any'
+      AUTHBROKER_CLIENT_SECRET: 'any'
+      IP_FILTER_ALLOWED_NETWORKS: '{"all":["0.0.0.0/0"]}'
+    volumes:
+       - ./scl/core/templates:/app/scl/core/templates
+       - ./scl/core/migrations:/app/scl/core/migrations
+       - ./scl/core/static:/app/scl/core/static
+       - ./scl/core/views:/app/scl/core/views
+       - ./scl/core/views/html.py:/app/scl/core/views/html.py
+       - ./scl/core/models.py:/app/scl/core/models.py
+       - ./scl/core/forms.py:/app/scl/core/forms.py
+    profiles: ['']
+
+volumes:
+    scl:

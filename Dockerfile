@@ -45,6 +45,7 @@ FROM common AS dev
 
 # Disable nginx serving of static assets, so Django serves them without collect static
 RUN sed -i 's/assets/__dummy/' /etc/nginx/nginx.conf
+
 COPY start-dev.sh .
 
 ARG GIT_COMMIT
@@ -53,6 +54,21 @@ USER scl
 
 CMD ["./start-dev.sh"]
 
+FROM common AS vde
+
+# Sidestep port overlap between SSO and Django services in VDE host network
+RUN sed -i 's/server 127.0.0.1:8001;/server 127.0.0.1:8002;/' /etc/nginx/nginx.conf
+# Disable nginx serving of static assets, so Django serves them without collect static
+RUN sed -i 's/assets/__dummy/' /etc/nginx/nginx.conf
+
+COPY start-dev.sh .
+RUN sed -i 's/python manage.py runserver 0.0.0.0:8001/python manage.py runserver 0.0.0.0:8002 --settings=scl.settings_vde/' start-dev.sh
+
+ARG GIT_COMMIT
+ENV GIT_COMMIT=${GIT_COMMIT}
+USER scl
+
+CMD ["./start-dev.sh"]
 
 FROM common AS prod
 
