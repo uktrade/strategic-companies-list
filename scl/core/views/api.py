@@ -117,7 +117,7 @@ def engagement_note_api(request, engagement_id):
 
             reversion.set_user(request.user)
             reversion.set_comment(
-                "Note added to engagment"
+                "Note added to engagement"
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
     if request.method == 'DELETE':
@@ -127,7 +127,7 @@ def engagement_note_api(request, engagement_id):
 
             reversion.set_user(request.user)
             reversion.set_comment(
-                "Note added to engagment"
+                "Note deleted from engagement"
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
