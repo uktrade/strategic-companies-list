@@ -105,8 +105,8 @@ resource "aws_secretsmanager_secret" "django_secret_key" {
 }
 
 resource "aws_secretsmanager_secret_version" "django_secret_key" {
-  secret_id     = aws_secretsmanager_secret.django_secret_key.id
-  secret_string = random_password.django_secret_key.result
+  secret_id        = aws_secretsmanager_secret.django_secret_key.id
+  secret_string_wo = random_password.django_secret_key.result
 }
 
 resource "random_password" "django_secret_key" {
@@ -293,7 +293,7 @@ resource "aws_secretsmanager_secret_version" "authbroker_client_secret" {
   secret_string = "to-replace-in-aws-console"
 
   lifecycle {
-    ignore_changes = ["secret_string"]
+    ignore_changes = [secret_string]
   }
 }
 
@@ -306,6 +306,6 @@ resource "aws_secretsmanager_secret_version" "ip_filter_allowed_networks" {
   secret_string = "{\"to-replace-in-aws-console\":[]}"
 
   lifecycle {
-    ignore_changes = ["secret_string"]
+    ignore_changes = [secret_string]
   }
 }
