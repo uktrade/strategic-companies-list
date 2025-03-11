@@ -7,7 +7,7 @@ from django.conf import settings
 from django.http import JsonResponse
 import reversion
 
-from scl.core.models import Company, Engagement
+from scl.core.models import Company, Engagement, EngagementNote
 
 
 def aws_credentials_api(request):
@@ -107,6 +107,46 @@ def engagement_api(request, engagement_id):
         {
             "engagement": engagement.title,
             "id": engagement.id,
+        },
+        status=200,
+    )
+
+
+def engagement_note_api(request, engagement_id):
+    data = json.loads(request.body)
+    engagement = Engagement.objects.get(id=engagement_id)
+
+    account_managers = engagement.company.account_manager.all()
+    is_privileged = request.user in account_managers
+    if not is_privileged:
+        return JsonResponse(403, safe=False)
+
+    if request.method == 'POST':
+        with reversion.create_revision():
+            note = EngagementNote.objects.create(contents=data.get(
+                'note').strip(), engagement=engagement)
+
+            reversion.set_user(request.user)
+            reversion.set_comment(
+                "Note added to engagement"
+                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+    if request.method == 'DELETE':
+        with reversion.create_revision():
+            note = EngagementNote.objects.get(id=data.get('id'))
+            note.delete()
+
+            reversion.set_user(request.user)
+            reversion.set_comment(
+                "Note deleted from engagement"
+                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+
+    return JsonResponse(
+        {
+            "engagement": engagement.title,
+            "id": engagement.id,
+            "note": note.id
         },
         status=200,
     )

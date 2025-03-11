@@ -28,11 +28,14 @@ import { Readable } from 'readable-stream'
   const registerTranscriptionButton = (recordButton) => {
     const target = document.querySelector(recordButton.getAttribute("data-scl-transcription-target"));
 
-    target.replaceChildren(...htmlToNodes('<p class="govuk-body scl-key-list__item_body"><span class="scl-transcription-target__final-output"></span><span class="scl-transcription-target__partial-output">&nbsp;</span></p><div class="scl-key-list__item_body"><button class="govuk-button">Save note</button></div>'))
+    target.replaceChildren(
+      ...htmlToNodes(
+        '<p class="govuk-body scl-key-list__item_body scl-transcription__content" data-scl-transcript-target="notes"><span class="scl-transcription-target__final-output" data-module="transcript-output"></span><span class="scl-transcription-target__partial-output">&nbsp;</span></p><div class="scl-key-list__item_body"></div>'
+      )
+    );
 
     const finalOutput = target.querySelector('.scl-transcription-target__final-output');
     const partialOutput = target.querySelector('.scl-transcription-target__partial-output');
-    const button = target.querySelector('button');
 
     let isRecording = false;
     var stream = null;

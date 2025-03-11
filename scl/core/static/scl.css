@@ -364,15 +364,50 @@
   top: 2px;
 }
 
+.scl-transcription {
+  margin-top: 0;
+}
+
+.scl-transcription--secondary {
+  margin-top: 50px;
+}
+
+.scl-transcription--secondary .scl-button--record {
+  float: left;
+  margin-right: 20px;
+}
+
+.scl-transcription__content {
+  margin: 0 10px 20px 0;
+}
+
+.scl-transcribe-notes div.scl-key-list__item_body {
+  padding: 0;
+}
+
 .scl-transcription-target {
   display: none;
   padding: 0 15px;
-  margin-top: 10px;
+  width: 100%;
 }
 
-.scl-transcription-target--with-content {
+.scl-transcription-target+button+button[data-module='scl-save-transcript'],
+.scl-transcription-target+button[data-module='scl-save-transcript'] {
+  display: none;
+}
+
+.scl-transcription-target--with-content,
+.scl-transcription-target--with-content+button+button[data-module='scl-save-transcript'],
+.scl-transcription-target--with-content+button[data-module='scl-save-transcript'] {
   display: block;
 }
+
+.scl-transcription-target--with-content p {
+  margin-top: 10px;
+  border: 1px solid #0b0c0c;
+  padding: 10px 0;
+}
+
 
 .scl-transcription-target__partial-output {
   font-weight: bold;
@@ -512,10 +547,23 @@ h1.scl-editable[contenteditable] {
   font-weight: 700;
 }
 
-/* Your engagements - TODO: replace with tailwind */
+/* Your engagements */
 
 .scl-accordian-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+/* Notes */
+
+.scl-note {
+  display: flex;
+  justify-content: space-between;
+}
+
+.scl-note button {
+  margin-bottom: 0;
+  width: 100%;
+  max-width: 100px;
 }
