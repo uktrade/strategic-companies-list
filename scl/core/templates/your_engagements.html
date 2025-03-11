@@ -65,7 +65,16 @@
                           {% endfor %}
                         </ul>
                         {% else %}
-                          <p class="govuk-body">You currently have no engagements. <a href="/company-briefing/{{company.duns_number}}/add-engagement" class="govuk-link">Would you like to add one?</a></p>
+                        <div class="scl-accordian-actions">
+                            <p class="govuk-body govuk-!-margin-0">You currently have no engagements. 
+                            </p>
+                            <div>
+                            <a href="/company-briefing/{{ company.duns_number }}/add-engagement" 
+                              role="button" 
+                              draggable="false" 
+                              class="govuk-button scl-content-header__button govuk-!-margin-0">Add engagement</a>
+                            </div>
+                        </div>
                         {% endif %}
                       </div>
                     </div>
