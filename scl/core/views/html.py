@@ -78,6 +78,7 @@ def your_engagements(request):
     for company in companies:
         your_companies.append({
             'name': company.name,
+            'duns_number': company.duns_number,
             'engagements': company.engagements.all().order_by('-date'),
         })
 
