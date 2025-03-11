@@ -48,7 +48,8 @@ CSP_FORM_ACTION = ("'self'",)
 
 AUTHBROKER_URL = os.environ.get('AUTHBROKER_URL', '')
 AUTHBROKER_INTERNAL_URL = os.environ.get(
-    'AUTHBROKER_INTERNAL_URL', AUTHBROKER_URL)
+    'AUTHBROKER_INTERNAL_URL', AUTHBROKER_URL
+)
 
 AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
 AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
@@ -72,14 +73,18 @@ LOGIN_REDIRECT_URL = reverse_lazy('home-page')
 
 # IP Filter
 IP_FILTER_ALLOWED_NETWORKS = json.loads(
-    os.environ.get('IP_FILTER_ALLOWED_NETWORKS', '{}'))
+    os.environ.get('IP_FILTER_ALLOWED_NETWORKS', '{}')
+)
 IP_FILTER_EXCLUDE_PATHS = ['/lb-healthcheck']
 
 # Basic access group: configures BasicAccessMiddleware that requires all users to have this access
 # This allows the app itself to be quite open in terms of SSO, but access is managed within
 BASIC_ACCESS_GROUP = 'Basic access'
-BASIC_ACCESS_EXCLUDE_PATHS = ['/lb-healthcheck', reverse_lazy(
-    'authbroker_client:login'), reverse_lazy('authbroker_client:callback'),]
+BASIC_ACCESS_EXCLUDE_PATHS = [
+    '/lb-healthcheck',
+    reverse_lazy('authbroker_client:login'),
+    reverse_lazy('authbroker_client:callback'),
+]
 
 
 # Application definition
@@ -212,6 +217,9 @@ LOGGING = {
 # Transcription
 
 AWS_TRANSCRIBE_ROLE_ARN = os.environ.get('AWS_TRANSCRIBE_ROLE_ARN')
+
+AWS_TRANSCRIBE_ACCESS_KEY_ID = os.environ.get('AWS_TRANSCRIBE_ACCESS_KEY_ID')
+AWS_TRANSCRIBE_SECRET_ACCESS_KEY = os.environ.get('AWS_TRANSCRIBE_SECRET_ACCESS_KEY')
 
 
 # Cleaning up HTML

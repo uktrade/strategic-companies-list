@@ -7,12 +7,15 @@ import { Readable } from 'readable-stream'
     region: "eu-west-2",
     credentials: (async function() {
       const response = await (await fetch('/api/v1/aws-credentials')).json()
-      return {
+      const credentials = {
         accessKeyId: response.AccessKeyId,
         secretAccessKey: response.SecretAccessKey,
-        sessionToken: response.SessionToken,
-        expiration: new Date(Date.parse(response.Expiration)),
       }
+      if (!!response.SessionToken && !!response.Expiration) {
+        credentials.sessionToken = response.SessionToken;
+        credentials.expiration = new Date(Date.parse(response.Expiration));
+      }
+      return credentials;
     })
   });
 
