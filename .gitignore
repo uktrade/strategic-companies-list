@@ -172,6 +172,7 @@ cython_debug/
 
 # Node
 node_modules/
+bundle.js
 
 # macOS
 .DS_Store

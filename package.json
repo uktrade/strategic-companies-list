@@ -1,12 +1,13 @@
 {
   "scripts": {
-    "build": "webpack"
+    "build": "bun build browser.js --outfile=bundle.js"
   },
   "dependencies": {
-    "@aws-sdk/client-transcribe-streaming": "^3.750.0",
-    "govuk-frontend": "^5.8.0",
-    "path-browserify": "^1.0.1",
-    "readable-stream": "^4.7.0",
-    "webpack-cli": "^6.0.1"
+    "@aws-sdk/client-transcribe-streaming": "^3.758.0",
+    "govuk-frontend": "^5.9.0",
+    "readable-stream": "^4.7.0"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
   }
 }

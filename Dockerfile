@@ -1,15 +1,16 @@
-FROM node:23-bookworm-slim AS static-resources
+FROM oven/bun:1.2.5-slim AS static-resources
 
 WORKDIR /app
 
-COPY package.json package-lock.json .
-RUN npm ci
+COPY package.json bun.lock .
+RUN bun install
 
-COPY webpack.config.js browser.js .
-RUN npm run build
+COPY browser.js bunfig.toml .
+RUN bun run build
 
 
 FROM python:3.13-slim-bookworm AS common
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 RUN \
     apt-get update && \
@@ -24,7 +25,7 @@ RUN \
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN uv pip install --system -r requirements.txt
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY manage.py .

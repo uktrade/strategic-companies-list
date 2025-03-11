@@ -1,0 +1,8 @@
+[build]
+entrypoints = ["browser.js"]
+outdir = "."
+target = "browser"
+format = "esm"
+
+[dev]
+port = 8000
