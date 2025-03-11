@@ -36,8 +36,7 @@
             </button>
             <button
               class="govuk-button scl-content-header__button govuk-!-margin-left-1 govuk-!-margin-bottom-2"
-              data-module="govuk-button"
-              onclick="window.print()"
+              data-module="scl-print-button"
             >
               Print
             </button>
@@ -50,18 +49,42 @@
       <div class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
         <p class="govuk-body scl-body--small">Engagement created {{ engagement_first_version.revision.date_created }} by <a class="govuk-link govuk-link--no-visited-state" href="#">{{ engagement_first_version.revision.user.first_name }} {{ engagement_first_version.revision.user.last_name }}</a></p>
-        <div data-scl-editable-field="engagement_details" class="scl-editable scl-editable--paragraphs">
-           {{ engagement.details | ensure_p | bleach | safe }}
-        </div>
+          <div data-scl-editable-field="engagement_details" class="scl-editable scl-editable--paragraphs">
+            {{ engagement.details | ensure_p | bleach | safe }}
+          </div>
       </div>
     </div>
-    {% for note, note_first_version in notes_versions %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-4">
-        <p class="govuk-body scl-body--small">Note created {{ note_first_version.revision.date_created }} by <a class="govuk-link govuk-link--no-visited-state" href="#">{{ note_first_version.revision.user.first_name }} {{ note_first_version.revision.user.last_name }}</a></p>
-        {{ note.contents | ensure_p | bleach | safe }}
-    {% endfor %}
+          {% for note, note_first_version in notes_versions %}
+              <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-4">
+                  <div class="scl-note">
+                      <p class="govuk-body scl-body--small">Note created {{ note_first_version.revision.date_created }} by <a class="govuk-link govuk-link--no-visited-state" href="#">{{ note_first_version.revision.user.first_name }} {{ note_first_version.revision.user.last_name }}</a></p>
+                      <button
+                        class="govuk-button"
+                        data-scl-endpoint="/api/v1/engagement/{{ engagement.id }}/note"
+                        data-module="scl-delete-transcript"
+                        data-scl-notes-id={{note.id}}
+                      >
+                      Delete
+                    </button>
+                  </div>
+                  {{ note.contents | ensure_p | bleach | safe }}
+          {% endfor %}
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+          <div class="scl-transcription scl-transcription--secondary">
+            <div id="transcription-target-{{ engagement.id }}" class="scl-transcription-target"></div>
+              <button class="scl-key-list__button govuk-button scl-button--record scl-button--recording-paused" type="button" data-module="scl-transcription-button" data-scl-transcription-target="#transcription-target-{{ engagement.id }}">
+                    <span class="scl-button__microphone"><svg class="scl-button__icon" width="15" viewbox="0 0 576 700" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M576 348h-72c0 105.84-86.16 192-192 192h-48c-105.84 0-192-86.16-192-192H0c0 141.61 111.94 257.39 252 263.63v96.38H120v72h336v-72H324v-96.38C464.06 605.4 576 489.47 576 348Z"/><path d="M288 480c79.45 0 144-64.55 144-144V144C432 64.55 367.45 0 288 0S144 64.55 144 144v192c0 79.45 64.55 144 144 144zm-72-336c0-39.7 32.3-72 72-72s72 32.3 72 72v192c0 39.7-32.3 72-72 72s-72-32.3-72-72z"/></svg></span>
+                    </span>
+                    <span class="scl-button__recording-animation">
+                      <svg class="scl-button__icon scl-button__icon--recording-animation" width="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><style nonce="{{request.csp_nonce}}">.spinner_7uc5{animation:spinner_3l8F .9s linear infinite;animation-delay:-.9s}.spinner_RibN{animation-delay:-.7s}.spinner_ZAxd{animation-delay:-.5s}@keyframes spinner_3l8F{0%,66.66%{animation-timing-function:cubic-bezier(0.14,.73,.34,1);y:6px;height:12px}33.33%{animation-timing-function:cubic-bezier(0.65,.26,.82,.45);y:1px;height:22px}}</style><rect class="spinner_7uc5 spinner_ZAxd" x="1" y="6" width="2.8" height="12"/><rect class="spinner_7uc5 spinner_RibN" x="5.8" y="6" width="2.8" height="12"/><rect class="spinner_7uc5" x="10.6" y="6" width="2.8" height="12"/><rect class="spinner_7uc5 spinner_RibN" x="15.4" y="6" width="2.8" height="12"/><rect class="spinner_7uc5 spinner_ZAxd" x="20.2" y="6" width="2.8" height="12"/></svg>
+                    </span>
+                </button>
+              <button class="govuk-button" data-scl-endpoint="/api/v1/engagement/{{ engagement.id }}/note" data-module="scl-save-transcript" data-transcript-target="{{ engagement.id }}">Save note</button>
+            </div>
+          </div>
+      </div>
   </main>
 </div>
 {% endblock %}

@@ -27,7 +27,10 @@
                   </span>
                 </button>
               </div>
-              <div id="transcription-target-{{ engagement.id }}" class="scl-transcription-target"></div>
+               <div class="scl-transcription">
+                <div id="transcription-target-{{ engagement.id }}" class="scl-transcription-target"></div>
+                <button class="govuk-button" data-scl-endpoint="/api/v1/engagement/{{ engagement.id }}/note" data-module="scl-save-transcript" data-transcript-target="{{ engagement.id }}">Save note</button>
+              </div>
             </li>
             {% endfor %}
           </ul>
