@@ -62,7 +62,12 @@ RUN sed -i 's/server 127.0.0.1:8001;/server 127.0.0.1:8002;/' /etc/nginx/nginx.c
 RUN sed -i 's/assets/__dummy/' /etc/nginx/nginx.conf
 
 COPY start-dev.sh .
-RUN sed -i 's/python manage.py runserver 0.0.0.0:8001/python manage.py runserver 0.0.0.0:8002 --settings=scl.settings_vde/' start-dev.sh
+RUN sed -i 's/python manage.py runserver 0.0.0.0:8001/python manage.py runserver 0.0.0.0:8002/' start-dev.sh
+
+RUN sed -i 's/CSRF_COOKIE_SECURE = True/CSRF_COOKIE_SECURE = False/' scl/settings.py
+RUN sed -i 's/CSRF_COOKIE_DOMAIN/c\CSRF_COOKIE_DOMAIN = None' scl/settings.py || echo 'CSRF_COOKIE_DOMAIN = None' >> scl/settings.py
+RUN sed -i 's/SESSION_COOKIE_SECURE = True/SESSION_COOKIE_SECURE = False/' scl/settings.py
+RUN sed -i 's/SESSION_COOKIE_DOMAIN/c\SESSION_COOKIE_DOMAIN = None' scl/settings.py || echo 'SESSION_COOKIE_DOMAIN = None' >> scl/settings.py
 
 ARG GIT_COMMIT
 ENV GIT_COMMIT=${GIT_COMMIT}
