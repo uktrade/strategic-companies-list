@@ -1,4 +1,3 @@
-import reversion
 import json
 import time
 import uuid
@@ -6,11 +5,23 @@ import uuid
 import boto3
 from django.conf import settings
 from django.http import JsonResponse
+import reversion
 
 from scl.core.models import Company, Engagement
 
 
 def aws_credentials_api(request):
+
+    if settings.AWS_TRANSCRIBE_ACCESS_KEY_ID and settings.AWS_TRANSCRIBE_SECRET_ACCESS_KEY:
+
+        return JsonResponse(
+            {
+                "AccessKeyId": settings.AWS_TRANSCRIBE_ACCESS_KEY_ID,
+                "SecretAccessKey": settings.AWS_TRANSCRIBE_SECRET_ACCESS_KEY,
+            },
+            status=200,
+        )
+
     client = boto3.client("sts")
     role_arn = settings.AWS_TRANSCRIBE_ROLE_ARN
 

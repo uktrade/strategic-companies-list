@@ -49,6 +49,8 @@ services:
       AUTHBROKER_CLIENT_ID: 'any'
       AUTHBROKER_CLIENT_SECRET: 'any'
       IP_FILTER_ALLOWED_NETWORKS: '{"all":["0.0.0.0/0"]}'
+    env_file:
+      - .env
     volumes:
        - ./scl/core/templates:/app/scl/core/templates
        - ./scl/core/migrations:/app/scl/core/migrations
@@ -82,6 +84,8 @@ services:
       AUTHBROKER_CLIENT_ID: 'any'
       AUTHBROKER_CLIENT_SECRET: 'any'
       IP_FILTER_ALLOWED_NETWORKS: '{"all":["0.0.0.0/0"]}'
+    env_file:
+      - .env
     profiles: ['prod']
 
 networks:

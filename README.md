@@ -32,6 +32,16 @@ The above uses a development config, which has differences to production around 
 docker compose down && docker compose --profile prod up --build
 ```
 
+### Setting up AWS Transcribe locally
+
+The application uses AWS Transcribe for speech-to-text functionality.
+
+For local development, add the following to a `.env` file in the root of the project:
+```
+TRANSCRIBE_AWS_ACCESS_KEY_ID=your_access_key_here
+TRANSCRIBE_AWS_SECRET_ACCESS_KEY=your_secret_key_here
+```
+
 ## Creating migrations
 
 ```bash
