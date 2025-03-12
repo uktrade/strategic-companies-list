@@ -62,6 +62,9 @@
           </div>
         </div>
         <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">D-U-N-S: {{ company.duns_number }}{% if company.global_hq_name %}, {{ company.global_hq_name}}{% endif %}</p>
+        {% if company.sectors %}
+        <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">Sectors: {{ company.get_sectors_display }}</p>
+        {% endif %}
         <p class="govuk-body govuk-body-s">Last updated: {{ current_version.revision.date_created }}</p>
       </div>
     </div>
@@ -180,15 +183,22 @@
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-5 govuk-!-margin-bottom-2">
         {% endif %}
         <h2 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-margin-top-{% if is_privileged %}2{% else %}4{% endif %}">Account managers</h2>
-        {% if account_managers %}
-          <ul class="govuk-list scl-list--small">
-          {% for account_manager in account_managers %}
-              <li><a class="govuk-link govuk-link--no-visited-state scl-link--no-underline" href="##">{{ account_manager.first_name }} {{ account_manager.last_name }}</a></li>
+        {% if account_managers_with_lead %}
+        <ul class="govuk-list scl-list--small">
+          {% for account_manager, is_lead in account_managers_with_lead %}
+          <li>
+            <div class="scl-key-list__item_header">
+              <a class="govuk-link govuk-link--no-visited-state scl-link--no-underline" href="##">{{ account_manager.first_name }} {{ account_manager.last_name }}</a>
+              {% if is_lead %}
+              <strong class="govuk-tag govuk-tag--turquoise scl-tag scl-tag--small govuk-!-static-margin-left-1">Lead</strong>
+              {% endif %}
+            </div>
+          </li>
           {% endfor %}
-          </ul>
+        </ul>
         {% else %}
-            <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small">No account managers</p>
-        {% endif %}
+    <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small">No account managers</p>
+{% endif %}
       </aside>
     </div>
   </main>

@@ -18,7 +18,7 @@
           <ul class="scl-key-list">
             {% for engagement in your_future_enagements %}
             <li class="scl-key-list__item">
-              <div class="scl-key-list__item_header">
+              <div class="scl-key-list__item_header scl-key-list__item_header--tall">
                 <a class="govuk-link govuk-link--no-visited-state scl-key-list__link" href="/engagement/{{ engagement.id }}"><strong class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--medium scl-tag--date scl-key-list__date">{{ engagement.date |date:"j M. Y" }}</strong><span class="scl-block-link-text">{{ engagement.title }} </span></a>
                 <button class="scl-key-list__button govuk-button scl-button--record scl-button--recording-paused" type="button" data-module="scl-transcription-button" data-scl-transcription-target="#transcription-target-{{ engagement.id }}">
                   <span class="scl-button__microphone">{% svg 'microphone' %}</span>

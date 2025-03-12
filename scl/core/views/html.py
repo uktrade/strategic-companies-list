@@ -6,7 +6,7 @@ from reversion.models import Version
 from django.http import JsonResponse
 
 from scl.core.forms import EngagementForm
-from scl.core.models import Company, Engagement
+from scl.core.models import Company, Engagement, CompanyAccountManager
 
 logger = logging.getLogger().warning
 
@@ -31,6 +31,12 @@ def company_briefing(request, duns_number):
 
     company = Company.objects.get(duns_number=duns_number)
     account_managers = list(company.account_manager.all())
+
+    account_managers_with_lead = []
+    for am in account_managers:
+        is_lead = CompanyAccountManager.objects.filter(company=company, account_manager=am, is_lead=True).exists()
+        account_managers_with_lead.append((am, is_lead))
+
     past_engagements = list(company.engagements.filter(
         date__lte=today).order_by('-date'))[0:4]
     is_privileged = request.user in account_managers
@@ -42,7 +48,7 @@ def company_briefing(request, duns_number):
         "company": company,
         "past_engagements": past_engagements,
         "is_privileged": is_privileged,
-        "account_managers": account_managers,
+        "account_managers_with_lead": account_managers_with_lead,
         "current_version": current_version,
     }
     return render(request, "company.html", context)

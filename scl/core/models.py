@@ -1,8 +1,9 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
 
-from .constants import COUNTRIES_AND_TERRITORIES
+from .constants import COUNTRIES_AND_TERRITORIES, SECTORS
 
 import reversion
 
@@ -38,6 +39,14 @@ class Company(models.Model):
     global_turnover_millions_usd = models.BigIntegerField(null=True, blank=True, verbose_name="Global turnover (millions USD)")
     global_number_of_employees = models.BigIntegerField(null=True, blank=True, verbose_name="Global number of employees")
 
+    sectors = ArrayField(
+        models.CharField(max_length=3, choices=SECTORS),
+        blank=True,
+        null=True,
+        default=list,
+        verbose_name="Sectors"
+    )
+
     account_manager = models.ManyToManyField(
         User,
         through="CompanyAccountManager",
@@ -52,6 +61,12 @@ class Company(models.Model):
     def global_turnover_billions_usd(self):
         return self.global_turnover_millions_usd / 1000
 
+    @property
+    def get_sectors_display(self):
+        if not self.sectors:
+            return ""
+        return ", ".join(dict(SECTORS).get(sector, sector) for sector in self.sectors)
+
     class Meta:
         verbose_name_plural = "companies"
         ordering = ["name", "duns_number", "id"]
@@ -63,14 +78,13 @@ class CompanyAccountManager(models.Model):
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     account_manager = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_lead = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=['company', 'account_manager'], name="company_account_manager")
         ]
-
-    class Meta:
         verbose_name = "account manager"
         verbose_name_plural = "account managers"
 
