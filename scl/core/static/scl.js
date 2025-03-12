@@ -3,6 +3,8 @@
     return new Promise((resolve) => setTimeout(resolve, duration));
   };
 
+  const getToken = ()=> document.querySelector("[data-scl-csrf-token]").getAttribute("data-scl-csrf-token");
+
   const minTimeFetch = async (minTime, resource, options) => {
     // Wraps fetch in an API where it has a minimum run time (in case it's really quick so
     // the user has a chance to see "Saving" or similar, and also avoids it from raising an
@@ -28,7 +30,7 @@
   };
   
   const registerEditButton = (editButton) => {
-    const token = editButton.getAttribute("data-scl-csrf-token");
+    const token = getToken()
     const editableSection = Array.from(
       document.querySelectorAll(
         editButton.getAttribute("data-scl-edit-button-target")
@@ -76,18 +78,19 @@
   };
 
   const registerSaveTranscriptButton = (button) => {
+    const token = getToken();
     const targetId = button.getAttribute("data-transcript-target");
     const endPoint = button.getAttribute("data-scl-endpoint");
 
     const saveTranscript = async () => {
       button.innerHTML = "Saving...";
-      data = document.querySelector(
+      const data = document.querySelector(
         `#transcription-target-${targetId} p span`
       ).innerHTML;
       const { error, response } = await minTimeFetch(750, endPoint, {
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}",
+          "X-CSRFToken": token,
         },
         method: "POST",
         body: JSON.stringify({ note: data }),
