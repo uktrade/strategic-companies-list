@@ -46,6 +46,8 @@ def company_briefing(request, duns_number):
 
     context = {
         "company": company,
+        "edit_endpoint": f'/api/v1/company/{company.duns_number}',
+        "add_engagement_link": f'/company-briefing/{company.duns_number}/add-engagement',
         "past_engagements": past_engagements,
         "is_privileged": is_privileged,
         "account_managers_with_lead": account_managers_with_lead,
@@ -72,6 +74,7 @@ def engagement(request, engagement_id):
 
     return render(request, "engagements.html", {
         "engagement": engagement,
+        "edit_endpoint": f'/api/v1/engagement/{engagement.id}',
         "engagement_first_version": engagement_first_version,
         "notes_versions": notes_versions,
     })
@@ -109,6 +112,7 @@ def company_engagements(request, duns_number):
 
     return render(request, "company_engagements.html", {
         "company": company,
+        "add_engagement_link": f'/company-briefing/{company.duns_number}/add-engagement',
         "engagements": engagements,
         "past_engagements": past_engagements,
         "is_privileged": is_privileged,

@@ -32,35 +32,7 @@
     {% endif %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
-        <div class="scl-content-header">
-          <h1 class="govuk-heading-l scl-content-header__heading govuk-!-margin-bottom-2">{{ company.name }}</h1>
-          <div>
-            {% if is_privileged %}
-            <button
-              class="govuk-button scl-content-header__button govuk-!-margin-bottom-2"
-              data-module="scl-edit-button"
-              data-scl-edit-button-target=".scl-editable"
-              data-scl-endpoint="/api/v1/company/{{ company.duns_number }}"
-            >
-              Edit
-            </button>
-            {% endif %}
-            <button
-              class="govuk-button scl-content-header__button govuk-!-margin-left-1 govuk-!-margin-bottom-2"
-              data-module="scl-print-button"
-            >
-              Print
-            </button>
-
-            {% if is_privileged %}
-            <a
-              href="/company-briefing/{{ company.duns_number }}/add-engagement" role="button" draggable="false" class="govuk-button scl-content-header__button govuk-!-margin-left-4 govuk-!-margin-bottom-2"
-            >
-              Add engagement
-            </a>
-            {% endif %}
-          </div>
-        </div>
+        {% include './partials/header.html' with edit=True edit_endpoint=edit_endpoint title=company.name add_engagement_link=add_engagement_link %}
         <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">D-U-N-S: {{ company.duns_number }}{% if company.global_hq_name %}, {{ company.global_hq_name}}{% endif %}</p>
         {% if company.sectors %}
         <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">Sectors: {{ company.get_sectors_display }}</p>

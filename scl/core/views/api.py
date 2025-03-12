@@ -62,6 +62,7 @@ def company_api(request, duns_number):
 
     if request.method == 'PATCH':
         with reversion.create_revision():
+            company.name = data.get('page_title').strip()
             company.key_people = data.get('key_people').strip()
             company.hmg_priorities = data.get('hmg_priorities').strip()
             company.company_priorities = data.get('company_priorities').strip()
@@ -93,7 +94,7 @@ def engagement_api(request, engagement_id):
 
     if request.method == 'PATCH':
         with reversion.create_revision():
-            engagement.title = data.get('engagement_title').strip()
+            engagement.title = data.get('page_title').strip()
             engagement.details = data.get('engagement_details').strip()
             engagement.save()
 

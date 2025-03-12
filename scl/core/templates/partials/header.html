@@ -1,0 +1,33 @@
+<div class="scl-content-header">
+    <div class="scl-content-header__heading">
+    <h1 data-scl-editable-field="page_title" class="govuk-heading-l govuk-!-margin-bottom-1 scl-editable">{{title}}</h1>
+    </div>
+    <div>
+    {% if edit %}
+    <button
+        class="govuk-button scl-content-header__button govuk-!-margin-bottom-2"
+        data-module="scl-edit-button"
+        data-scl-edit-button-target=".scl-editable"
+        data-scl-endpoint="{{edit_endpoint}}"
+        data-scl-csrf-token="{{ csrf_token }}"
+        >
+        Edit
+    </button>
+    {% endif %}
+    {% if add_engagement_link %}
+         {% if is_privileged %}
+            <a
+              href="{{add_engagement_link}}" role="button" class="govuk-button scl-content-header__button govuk-!-margin-left-4 govuk-!-margin-bottom-2"
+            >
+              Add engagement
+            </a>
+        {% endif %}
+    {% endif %}
+    <button
+        class="govuk-button scl-content-header__button govuk-!-margin-left-1 govuk-!-margin-bottom-2"
+        data-module="scl-print-button"
+        >
+        Print
+    </button>
+    </div>
+</div>

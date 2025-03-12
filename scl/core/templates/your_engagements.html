@@ -18,25 +18,7 @@
   <main class="govuk-main-wrapper" id="main-content">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
-        <div class="scl-content-header">
-            <h1 class="govuk-heading-l scl-content-header__heading govuk-!-margin-bottom-5">All engagements</h1>
-            <div>
-            <button
-              class="govuk-button scl-content-header__button govuk-!-margin-left-1 govuk-!-margin-bottom-2"
-              data-module="scl-print-button"
-            >
-              Print
-            </button>
-
-            {% if is_privileged %}
-            <a
-              href="/company-briefing/{{ company.duns_number }}/add-engagement" role="button" draggable="false" class="govuk-button scl-content-header__button govuk-!-margin-left-4 govuk-!-margin-bottom-2"
-            >
-              Add engagement
-            </a>
-            {% endif %}
-          </div>
-        </div>
+         {% include './partials/header.html' with title="All engagements" %}
       </div>
     </div>
     <div class="govuk-grid-row">
