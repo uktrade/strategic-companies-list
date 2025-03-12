@@ -6,7 +6,7 @@ from reversion.models import Version
 from django.http import JsonResponse
 
 from scl.core.forms import EngagementForm
-from scl.core.models import Company, Engagement, CompanyAccountManager
+from scl.core.models import Company, Engagement, CompanyAccountManager, Insight
 
 logger = logging.getLogger().warning
 
@@ -44,6 +44,9 @@ def company_briefing(request, duns_number):
     versions = Version.objects.get_for_object(company)
     current_version = versions.first()
 
+    company_priorities = list(company.insights.filter(insight_type=Insight.TYPE_COMPANY_PRIORITY).order_by('order'))
+    hmg_priorities = list(company.insights.filter(insight_type=Insight.TYPE_HMG_PRIORITY).order_by('order'))
+
     context = {
         "company": company,
         "edit_endpoint": f'/api/v1/company/{company.duns_number}',
@@ -52,6 +55,8 @@ def company_briefing(request, duns_number):
         "is_privileged": is_privileged,
         "account_managers_with_lead": account_managers_with_lead,
         "current_version": current_version,
+        "company_priorities": company_priorities,
+        "hmg_priorities": hmg_priorities,
     }
     return render(request, "company.html", context)
 

@@ -21,7 +21,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from scl.core.views.html import index, company_briefing, engagement, add_engagement, company_engagements, your_engagements
-from scl.core.views.api import aws_credentials_api, company_api, engagement_api, engagement_note_api
+from scl.core.views.api import aws_credentials_api, company_api, engagement_api, engagement_note_api, company_insight_api, insight_api
 from scl.core.views.healthcheck import lb_healthcheck
 
 
@@ -45,6 +45,8 @@ urlpatterns = [
 
     # API
     path("api/v1/company/<str:duns_number>", company_api),
+    path("api/v1/company/<str:duns_number>/insights/<str:insight_type>", company_insight_api),
+    path("api/v1/insights/<uuid:insight_id>", insight_api),
     path("api/v1/engagement/<uuid:engagement_id>", engagement_api),
     path("api/v1/engagement/<uuid:engagement_id>/note", engagement_note_api),
     path("api/v1/aws-credentials", aws_credentials_api),
