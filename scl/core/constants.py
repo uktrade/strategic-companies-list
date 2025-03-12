@@ -270,3 +270,26 @@ COUNTRIES_AND_TERRITORIES = (
     ("ZM","Zambia"),
     ("ZW","Zimbabwe"),
 )
+
+SECTORS = (
+    ("AER", "Aerospace"),
+    ("AGR", "Agriculture"),
+    ("AUT", "Automotive"),
+    ("CHM", "Chemicals"),
+    ("CON", "Construction"),
+    ("DEF", "Defence"),
+    ("EDU", "Education"),
+    ("ENE", "Energy"),
+    ("FIN", "Financial Services"),
+    ("FBT", "Food & Beverage"),
+    ("HLT", "Healthcare"),
+    ("ICT", "Information Technology"),
+    ("MFG", "Manufacturing"),
+    ("MED", "Media"),
+    ("MIN", "Mining"),
+    ("PHR", "Pharmaceuticals"),
+    ("RET", "Retail"),
+    ("TEL", "Telecommunications"),
+    ("TRA", "Transportation"),
+    ("UTL", "Utilities"),
+)

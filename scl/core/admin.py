@@ -1,23 +1,52 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django import forms
 from .models import User, Company, Engagement, EngagementNote
+from .constants import SECTORS
 
 from reversion.admin import VersionAdmin
 
 
 @admin.register(User)
 class UserAdminWithVersion(UserAdmin, VersionAdmin):
-    pass
+    fieldsets = (
+        (None, {'fields': ('username', 'email')}),
+        ('Personal info', {'fields': ('first_name', 'last_name')}),
+        ('Permissions', {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        }),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser'),
+        }),
+    )
 
 
 class CompanyAccountManagerInline(admin.TabularInline):
     model = Company.account_manager.through
     extra = 1
     autocomplete_fields = ["account_manager"]
+    fields = ["account_manager", "is_lead"]
+
+
+class CompanyAdminForm(forms.ModelForm):
+    sectors = forms.MultipleChoiceField(
+        choices=SECTORS,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    class Meta:
+        model = Company
+        fields = '__all__'
 
 
 @admin.register(Company)
 class CompanyAdmin(VersionAdmin):
+    form = CompanyAdminForm
     list_display = (
         "duns_number",
         "name",
