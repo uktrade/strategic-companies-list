@@ -22,7 +22,7 @@
   <main class="govuk-main-wrapper" id="main-content">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
-        {% include './partials/header.html' with edit=True edit_endpoint=edit_endpoint title=engagement.title %}
+        {% include './partials/header.html' with edit=True edit_endpoint=edit_endpoint title=engagement.title id=engagement.id %}
         <p class="govuk-body govuk-body-s">{{engagement.date}}</p>
       </div>
     </div>
@@ -30,27 +30,32 @@
       <div class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
         <p class="govuk-body scl-body--small">Engagement created {{ engagement_first_version.revision.date_created }} by <a class="govuk-link govuk-link--no-visited-state" href="#">{{ engagement_first_version.revision.user.first_name }} {{ engagement_first_version.revision.user.last_name }}</a></p>
-        <div data-scl-editable-field="engagement_details" class="scl-editable scl-editable--paragraphs">
+        <div data-scl-edit-source="editable-content" data-scl-payload="details" class="scl-editable scl-editable--paragraphs">
           {{ engagement.details | ensure_p | bleach | safe }}
         </div>
       </div>
     </div>
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
+      <h2 class="govuk-heading-m govuk-!-margin-top-8">Notes</h2>
         {% for note, note_first_version in notes_versions %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-4">
         <div class="scl-note">
           <p class="govuk-body scl-body--small">Note created {{ note_first_version.revision.date_created }} by <a class="govuk-link govuk-link--no-visited-state" href="#">{{ note_first_version.revision.user.first_name }} {{ note_first_version.revision.user.last_name }}</a></p>
           <button
             class="govuk-button"
+            data-module="scl-edit-button"
+            data-scl-method="PATCH"
             data-scl-endpoint="/api/v1/engagement/{{ engagement.id }}/note"
-            data-module="scl-delete-transcript"
-            data-scl-notes-id={{note.id}}
+            data-scl-edit-target="note-{{note.id}}"
+            data-scl-edit-id="{{note.id}}"
             >
-            Delete
+            Edit
           </button>
         </div>
-        {{ note.contents | ensure_p | bleach | safe }}
+        <p class="govuk-body scl-editable scl-editable--paragraphs" data-scl-edit-source="note-{{note.id}}" data-scl-payload="contents">
+        {{ note.contents | bleach | safe }}
+        </p>
         {% endfor %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
         <div class="scl-transcription scl-transcription--secondary">

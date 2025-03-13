@@ -32,7 +32,7 @@
     {% endif %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
-        {% include './partials/header.html' with edit=True edit_endpoint=edit_endpoint title=company.name add_engagement_link=add_engagement_link %}
+        {% include './partials/header.html' with edit=True edit_endpoint=edit_endpoint title=company.name add_engagement_link=add_engagement_link id=company.id %}
         <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">D-U-N-S: {{ company.duns_number }}{% if company.global_hq_name %}, {{ company.global_hq_name}}{% endif %}</p>
         {% if company.sectors %}
         <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">Sectors: {{ company.get_sectors_display }}</p>
@@ -58,7 +58,7 @@
         </ul>
         {% endif %}
         <h2 class="govuk-heading-m">Key people</h2>
-        <ul class="govuk-list govuk-list--bullet scl-editable" data-scl-editable-field="key_people">
+        <ul class="govuk-list govuk-list--bullet scl-editable" data-scl-edit-source="editable-content" data-scl-payload="key_people">
           {% if company.key_people %}
             {{ company.key_people | ensure_li | bleach | safe }}
           {% else %}
@@ -70,7 +70,7 @@
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--visible govuk-!-margin-top-7 govuk-!-margin-bottom-0">
         <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
         <h2 class="govuk-heading-m govuk-!-margin-top-3">Company current issues and priorities</h2>
-        <ol class="govuk-list govuk-list--number scl-editable" data-scl-editable-field="company_priorities">
+        <ol class="govuk-list govuk-list--number scl-editable" data-scl-edit-source="editable-content" data-scl-payload="company_priorities">
           {% if company.company_priorities %}
             {{ company.company_priorities | ensure_li | bleach | safe }}
           {% else %}
@@ -98,7 +98,7 @@
           {% endif %}
         </ol>
         <h2 class="govuk-heading-m">HMG priorities for engagement</h2>
-        <ol class="govuk-list govuk-list--number scl-editable" data-scl-editable-field="hmg_priorities">
+        <ol class="govuk-list govuk-list--number scl-editable" data-scl-edit-source="editable-content" data-scl-payload="hmg_priorities">
           {% if company.hmg_priorities %}
             {{ company.hmg_priorities | ensure_li | bleach | safe }}
           {% else %}
@@ -169,8 +169,8 @@
           {% endfor %}
         </ul>
         {% else %}
-    <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small">No account managers</p>
-{% endif %}
+          <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small">No account managers</p>
+      {% endif %}
       </aside>
     </div>
   </main>
