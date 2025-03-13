@@ -1,0 +1,9 @@
+.scl-body--hide-on-mobile {
+  display: none;
+}
+
+@media (min-width: 40.0625em) {
+  .scl-body--hide-on-mobile {
+    display: block;
+  }
+}

@@ -1,0 +1,45 @@
+.scl-tag {
+  /* A bit smaller than GOV.UK's, but since we capitalise them, it doesn't look smaller. Note
+     that OFFICIAL-SENSITIVE should be capitalised, so we capitalise in-text, not via CSS */
+  padding: 0 7px 0 7px;
+  font-weight: bold;
+  line-height: 22px;
+  font-size: 0.8rem;
+}
+
+:focus > .scl-tag {
+  background: transparent;
+  outline: 2px dotted #0b0c0c;
+  /* Still a touch close to the left on Desktop */
+  outline-offset: -3px;
+}
+
+.scl-tag--medium {
+  font-size: 13px;
+  padding: 2px 5px;
+}
+
+.scl-tag--small {
+  font-size: 11px;
+  padding: 1px 5px;
+  line-height: 15px;
+}
+
+.scl-tag--security {
+  /* A bit darker than GOV.UK's red so it looks less pink, especially when in the header against
+     a dark background, but it's still AAA-compliant contrast-wise */
+  background: #e88978;
+}
+
+.scl-tag--date {
+  width: 85px;
+  margin-right: 8px;
+  text-align: center;
+}
+
+.scl-tag--hanging {
+  float: right;
+  margin-top: -1px;
+  margin-bottom: 1px;
+  /* So text doesn't get too close underneath */
+}

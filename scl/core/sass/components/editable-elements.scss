@@ -1,0 +1,25 @@
+.scl-editable[contenteditable] {
+  padding-left: 0;
+}
+
+.scl-editable[contenteditable]:focus {
+  /* Override default browser styles */
+  outline: 0px solid transparent;
+}
+
+/* This is not BEM, but neither is the GOV.UK Design System on li, and it makes editing easier
+   because we don't care about classes on newly constucted elements */
+.scl-editable[contenteditable] > li,
+.scl-editable--paragraphs[contenteditable],
+h1.scl-editable[contenteditable] {
+  border: 1px dashed #0b0c0c;
+  padding: 5px;
+}
+
+.scl-editable--paragraphs[contenteditable] > p:last-child {
+  margin-bottom: 0;
+}
+
+.scl-editable--paragraphs[contenteditable] {
+  margin-bottom: 20px;
+}
