@@ -1,0 +1,99 @@
+.scl-button--record {
+  margin-bottom: 0;
+  border-radius: 20px;
+  height: 40px;
+  width: auto;
+  background: #1d70b8;
+}
+
+.scl-button--record:hover {
+  background: #16568e;
+}
+
+.scl-button__microphone,
+.scl-button__recording-animation {
+  display: none;
+}
+
+.scl-button--recording-paused > .scl-button__microphone,
+.scl-button--recording-active > .scl-button__recording-animation {
+  display: flex;
+  height: 22px;
+  width: 15px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.scl-button__icon {
+  overflow: visible;
+}
+
+.scl-button__icon--recording-animation {
+  position: relative;
+  top: 2px;
+}
+
+.scl-transcription {
+  margin-top: 0;
+}
+
+.scl-transcription--secondary {
+  margin-top: 50px;
+}
+
+.scl-transcription--secondary .scl-button--record {
+  float: left;
+  margin-right: 20px;
+}
+
+.scl-transcription__content {
+  margin: 0 10px 20px 0;
+}
+
+.scl-transcribe-notes div.scl-key-list__item_body {
+  padding: 0;
+}
+
+.scl-transcription-target {
+  display: none;
+  padding: 0 15px;
+  width: 100%;
+}
+
+.scl-transcription-target + button + button[data-module="scl-save-transcript"],
+.scl-transcription-target + button[data-module="scl-save-transcript"] {
+  display: none;
+}
+
+.scl-transcription-target--with-content,
+.scl-transcription-target--with-content
+  + button
+  + button[data-module="scl-save-transcript"],
+.scl-transcription-target--with-content
+  + button[data-module="scl-save-transcript"] {
+  display: block;
+}
+
+.scl-transcription-target--with-content p {
+  margin-top: 10px;
+  border: 1px solid #0b0c0c;
+  padding: 10px 0;
+}
+
+.scl-transcription-target__partial-output {
+  font-weight: bold;
+}
+
+.scl-transcription-target__partial-output--with-text {
+  padding-right: 5px;
+}
+
+.scl-transcription-target__partial-output--recording {
+  border-right: 2px solid #1d70b8;
+}
+
+@media (min-width: 40.0625em) {
+  .scl-transcription-target {
+    padding: 0;
+  }
+}

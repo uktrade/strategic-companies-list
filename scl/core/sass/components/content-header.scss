@@ -1,0 +1,18 @@
+.scl-content-header {
+  display: flex;
+}
+
+.scl-content-header__heading {
+  flex-grow: 1;
+}
+
+.scl-content-header__button {
+  /* Overrides width: 100% from govuk-button on mobile */
+  width: auto;
+}
+
+@media print {
+  .scl-content-header__button {
+    display: none;
+  }
+}

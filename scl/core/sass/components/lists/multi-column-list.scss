@@ -1,0 +1,16 @@
+.scl-list--multi-column {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* This is not BEM, but neither is the GOV.UK Design System on li */
+.scl-list--multi-column > li {
+  flex: 0 0 50%;
+  padding-bottom: 3px;
+}
+
+@media (min-width: 40.0625em) {
+  .scl-list--multi-column > li {
+    flex: 0 0 33.33333%;
+  }
+}

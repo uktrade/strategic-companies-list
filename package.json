@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "build": "bun build browser.js --outfile=bundle.js"
+    "build": "bun build browser.js --outfile=bundle.js",
+    "sass:watch": "sass scl/core/sass/scl.scss scl/core/static/css/scl.css -w --style=compressed"
   },
   "dependencies": {
     "@aws-sdk/client-transcribe-streaming": "^3.758.0",
@@ -8,6 +9,7 @@
     "readable-stream": "^4.7.0"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "sass": "^1.85.1"
   }
 }

@@ -1,0 +1,30 @@
+.scl-key-info__panel {
+  padding: 0;
+}
+
+.scl-key-info__panel-header {
+  padding: 15px 15px 0 15px;
+}
+
+.scl-key-info__panel-header-minilink {
+  float: right;
+}
+
+@media (min-width: 40.0625em) {
+  .scl-key-info {
+    border-bottom: 1px solid #b1b4b6;
+    background-color: #f8f8f8;
+    padding-top: 25px;
+    padding-bottom: 25px;
+  }
+
+  .scl-key-info__panel {
+    padding: 15px;
+    border: 1px solid rgb(177, 180, 182);
+    background: white;
+  }
+
+  .scl-key-info__panel-header {
+    padding: 0;
+  }
+}

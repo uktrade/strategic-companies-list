@@ -1,0 +1,76 @@
+.scl-key-list {
+  list-style-type: none;
+  border-top: 1px solid #b1b4b6;
+  margin: 0;
+  padding: 0;
+  font-size: 1.1875rem;
+}
+
+.scl-key-list__item_header {
+  align-items: center;
+  display: flex;
+}
+
+.scl-key-list__item_header--tall {
+  line-height: 47px;
+  height: 47px;
+  align-items: center;
+  display: flex;
+}
+
+.scl-key-list__item {
+  margin-bottom: 0;
+  border-bottom: 1px solid #b1b4b6;
+}
+
+.scl-key-list__link {
+  flex-grow: 1;
+  padding-left: 15px;
+  padding-right: 15px;
+  text-decoration-line: none;
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* The below for when this is not in a the flex parent of .scl-key-list__item_header */
+  display: block;
+  height: 47px;
+  line-height: 47px;
+}
+
+.scl-key-list__link:hover {
+  text-decoration-line: underline;
+}
+
+.scl-key-list__link:focus {
+  text-decoration-line: none;
+}
+
+.scl-key-list__date {
+  margin-right: 8px;
+  position: relative;
+  top: -2px;
+}
+
+.scl-key-list__button {
+  margin-right: 15px;
+  margin-left: 5px;
+}
+
+@media (min-width: 40.0625em) {
+  .scl-key-list {
+    margin-bottom: 20px;
+  }
+
+  .scl-key-list__item_body {
+    padding: 0 5px;
+  }
+
+  .scl-key-list__link {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .scl-key-list__button {
+    margin-right: 0;
+  }
+}
