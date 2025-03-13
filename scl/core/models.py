@@ -19,20 +19,13 @@ class User(AbstractUser):
 
 @reversion.register()
 class Company(models.Model):
-    # Auto generated
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     last_updated = models.DateTimeField(auto_now=True)
 
-    # Required
     name = models.CharField(blank=False, null=False, max_length=128)
-    duns_number = models.CharField(
-        blank=False, null=False, max_length=9, verbose_name='DUNS number')
+    duns_number = models.CharField(blank=False, null=False, max_length=9, verbose_name='DUNS number')
 
-    # Optional
     key_people = models.TextField(blank=True, null=False, default='')
-    company_priorities = models.TextField(blank=True, null=False, default='')
-    hmg_priorities = models.TextField(
-        blank=True, null=False, default='', verbose_name='HMG priorities')
 
     global_hq_name = models.CharField(max_length=128, blank=True, null=False, default='', verbose_name="Global HQ name")
     global_hq_country = models.CharField(max_length=5, null=True, blank=True, choices=COUNTRIES_AND_TERRITORIES, verbose_name="Global HQ country")
@@ -90,16 +83,39 @@ class CompanyAccountManager(models.Model):
 
 
 @reversion.register()
+class Insight(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    TYPE_COMPANY_PRIORITY = 'company_priority'
+    TYPE_HMG_PRIORITY = 'hmg_priority'
+
+    INSIGHT_TYPES = [
+        (TYPE_COMPANY_PRIORITY, 'Company Priority'),
+        (TYPE_HMG_PRIORITY, 'HMG Priority'),
+    ]
+
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='insights')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_insights')
+    insight_type = models.CharField(max_length=20, choices=INSIGHT_TYPES)
+    title = models.CharField(max_length=255)
+    details = models.TextField(blank=True)
+
+    order = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['insight_type', 'order', '-created_at']
+
+
+@reversion.register()
 class Engagement(models.Model):
-    # Auto generated
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    # Required
     title = models.CharField(blank=False, null=False, max_length=128)
     date = models.DateField(null=True, blank=False)
 
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="engagements")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="engagements")
     details = models.TextField(null=True, blank=True)
 
 
