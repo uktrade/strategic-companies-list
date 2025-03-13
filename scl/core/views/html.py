@@ -44,6 +44,7 @@ def company_briefing(request, duns_number):
     versions = Version.objects.get_for_object(company)
     current_version = versions.first()
 
+    key_people = list(company.insights.filter(insight_type=Insight.TYPE_KEY_PERSON).order_by('order'))
     company_priorities = list(company.insights.filter(insight_type=Insight.TYPE_COMPANY_PRIORITY).order_by('order'))
     hmg_priorities = list(company.insights.filter(insight_type=Insight.TYPE_HMG_PRIORITY).order_by('order'))
 
@@ -55,6 +56,7 @@ def company_briefing(request, duns_number):
         "is_privileged": is_privileged,
         "account_managers_with_lead": account_managers_with_lead,
         "current_version": current_version,
+        "key_people": key_people,
         "company_priorities": company_priorities,
         "hmg_priorities": hmg_priorities,
     }
