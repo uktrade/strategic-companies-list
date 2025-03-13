@@ -6,9 +6,6 @@
     {% if edit %}
     <button
         class="govuk-button scl-content-header__button govuk-!-margin-bottom-2"
-        {% comment %} data-module="scl-edit-button"
-        data-scl-edit-button-target=".scl-editable"
-        data-scl-endpoint="{{edit_endpoint}}" {% endcomment %}
         data-module="scl-edit-button"
         data-scl-method="PATCH"
         data-scl-endpoint="{{edit_endpoint}}"
