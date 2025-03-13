@@ -74,7 +74,7 @@
           {% if company_priorities %}
           <ul class="govuk-list" id="company-priorities-list">
             {% for priority in company_priorities %}
-            <li class="scl-priority-item" data-priority-id="{{ priority.id }}">
+            <li class="scl-priority-item{% if forloop.counter > 5 %} scl-priority-item--beyond-initial hidden{% endif %}" data-priority-id="{{ priority.id }}">
               <div class="scl-priority-content">
                 <b class="scl-priority-title">{{ priority.title }}</b>
                 <div class="scl-priority-details">{{ priority.details|linebreaks }}</div>
@@ -87,19 +87,19 @@
                 <button class="govuk-button govuk-button--warning scl-button-delete-priority">Delete</button>
               </div>
             </li>
-            {% if forloop.counter == 5 and company_priorities|length > 5 %}
+            {% endfor %}
+            {% if company_priorities|length > 5 %}
             <li class="scl-priority-more-toggle" data-more-text="Show all priorities" data-less-text="Show fewer priorities">
               <button class="govuk-button govuk-button--secondary">Show all priorities</button>
             </li>
             {% endif %}
-            {% endfor %}
           </ul>
-          <p class="govuk-body" id="no-company-priorities-message" style="display: none;">No company priorities have been set.</p>
+          <p class="govuk-body" id="no-company-priorities-message" hidden>No company priorities have been set.</p>
           {% else %}
           <p class="govuk-body" id="no-company-priorities-message">No company priorities have been set.</p>
           {% endif %}
 
-          <button id="add-company-priority-button" class="govuk-button govuk-!-margin-top-2 scl-priority-button--hidden">
+          <button id="add-company-priority-button" class="govuk-button govuk-!-margin-top-2 scl-priority-button--hidden" hidden>
             Add company priority
           </button>
         </div>
@@ -112,7 +112,7 @@
           {% if hmg_priorities %}
           <ul class="govuk-list" id="hmg-priorities-list">
             {% for priority in hmg_priorities %}
-            <li class="scl-priority-item" data-priority-id="{{ priority.id }}">
+            <li class="scl-priority-item{% if forloop.counter > 5 %} scl-priority-item--beyond-initial hidden{% endif %}" data-priority-id="{{ priority.id }}">
               <div class="scl-priority-content">
                 <b class="scl-priority-title">{{ priority.title }}</b>
                 <div class="scl-priority-details">{{ priority.details|linebreaks }}</div>
@@ -125,19 +125,19 @@
                 <button class="govuk-button govuk-button--warning scl-button-delete-priority">Delete</button>
               </div>
             </li>
-            {% if forloop.counter == 5 and hmg_priorities|length > 5 %}
+            {% endfor %}
+            {% if hmg_priorities|length > 5 %}
             <li class="scl-priority-more-toggle" data-more-text="Show all priorities" data-less-text="Show fewer priorities">
               <button class="govuk-button govuk-button--secondary">Show all priorities</button>
             </li>
             {% endif %}
-            {% endfor %}
           </ul>
-          <p class="govuk-body" id="no-hmg-priorities-message" style="display: none;">No HMG priorities have been set.</p>
+          <p class="govuk-body" id="no-hmg-priorities-message" hidden>No HMG priorities have been set.</p>
           {% else %}
           <p class="govuk-body" id="no-hmg-priorities-message">No HMG priorities have been set.</p>
           {% endif %}
 
-          <button id="add-hmg-priority-button" class="govuk-button govuk-!-margin-top-2 scl-priority-button--hidden">
+          <button id="add-hmg-priority-button" class="govuk-button govuk-!-margin-top-2 scl-priority-button--hidden" hidden>
             Add HMG priority
           </button>
         </div>
@@ -222,18 +222,20 @@
     // Helper function to safely create DOM elements
     const createElement = (tag, attributes = {}, children = []) => {
       const element = document.createElement(tag);
-      
+
       // Set attributes
       Object.entries(attributes).forEach(([key, value]) => {
         if (key === 'className') {
           element.className = value;
         } else if (key === 'textContent') {
           element.textContent = value;
+        } else if (key === 'hidden') {
+          if (value) element.setAttribute('hidden', '');
         } else {
           element.setAttribute(key, value);
         }
       });
-      
+
       // Append children
       children.forEach(child => {
         if (typeof child === 'string') {
@@ -242,7 +244,7 @@
           element.appendChild(child);
         }
       });
-      
+
       return element;
     };
 
@@ -258,7 +260,7 @@
         const minute = now.getMinutes().toString().padStart(2, '0');
         const ampm = now.getHours() >= 12 ? 'p.m.' : 'a.m.';
 
-        lastUpdatedElement.textContent = `Last updated: ${month} ${day}, ${year}, ${hour}:${minute} ${ampm}`;
+        lastUpdatedElement.textContent = `Last updated: ${day} ${month} ${year}, ${hour}:${minute} ${ampm}`;
      }
     };
 
@@ -279,19 +281,19 @@
         });
 
         addButtons.forEach(button => {
-          button.style.display = pageIsEditing ? 'inline-block' : 'none';
+          button.toggleAttribute('hidden', !pageIsEditing);
         });
 
         // When editing, show all priorities
         if (pageIsEditing) {
           // Hide all "Show more" toggles
           moreToggles.forEach(toggle => {
-            toggle.style.display = 'none';
+            toggle.toggleAttribute('hidden', true);
           });
 
           // Make all priorities visible
           document.querySelectorAll('.scl-priority-item').forEach(item => {
-            item.style.display = 'list-item';
+            item.toggleAttribute('hidden', false);
           });
         } else {
           // When not editing, manage "Show more" toggles
@@ -330,7 +332,7 @@
 
             // Hide "no priorities" message
             if (noMessage) {
-              noMessage.style.display = 'none';
+              noMessage.toggleAttribute('hidden', true);
             }
             return;
           }
@@ -342,7 +344,7 @@
 
           // Update "no priorities" message visibility
           if (noMessage) {
-            noMessage.style.display = items.length === 0 ? 'block' : 'none';
+            noMessage.toggleAttribute('hidden', items.length > 0);
           }
 
           // If we have no items, remove the list
@@ -361,9 +363,11 @@
             // Hide priorities beyond the first 5
             items.forEach((item, index) => {
               if (index >= 5) {
-                item.style.display = 'none';
+                item.classList.add('scl-priority-item--beyond-initial');
+                item.toggleAttribute('hidden', true);
               } else {
-                item.style.display = 'list-item';
+                item.classList.remove('scl-priority-item--beyond-initial');
+                item.toggleAttribute('hidden', false);
               }
             });
 
@@ -372,7 +376,7 @@
             newToggle.className = 'scl-priority-more-toggle';
             newToggle.dataset.moreText = 'Show all priorities';
             newToggle.dataset.lessText = 'Show fewer priorities';
-            
+
             const toggleButton = document.createElement('button');
             toggleButton.className = 'govuk-button govuk-button--secondary';
             toggleButton.textContent = 'Show all priorities';
@@ -396,14 +400,14 @@
               // Show/hide priorities beyond the first 5
               items.forEach((item, index) => {
                 if (index >= 5) {
-                  item.style.display = isExpanded ? 'list-item' : 'none';
+                  item.toggleAttribute('hidden', !isExpanded);
                 }
               });
             });
           } else {
             // Show all priorities if we have 5 or fewer
             items.forEach(item => {
-              item.style.display = 'list-item';
+              item.toggleAttribute('hidden', false);
             });
           }
         });
@@ -436,7 +440,7 @@
 
             // If list exists but has no items, or doesn't exist, show the message
             if ((!list || list.querySelectorAll('.scl-priority-item').length === 0) && noMessage) {
-              noMessage.style.display = 'block';
+              noMessage.toggleAttribute('hidden', false);
               if (list) list.remove();
             }
           });
@@ -467,7 +471,7 @@
       addButton.addEventListener('click', () => {
         // Hide "no priorities" message when adding a new priority
         if (noMessage) {
-          noMessage.style.display = 'none';
+          noMessage.toggleAttribute('hidden', true);
         }
 
         // Create or get list
@@ -489,56 +493,56 @@
 
         // Create the form elements
         const editingDiv = createElement('div', { className: 'scl-priority-editing' });
-        
+
         // Title field
         const titleGroup = createElement('div', { className: 'govuk-form-group' });
-        const titleLabel = createElement('label', { 
-          className: 'govuk-label', 
-          for: `${tempId}-title` 
+        const titleLabel = createElement('label', {
+          className: 'govuk-label',
+          for: `${tempId}-title`
         }, ['Priority']);
-        const titleInput = createElement('input', { 
-          className: 'govuk-input', 
-          id: `${tempId}-title`, 
-          name: 'title', 
-          type: 'text' 
+        const titleInput = createElement('input', {
+          className: 'govuk-input',
+          id: `${tempId}-title`,
+          name: 'title',
+          type: 'text'
         });
-        
+
         titleGroup.appendChild(titleLabel);
         titleGroup.appendChild(titleInput);
-        
+
         // Details field
         const detailsGroup = createElement('div', { className: 'govuk-form-group' });
-        const detailsLabel = createElement('label', { 
-          className: 'govuk-label', 
-          for: `${tempId}-details` 
+        const detailsLabel = createElement('label', {
+          className: 'govuk-label',
+          for: `${tempId}-details`
         }, ['Details']);
-        const detailsTextarea = createElement('textarea', { 
-          className: 'govuk-textarea', 
-          id: `${tempId}-details`, 
-          name: 'details', 
-          rows: '5' 
+        const detailsTextarea = createElement('textarea', {
+          className: 'govuk-textarea',
+          id: `${tempId}-details`,
+          name: 'details',
+          rows: '5'
         });
-        
+
         detailsGroup.appendChild(detailsLabel);
         detailsGroup.appendChild(detailsTextarea);
-        
+
         // Buttons
         const buttonGroup = createElement('div', { className: 'govuk-button-group' });
-        const saveButton = createElement('button', { 
-          className: 'govuk-button scl-priority-save' 
+        const saveButton = createElement('button', {
+          className: 'govuk-button scl-priority-save'
         }, ['Save']);
-        const cancelButton = createElement('button', { 
-          className: 'govuk-button govuk-button--secondary scl-priority-cancel' 
+        const cancelButton = createElement('button', {
+          className: 'govuk-button govuk-button--secondary scl-priority-cancel'
         }, ['Cancel']);
-        
+
         buttonGroup.appendChild(saveButton);
         buttonGroup.appendChild(cancelButton);
-        
+
         // Assemble the form
         editingDiv.appendChild(titleGroup);
         editingDiv.appendChild(detailsGroup);
         editingDiv.appendChild(buttonGroup);
-        
+
         newItem.appendChild(editingDiv);
         priorityList.appendChild(newItem);
 
@@ -570,7 +574,7 @@
           if (listElement && listElement.querySelectorAll('.scl-priority-item').length === 0) {
             listElement.remove();
             if (noMessage) {
-              noMessage.style.display = 'block';
+              noMessage.toggleAttribute('hidden', false);
             }
           }
         });
@@ -613,20 +617,20 @@
           item.setAttribute('data-priority-id', data.id);
           item.removeAttribute('data-temp-id');
           item.classList.remove('scl-priority-item--new');
-          
+
           // Clear existing content
           while (item.firstChild) {
             item.removeChild(item.firstChild);
           }
-          
+
           // Create the content elements
           const contentDiv = createElement('div', { className: 'scl-priority-content' });
-          
+
           // Title
-          const titleElement = createElement('b', { 
-            className: 'scl-priority-title' 
+          const titleElement = createElement('b', {
+            className: 'scl-priority-title'
           }, [data.title]);
-          
+
           // Details with line breaks
           const detailsElement = createElement('div', { className: 'scl-priority-details' });
           data.details.split('\n').forEach((line, index, array) => {
@@ -635,32 +639,32 @@
               detailsElement.appendChild(document.createElement('br'));
             }
           });
-          
+
           // Author info
-          const authorInfo = createElement('p', { 
-            className: 'govuk-body-s govuk-!-margin-top-1' 
+          const authorInfo = createElement('p', {
+            className: 'govuk-body-s govuk-!-margin-top-1'
           }, [`Added by ${data.created_by} on ${new Date(data.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`]);
-          
+
           contentDiv.appendChild(titleElement);
           contentDiv.appendChild(detailsElement);
           contentDiv.appendChild(authorInfo);
-          
+
           // Action buttons
-          const actionsDiv = createElement('div', { 
-            className: `scl-priority-actions ${!pageIsEditing ? 'scl-priority-actions--hidden' : ''}` 
+          const actionsDiv = createElement('div', {
+            className: `scl-priority-actions ${!pageIsEditing ? 'scl-priority-actions--hidden' : ''}`
           });
-          
-          const editButton = createElement('button', { 
-            className: 'govuk-button govuk-button--secondary scl-button-edit-priority' 
+
+          const editButton = createElement('button', {
+            className: 'govuk-button govuk-button--secondary scl-button-edit-priority'
           }, ['Edit']);
-          
-          const deleteButton = createElement('button', { 
-            className: 'govuk-button govuk-button--warning scl-button-delete-priority' 
+
+          const deleteButton = createElement('button', {
+            className: 'govuk-button govuk-button--warning scl-button-delete-priority'
           }, ['Delete']);
-          
+
           actionsDiv.appendChild(editButton);
           actionsDiv.appendChild(deleteButton);
-          
+
           item.appendChild(contentDiv);
           item.appendChild(actionsDiv);
 
@@ -669,7 +673,7 @@
 
           // Hide "no priorities" message if it exists
           if (noMessage) {
-            noMessage.style.display = 'none';
+            noMessage.toggleAttribute('hidden', true);
           }
 
           // Refresh the priority display
@@ -705,90 +709,90 @@
               }
             });
           }
-          
+
           // Save original DOM structure
           item.setAttribute('data-original-structure', 'saved');
           // Store the original elements for later restore
           const origContent = item.cloneNode(true);
-          
+
           // Clear the item
           while (item.firstChild) {
             item.removeChild(item.firstChild);
           }
-          
+
           // Create editing form
           const editingDiv = createElement('div', { className: 'scl-priority-editing' });
-          
+
           // Title field
           const titleGroup = createElement('div', { className: 'govuk-form-group' });
-          const titleLabel = createElement('label', { 
-            className: 'govuk-label', 
-            for: `edit-${priorityId}-title` 
+          const titleLabel = createElement('label', {
+            className: 'govuk-label',
+            for: `edit-${priorityId}-title`
           }, ['Priority']);
-          const titleInput = createElement('input', { 
-            className: 'govuk-input', 
-            id: `edit-${priorityId}-title`, 
-            name: 'title', 
+          const titleInput = createElement('input', {
+            className: 'govuk-input',
+            id: `edit-${priorityId}-title`,
+            name: 'title',
             type: 'text',
             value: currentTitle
           });
-          
+
           titleGroup.appendChild(titleLabel);
           titleGroup.appendChild(titleInput);
-          
+
           // Details field
           const detailsGroup = createElement('div', { className: 'govuk-form-group' });
-          const detailsLabel = createElement('label', { 
-            className: 'govuk-label', 
-            for: `edit-${priorityId}-details` 
+          const detailsLabel = createElement('label', {
+            className: 'govuk-label',
+            for: `edit-${priorityId}-details`
           }, ['Details']);
-          const detailsTextarea = createElement('textarea', { 
-            className: 'govuk-textarea', 
-            id: `edit-${priorityId}-details`, 
-            name: 'details', 
+          const detailsTextarea = createElement('textarea', {
+            className: 'govuk-textarea',
+            id: `edit-${priorityId}-details`,
+            name: 'details',
             rows: '5'
           });
           detailsTextarea.textContent = currentDetails.trim();
-          
+
           detailsGroup.appendChild(detailsLabel);
           detailsGroup.appendChild(detailsTextarea);
-          
+
           // Buttons
           const buttonGroup = createElement('div', { className: 'govuk-button-group' });
-          const saveButton = createElement('button', { 
-            className: 'govuk-button scl-priority-update' 
+          const saveButton = createElement('button', {
+            className: 'govuk-button scl-priority-update'
           }, ['Save']);
-          const cancelButton = createElement('button', { 
-            className: 'govuk-button govuk-button--secondary scl-priority-cancel-edit' 
+          const cancelButton = createElement('button', {
+            className: 'govuk-button govuk-button--secondary scl-priority-cancel-edit'
           }, ['Cancel']);
-          
+
           buttonGroup.appendChild(saveButton);
           buttonGroup.appendChild(cancelButton);
-          
+
           // Assemble the form
           editingDiv.appendChild(titleGroup);
           editingDiv.appendChild(detailsGroup);
           editingDiv.appendChild(buttonGroup);
-          
+
           item.appendChild(editingDiv);
 
           // Setup save/cancel handlers for editing
           const updateButton = item.querySelector('.scl-priority-update');
-          
+
           // Cancel editing
           cancelButton.addEventListener('click', () => {
             // Restore original content by replacing the entire item
             while (item.firstChild) {
               item.removeChild(item.firstChild);
             }
-            
+
             // Clone each child node from the original content
             Array.from(origContent.childNodes).forEach(node => {
               item.appendChild(node.cloneNode(true));
             });
-            
+
             item.removeAttribute('data-original-structure');
-            
+
             // Re-setup event listeners
             setupItemEventListeners(item);
           });
@@ -831,15 +835,15 @@
             while (item.firstChild) {
               item.removeChild(item.firstChild);
             }
-            
+
             // Create the content elements
             const contentDiv = createElement('div', { className: 'scl-priority-content' });
-            
+
             // Title
-            const titleElement = createElement('b', { 
-              className: 'scl-priority-title' 
+            const titleElement = createElement('b', {
+              className: 'scl-priority-title'
             }, [data.title]);
-            
+
             // Details with line breaks
             const detailsElement = createElement('div', { className: 'scl-priority-details' });
             data.details.split('\n').forEach((line, index, array) => {
@@ -848,32 +852,32 @@
                 detailsElement.appendChild(document.createElement('br'));
               }
             });
-            
+
             // Author info
-            const authorInfo = createElement('p', { 
-              className: 'govuk-body-s govuk-!-margin-top-1' 
+            const authorInfo = createElement('p', {
+              className: 'govuk-body-s govuk-!-margin-top-1'
             }, [`Added by ${data.created_by} on ${new Date(data.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`]);
-            
+
             contentDiv.appendChild(titleElement);
             contentDiv.appendChild(detailsElement);
             contentDiv.appendChild(authorInfo);
-            
+
             // Action buttons
-            const actionsDiv = createElement('div', { 
-              className: `scl-priority-actions ${!pageIsEditing ? 'scl-priority-actions--hidden' : ''}` 
+            const actionsDiv = createElement('div', {
+              className: `scl-priority-actions ${!pageIsEditing ? 'scl-priority-actions--hidden' : ''}`
             });
-            
-            const editButton = createElement('button', { 
-              className: 'govuk-button govuk-button--secondary scl-button-edit-priority' 
+
+            const editButton = createElement('button', {
+              className: 'govuk-button govuk-button--secondary scl-button-edit-priority'
             }, ['Edit']);
-            
-            const deleteButton = createElement('button', { 
-              className: 'govuk-button govuk-button--warning scl-button-delete-priority' 
+
+            const deleteButton = createElement('button', {
+              className: 'govuk-button govuk-button--warning scl-button-delete-priority'
             }, ['Delete']);
-            
+
             actionsDiv.appendChild(editButton);
             actionsDiv.appendChild(deleteButton);
-            
+
             item.appendChild(contentDiv);
             item.appendChild(actionsDiv);
 
@@ -917,7 +921,7 @@
           if (listElement && listElement.querySelectorAll('.scl-priority-item').length === 0) {
             listElement.remove();
             if (noMessage) {
-              noMessage.style.display = 'block';
+              noMessage.toggleAttribute('hidden', false);
             }
           } else if (listElement) {
             // Refresh the priority display
@@ -959,11 +963,11 @@
         // Update "no priorities" message visibility
         if (noMessage) {
           if (!list || !list.querySelectorAll('.scl-priority-item').length) {
-            noMessage.style.display = 'block';
+            noMessage.toggleAttribute('hidden', false);
             if (list) list.remove();
             return;
           } else {
-            noMessage.style.display = 'none';
+            noMessage.toggleAttribute('hidden', true);
           }
         }
 
@@ -982,9 +986,11 @@
           // Hide priorities beyond the first 5
           items.forEach((item, index) => {
             if (index >= 5) {
-              item.style.display = 'none';
+              item.classList.add('scl-priority-item--beyond-initial');
+              item.toggleAttribute('hidden', true);
             } else {
-              item.style.display = 'list-item';
+              item.classList.remove('scl-priority-item--beyond-initial');
+              item.toggleAttribute('hidden', false);
             }
           });
 
@@ -992,15 +998,15 @@
           const newToggle = createElement('li', {
             className: 'scl-priority-more-toggle'
           });
-          
+
           newToggle.dataset.moreText = 'Show all priorities';
           newToggle.dataset.lessText = 'Show fewer priorities';
-          
+
           const toggleButton = createElement('button', {
             className: 'govuk-button govuk-button--secondary',
             textContent: 'Show all priorities'
           });
-          
+
           newToggle.appendChild(toggleButton);
 
           // Insert after the 5th item
@@ -1021,14 +1027,14 @@
             // Show/hide priorities beyond the first 5
             items.forEach((item, index) => {
               if (index >= 5) {
-                item.style.display = isExpanded ? 'list-item' : 'none';
+                item.toggleAttribute('hidden', !isExpanded);
               }
             });
           });
         } else {
           // Show all priorities if we have 5 or fewer
           items.forEach(item => {
-            item.style.display = 'list-item';
+            item.toggleAttribute('hidden', false);
           });
         }
       });
@@ -1044,39 +1050,49 @@
   list-style-type: none;
 }
 
-  .govuk-list .scl-priority-item:before {
-    content: none;
-  }
+.govuk-list .scl-priority-item:before {
+  content: none;
+}
 
-  .scl-priority-actions {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.5rem;
-  }
+.scl-priority-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
 
-  .scl-priority-actions--hidden {
-    display: none;
-  }
+.scl-priority-actions--hidden {
+  display: none;
+}
 
-  .scl-priority-editing {
-    margin-top: 1rem;
-  }
+.scl-priority-editing {
+  margin-top: 1rem;
+}
 
-  .scl-priority-more-toggle {
-    margin: 1rem 0;
-    list-style: none;
-  }
+.scl-priority-more-toggle {
+  margin: 1rem 0;
+  list-style: none;
+}
 
-  .govuk-list .scl-priority-more-toggle:before {
-    content: none;
-  }
+.govuk-list .scl-priority-more-toggle:before {
+  content: none;
+}
 
-  .govuk-button--warning {
-    background-color: #d4351c;
-  }
+.govuk-button--warning {
+  background-color: #d4351c;
+}
 
-  .govuk-button--warning:hover {
-    background-color: #aa2a16;
-  }
+.govuk-button--warning:hover {
+  background-color: #aa2a16;
+}
+
+/* Add specific styles for the hidden class - this can be useful for transitions later */
+.scl-priority-item--beyond-initial.hidden {
+  display: none;
+}
+
+/* For browsers that don't fully support the hidden attribute (rare nowadays) */
+[hidden] {
+  display: none !important;
+}
 </style>
 {% endblock %}
