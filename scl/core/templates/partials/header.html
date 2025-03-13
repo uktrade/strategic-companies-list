@@ -1,34 +1,22 @@
 <div class="scl-content-header">
-    <div class="scl-content-header__heading">
+  <div class="scl-content-header__heading">
     <h1 class="govuk-heading-l govuk-!-margin-bottom-1">{{title}}</h1>
-    </div>
-    <div>
+  </div>
+  <div>
     {% if edit %}
-    <button
-        class="govuk-button scl-content-header__button govuk-!-margin-bottom-2"
-        data-module="scl-edit-button"
-        data-scl-method="PATCH"
-        data-scl-endpoint="{{edit_endpoint}}"
-        data-scl-edit-target="editable-content"
-        data-scl-edit-id="{{id}}"
-        >
-        Edit
+    <button class="govuk-button scl-content-header__button govuk-!-margin-bottom-2" data-module="scl-edit-button" data-scl-method="PATCH" data-scl-endpoint="{{edit_endpoint}}" data-scl-edit-target="editable-content" data-scl-edit-id="{{id}}">
+      Edit
+    </button>
+    <button class="govuk-button scl-content-header__button" data-module="scl-print-button">
+      Print
     </button>
     {% endif %}
     {% if add_engagement_link %}
-         {% if is_privileged %}
-            <a
-              href="{{add_engagement_link}}" role="button" class="govuk-button scl-content-header__button govuk-!-margin-left-4 govuk-!-margin-bottom-2"
-            >
-              Add engagement
-            </a>
-        {% endif %}
+    {% if is_privileged %}
+    <a href="{{add_engagement_link}}" role="button" class="govuk-button scl-content-header__button">
+      Add engagement
+    </a>
     {% endif %}
-    <button
-        class="govuk-button scl-content-header__button govuk-!-margin-left-1 govuk-!-margin-bottom-2"
-        data-module="scl-print-button"
-        >
-        Print
-    </button>
-    </div>
+    {% endif %}
+  </div>
 </div>
