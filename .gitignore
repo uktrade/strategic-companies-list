@@ -173,6 +173,7 @@ cython_debug/
 # Node
 node_modules/
 bundle.js
+package-lock.json
 
 # macOS
 .DS_Store
