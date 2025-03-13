@@ -51,7 +51,6 @@ def aws_credentials_api(request):
 
 
 def company_api(request, duns_number):
-    data = json.loads(request.body)
     company = Company.objects.get(duns_number=duns_number)
 
     account_managers = list(company.account_manager.all())
@@ -61,12 +60,11 @@ def company_api(request, duns_number):
 
     if request.method == 'PATCH':
         with reversion.create_revision():
-            company.key_people = data.get('key_people').strip()
             company.save()
 
             reversion.set_user(request.user)
             reversion.set_comment(
-                "Updated key_people via API "
+                "Updated company via API "
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
@@ -108,10 +106,10 @@ def company_insight_api(request, duns_number, insight_type):
 
         with reversion.create_revision():
             model_insight_type = insight_type
-            if insight_type == 'company_priority':
-                model_insight_type = Insight.TYPE_COMPANY_PRIORITY
-            elif insight_type == 'hmg_priority':
-                model_insight_type = Insight.TYPE_HMG_PRIORITY
+
+            valid_types = dict(Insight.INSIGHT_TYPES).keys()
+            if insight_type not in valid_types:
+                return JsonResponse({'error': 'Invalid insight type'}, status=400)
 
             insight = Insight.objects.create(
                 company=company,
@@ -156,7 +154,8 @@ def insight_api(request, insight_id):
             'details': insight.details,
             'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
             'created_at': insight.created_at.isoformat(),
-            'order': insight.order
+            'order': insight.order,
+            'insight_type': insight.insight_type
         })
 
     elif request.method == 'PATCH':
@@ -184,7 +183,8 @@ def insight_api(request, insight_id):
             'details': insight.details,
             'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
             'created_at': insight.created_at.isoformat(),
-            'order': insight.order
+            'order': insight.order,
+            'insight_type': insight.insight_type
         })
 
     elif request.method == 'DELETE':

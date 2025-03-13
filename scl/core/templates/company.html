@@ -44,7 +44,7 @@
       <section class="govuk-grid-column-two-thirds">
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
         {% if company.global_hq_country or company.global_turnover_millions_usd or global_number_of_employees.global_number_of_employees %}
-        <h2 class="govuk-heading-m">Key facts</h2>
+        <h2 class="govuk-heading-m">Key Facts</h2>
         <ul class="govuk-list govuk-list--bullet">
           {% if company.global_hq_country %}
           <li>Headquartered in {{ company.get_global_hq_country_display }}</li>
@@ -58,48 +58,72 @@
         </ul>
         {% endif %}
         <h2 class="govuk-heading-m">Key People</h2>
-        <ul class="govuk-list govuk-list--bullet scl-editable" data-scl-edit-source="editable-content" data-scl-payload="key_people">
-          {% if company.key_people %}
-          {{ company.key_people | ensure_li | bleach | safe }}
+
+        <div id="key-people-container" class="scl-insight-container" data-company-duns="{{ company.duns_number }}" data-insight-type="key_person">
+          {% if key_people %}
+          <ul class="govuk-list scl-insight-list" id="key-people-list">
+            {% for person in key_people %}
+            <li class="scl-insight-item{% if forloop.counter > 5 %} scl-insight-item--beyond-initial hidden{% endif %}" data-insight-id="{{ person.id }}">
+              <div class="scl-insight-content scl-insight-content__person">
+                <div class="scl-insight-name"><a href="##" class="govuk-link govuk-link--no-visited-state">{{ person.title }}</a></div>
+                {% if person.details %}<span class="scl-insight-role">{{ person.details }}</span>{% endif %}
+              </div>
+              <div class="scl-insight-actions scl-insight-actions--hidden">
+                <button class="govuk-button govuk-button--secondary scl-button-edit-insight">Edit</button>
+                <button class="govuk-button govuk-button--warning scl-button-delete-insight">Delete</button>
+              </div>
+            </li>
+            {% endfor %}
+            {% if key_people|length > 5 %}
+            <li class="scl-insight-more-toggle" data-more-text="Show all key people" data-less-text="Show fewer key people">
+              <button class="govuk-button govuk-button--secondary">Show all key people</button>
+            </li>
+            {% endif %}
+          </ul>
+          <p class="govuk-body scl-insight-empty-message" id="key-people-empty-message" hidden>No key people have been added.</p>
           {% else %}
-          <li>No key people information available.</li>
+          <p class="govuk-body scl-insight-empty-message" id="key-people-empty-message">No key people have been added.</p>
           {% endif %}
-        </ul>
+
+          <button id="add-key-person-button" class="govuk-button govuk-!-margin-top-2 scl-add-insight-button" hidden>
+            Add key person
+          </button>
+        </div>
         {% if is_privileged %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--visible govuk-!-margin-top-7 govuk-!-margin-bottom-0">
         <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
         <h2 class="govuk-heading-m govuk-!-margin-top-3">Company Priorities</h2>
 
-        <div id="company-priorities-container" data-company-duns="{{ company.duns_number }}" data-insight-type="company_priority">
+        <div id="company-priorities-container" class="scl-insight-container" data-company-duns="{{ company.duns_number }}" data-insight-type="company_priority">
           {% if company_priorities %}
-          <ul class="govuk-list" id="company-priorities-list">
+          <ul class="govuk-list scl-insight-list" id="company-priorities-list">
             {% for priority in company_priorities %}
-            <li class="scl-priority-item{% if forloop.counter > 5 %} scl-priority-item--beyond-initial hidden{% endif %}" data-priority-id="{{ priority.id }}">
-              <div class="scl-priority-content">
-                <b class="scl-priority-title">{{ priority.title }}</b>
-                <div class="scl-priority-details">{{ priority.details|linebreaks }}</div>
+            <li class="scl-insight-item{% if forloop.counter > 5 %} scl-insight-item--beyond-initial hidden{% endif %}" data-insight-id="{{ priority.id }}">
+              <div class="scl-insight-content">
+                <b class="scl-insight-title">{{ priority.title }}</b>
+                <div class="scl-insight-details">{{ priority.details|linebreaks }}</div>
                 <p class="govuk-body-s govuk-!-margin-top-1">
                   Added by {{ priority.created_by.first_name }} {{ priority.created_by.last_name }} on {{ priority.created_at|date:"j M Y" }}
                 </p>
               </div>
-              <div class="scl-priority-actions scl-priority-actions--hidden">
-                <button class="govuk-button govuk-button--secondary scl-button-edit-priority">Edit</button>
-                <button class="govuk-button govuk-button--warning scl-button-delete-priority">Delete</button>
+              <div class="scl-insight-actions scl-insight-actions--hidden">
+                <button class="govuk-button govuk-button--secondary scl-button-edit-insight">Edit</button>
+                <button class="govuk-button govuk-button--warning scl-button-delete-insight">Delete</button>
               </div>
             </li>
             {% endfor %}
             {% if company_priorities|length > 5 %}
-            <li class="scl-priority-more-toggle" data-more-text="Show all priorities" data-less-text="Show fewer priorities">
+            <li class="scl-insight-more-toggle" data-more-text="Show all priorities" data-less-text="Show fewer priorities">
               <button class="govuk-button govuk-button--secondary">Show all priorities</button>
             </li>
             {% endif %}
           </ul>
-          <p class="govuk-body" id="no-company-priorities-message" hidden>No company priorities have been set.</p>
+          <p class="govuk-body scl-insight-empty-message" id="company-priorities-empty-message" hidden>No company priorities have been set.</p>
           {% else %}
-          <p class="govuk-body" id="no-company-priorities-message">No company priorities have been set.</p>
+          <p class="govuk-body scl-insight-empty-message" id="company-priorities-empty-message">No company priorities have been set.</p>
           {% endif %}
 
-          <button id="add-company-priority-button" class="govuk-button govuk-!-margin-top-2 scl-priority-button--hidden" hidden>
+          <button id="add-company-priority-button" class="govuk-button govuk-!-margin-top-2 scl-add-insight-button" hidden>
             Add company priority
           </button>
         </div>
@@ -108,36 +132,36 @@
         <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
         <h2 class="govuk-heading-m govuk-!-margin-top-3">HMG Priorities</h2>
 
-        <div id="hmg-priorities-container" data-company-duns="{{ company.duns_number }}" data-insight-type="hmg_priority">
+        <div id="hmg-priorities-container" class="scl-insight-container" data-company-duns="{{ company.duns_number }}" data-insight-type="hmg_priority">
           {% if hmg_priorities %}
-          <ul class="govuk-list" id="hmg-priorities-list">
+          <ul class="govuk-list scl-insight-list" id="hmg-priorities-list">
             {% for priority in hmg_priorities %}
-            <li class="scl-priority-item{% if forloop.counter > 5 %} scl-priority-item--beyond-initial hidden{% endif %}" data-priority-id="{{ priority.id }}">
-              <div class="scl-priority-content">
-                <b class="scl-priority-title">{{ priority.title }}</b>
-                <div class="scl-priority-details">{{ priority.details|linebreaks }}</div>
+            <li class="scl-insight-item{% if forloop.counter > 5 %} scl-insight-item--beyond-initial hidden{% endif %}" data-insight-id="{{ priority.id }}">
+              <div class="scl-insight-content">
+                <b class="scl-insight-title">{{ priority.title }}</b>
+                <div class="scl-insight-details">{{ priority.details|linebreaks }}</div>
                 <p class="govuk-body-s govuk-!-margin-top-1">
                   Added by {{ priority.created_by.first_name }} {{ priority.created_by.last_name }} on {{ priority.created_at|date:"j M Y" }}
                 </p>
               </div>
-              <div class="scl-priority-actions scl-priority-actions--hidden">
-                <button class="govuk-button govuk-button--secondary scl-button-edit-priority">Edit</button>
-                <button class="govuk-button govuk-button--warning scl-button-delete-priority">Delete</button>
+              <div class="scl-insight-actions scl-insight-actions--hidden">
+                <button class="govuk-button govuk-button--secondary scl-button-edit-insight">Edit</button>
+                <button class="govuk-button govuk-button--warning scl-button-delete-insight">Delete</button>
               </div>
             </li>
             {% endfor %}
             {% if hmg_priorities|length > 5 %}
-            <li class="scl-priority-more-toggle" data-more-text="Show all priorities" data-less-text="Show fewer priorities">
+            <li class="scl-insight-more-toggle" data-more-text="Show all priorities" data-less-text="Show fewer priorities">
               <button class="govuk-button govuk-button--secondary">Show all priorities</button>
             </li>
             {% endif %}
           </ul>
-          <p class="govuk-body" id="no-hmg-priorities-message" hidden>No HMG priorities have been set.</p>
+          <p class="govuk-body scl-insight-empty-message" id="hmg-priorities-empty-message" hidden>No HMG priorities have been set.</p>
           {% else %}
-          <p class="govuk-body" id="no-hmg-priorities-message">No HMG priorities have been set.</p>
+          <p class="govuk-body scl-insight-empty-message" id="hmg-priorities-empty-message">No HMG priorities have been set.</p>
           {% endif %}
 
-          <button id="add-hmg-priority-button" class="govuk-button govuk-!-margin-top-2 scl-priority-button--hidden" hidden>
+          <button id="add-hmg-priority-button" class="govuk-button govuk-!-margin-top-2 scl-add-insight-button" hidden>
             Add HMG priority
           </button>
         </div>
@@ -192,895 +216,922 @@
 </div>
 
 <script nonce="{{request.csp_nonce}}">
-  (() => {
+(() => {
+  // Utility functions
+  const token = document.querySelector("[data-scl-csrf-token]").getAttribute("data-scl-csrf-token");
+  const timeout = (duration) => new Promise(resolve => setTimeout(resolve, duration));
 
-    const token = document.querySelector("[data-scl-csrf-token]").getAttribute("data-scl-csrf-token");
+  const minTimeFetch = async (minTime, resource, options) => {
+    const start = performance.now();
+    let error = null;
+    let response = null;
 
-    // Utility functions
-    const timeout = (duration) => new Promise(resolve => setTimeout(resolve, duration));
-
-    const minTimeFetch = async (minTime, resource, options) => {
-      const start = performance.now();
-      let error = null;
-      let response = null;
-
-      try {
-        response = await fetch(resource, options);
-        if (!response.ok) {
-          throw new Error();
-        }
-      } catch (_error) {
-        error = _error;
+    try {
+      response = await fetch(resource, options);
+      if (!response.ok) {
+        throw new Error();
       }
-
-      const end = performance.now();
-      await timeout(Math.max(750, performance.now() - start));
-
-      return { error, response };
-    };
-
-    // Helper function to safely create DOM elements
-    const createElement = (tag, attributes = {}, children = []) => {
-      const element = document.createElement(tag);
-
-      // Set attributes
-      Object.entries(attributes).forEach(([key, value]) => {
-        if (key === 'className') {
-          element.className = value;
-        } else if (key === 'textContent') {
-          element.textContent = value;
-        } else if (key === 'hidden') {
-          if (value) element.setAttribute('hidden', '');
-        } else {
-          element.setAttribute(key, value);
-        }
-      });
-
-      // Append children
-      children.forEach(child => {
-        if (typeof child === 'string') {
-          element.appendChild(document.createTextNode(child));
-        } else {
-          element.appendChild(child);
-        }
-      });
-
-      return element;
-    };
-
-    // Update the last updated timestamp
-    const updateLastUpdated = () => {
-      const lastUpdatedElement = document.getElementById('company-last-updated');
-      if (lastUpdatedElement) {
-        const now = new Date();
-        const month = now.toLocaleString('en-US', { month: 'long' });
-        const day = now.getDate();
-        const year = now.getFullYear();
-        const hour = now.getHours() % 12 || 12;
-        const minute = now.getMinutes().toString().padStart(2, '0');
-        const ampm = now.getHours() >= 12 ? 'p.m.' : 'a.m.';
-
-        lastUpdatedElement.textContent = `Last updated: ${day} ${month} ${year}, ${hour}:${minute} ${ampm}`;
-     }
-    };
-
-    // Global editing state
-    let pageIsEditing = false;
-
-    // Toggle priority actions visibility based on edit mode
-    const editButton = document.querySelector('[data-module="scl-edit-button"]');
-    if (editButton) {
-      const priorityActions = document.querySelectorAll('.scl-priority-actions');
-      const addButtons = document.querySelectorAll('.scl-priority-button--hidden');
-      const moreToggles = document.querySelectorAll('.scl-priority-more-toggle');
-
-      // Show "Show more" toggle buttons only when not in edit mode
-      const updatePriorityVisibility = () => {
-        const priorityActions = document.querySelectorAll('.scl-priority-actions');
-        const addButtons = document.querySelectorAll('.scl-priority-button--hidden');
-        const moreToggles = document.querySelectorAll('.scl-priority-more-toggle');
-
-        priorityActions.forEach(action => {
-          action.classList.toggle('scl-priority-actions--hidden', !pageIsEditing);
-        });
-
-        addButtons.forEach(button => {
-          button.toggleAttribute('hidden', !pageIsEditing);
-        });
-
-        // When editing, show all priorities
-        if (pageIsEditing) {
-          // Hide all "Show more" toggles
-          moreToggles.forEach(toggle => {
-            toggle.toggleAttribute('hidden', true);
-          });
-
-          // Make all priorities visible
-          document.querySelectorAll('.scl-priority-item').forEach(item => {
-            item.toggleAttribute('hidden', false);
-          });
-        } else {
-          // When not editing, manage "Show more" toggles
-          refreshPriorityDisplay();
-        }
-      };
-
-      // Function to refresh priority display based on current state
-      const refreshPriorityDisplay = () => {
-        const containers = ['#company-priorities-container', '#hmg-priorities-container'];
-
-        containers.forEach(containerSelector => {
-          const container = document.querySelector(containerSelector);
-          if (!container) return;
-
-          const list = container.querySelector('.govuk-list');
-          const noMessage = container.querySelector('[id^="no-"][id$="-priorities-message"]');
-
-          // If there's no list but should be (we have items), create it
-          if (!list && container.querySelectorAll('.scl-priority-item').length > 0) {
-            const newList = document.createElement('ul');
-            newList.id = containerSelector.replace('#', '') + '-list';
-            newList.className = 'govuk-list';
-
-            // Move all priority items into the list
-            const items = container.querySelectorAll('.scl-priority-item');
-            items.forEach(item => newList.appendChild(item));
-
-            // Add the list to the container
-            const addButton = container.querySelector('[id^="add-"][id$="-priority-button"]');
-            if (addButton) {
-              container.insertBefore(newList, addButton);
-            } else {
-              container.appendChild(newList);
-            }
-
-            // Hide "no priorities" message
-            if (noMessage) {
-              noMessage.toggleAttribute('hidden', true);
-            }
-            return;
-          }
-
-          if (!list) return;
-
-          const items = list.querySelectorAll('.scl-priority-item');
-          const moreToggle = list.querySelector('.scl-priority-more-toggle');
-
-          // Update "no priorities" message visibility
-          if (noMessage) {
-            noMessage.toggleAttribute('hidden', items.length > 0);
-          }
-
-          // If we have no items, remove the list
-          if (items.length === 0) {
-            list.remove();
-            return;
-          }
-
-          // Remove any existing "Show more" toggle
-          if (moreToggle) {
-            moreToggle.remove();
-          }
-
-          // If we have more than 5 priorities, add the toggle and hide extras
-          if (items.length > 5) {
-            // Hide priorities beyond the first 5
-            items.forEach((item, index) => {
-              if (index >= 5) {
-                item.classList.add('scl-priority-item--beyond-initial');
-                item.toggleAttribute('hidden', true);
-              } else {
-                item.classList.remove('scl-priority-item--beyond-initial');
-                item.toggleAttribute('hidden', false);
-              }
-            });
-
-            // Create and add the "Show more" toggle
-            const newToggle = document.createElement('li');
-            newToggle.className = 'scl-priority-more-toggle';
-            newToggle.dataset.moreText = 'Show all priorities';
-            newToggle.dataset.lessText = 'Show fewer priorities';
-
-            const toggleButton = document.createElement('button');
-            toggleButton.className = 'govuk-button govuk-button--secondary';
-            toggleButton.textContent = 'Show all priorities';
-            newToggle.appendChild(toggleButton);
-
-            // Insert after the 5th item
-            if (items[4] && items[4].nextSibling) {
-              list.insertBefore(newToggle, items[4].nextSibling);
-            } else {
-              list.appendChild(newToggle);
-            }
-
-            // Add toggle functionality
-            const button = newToggle.querySelector('button');
-            let isExpanded = false;
-
-            button.addEventListener('click', () => {
-              isExpanded = !isExpanded;
-              button.textContent = isExpanded ? newToggle.dataset.lessText : newToggle.dataset.moreText;
-
-              // Show/hide priorities beyond the first 5
-              items.forEach((item, index) => {
-                if (index >= 5) {
-                  item.toggleAttribute('hidden', !isExpanded);
-                }
-              });
-            });
-          } else {
-            // Show all priorities if we have 5 or fewer
-            items.forEach(item => {
-              item.toggleAttribute('hidden', false);
-            });
-          }
-        });
-      };
-
-      // Initialize priority visibility
-      updatePriorityVisibility();
-
-      // Listen for edit button clicks
-      editButton.addEventListener('click', () => {
-        pageIsEditing = !pageIsEditing;
-        updatePriorityVisibility();
-
-        // Force refresh all priority items to update their visibility state
-        document.querySelectorAll('.scl-priority-actions').forEach(action => {
-          action.classList.toggle('scl-priority-actions--hidden', !pageIsEditing);
-        });
-
-        // Update the last updated timestamp when saving
-        if (!pageIsEditing) {
-          updateLastUpdated();
-
-          // Check each container for empty priority lists and update messages
-          ['#company-priorities-container', '#hmg-priorities-container'].forEach(selector => {
-            const container = document.querySelector(selector);
-            if (!container) return;
-
-            const list = container.querySelector('.govuk-list');
-            const noMessage = container.querySelector('[id^="no-"][id$="-priorities-message"]');
-
-            // If list exists but has no items, or doesn't exist, show the message
-            if ((!list || list.querySelectorAll('.scl-priority-item').length === 0) && noMessage) {
-              noMessage.toggleAttribute('hidden', false);
-              if (list) list.remove();
-            }
-          });
-
-          // Then refresh the overall display
-          refreshPriorityDisplay();
-        }
-      });
+    } catch (_error) {
+      error = _error;
     }
 
-    // Handle Company Priorities
-    const setupPriorityHandlers = (containerSelector, type) => {
-      const container = document.querySelector(containerSelector);
-      if (!container) return;
-
-      const duns = container.getAttribute('data-company-duns');
-      const insightType = container.getAttribute('data-insight-type');
-
-      const listId = `${insightType.replace('_', '-')}-list`;
-      const noMessageId = `no-${insightType.replace('_', '-')}-message`;
-      const addButtonId = `add-${insightType.replace('_', '-')}-button`;
-
-      const list = document.getElementById(listId);
-      const noMessage = document.getElementById(noMessageId);
-      const addButton = document.getElementById(addButtonId);
-
-      // Add new priority
-      addButton.addEventListener('click', () => {
-        // Hide "no priorities" message when adding a new priority
-        if (noMessage) {
-          noMessage.toggleAttribute('hidden', true);
-        }
-
-        // Create or get list
-        let priorityList = container.querySelector('.govuk-list');
-        if (!priorityList) {
-            priorityList = document.createElement('ul');
-            priorityList.id = listId;
-            priorityList.className = 'govuk-list';
-            container.insertBefore(priorityList, addButton);
-        }
-
-        // Create a new priority item at the end of the list
-        const newItem = document.createElement('li');
-        newItem.className = 'scl-priority-item scl-priority-item--new';
-
-        // Generate a temporary ID for the new item
-        const tempId = 'new-priority-' + Date.now();
-        newItem.setAttribute('data-temp-id', tempId);
-
-        // Create the form elements
-        const editingDiv = createElement('div', { className: 'scl-priority-editing' });
-
-        // Title field
-        const titleGroup = createElement('div', { className: 'govuk-form-group' });
-        const titleLabel = createElement('label', {
-          className: 'govuk-label',
-          for: `${tempId}-title`
-        }, ['Priority']);
-        const titleInput = createElement('input', {
-          className: 'govuk-input',
-          id: `${tempId}-title`,
-          name: 'title',
-          type: 'text'
-        });
-
-        titleGroup.appendChild(titleLabel);
-        titleGroup.appendChild(titleInput);
-
-        // Details field
-        const detailsGroup = createElement('div', { className: 'govuk-form-group' });
-        const detailsLabel = createElement('label', {
-          className: 'govuk-label',
-          for: `${tempId}-details`
-        }, ['Details']);
-        const detailsTextarea = createElement('textarea', {
-          className: 'govuk-textarea',
-          id: `${tempId}-details`,
-          name: 'details',
-          rows: '5'
-        });
-
-        detailsGroup.appendChild(detailsLabel);
-        detailsGroup.appendChild(detailsTextarea);
-
-        // Buttons
-        const buttonGroup = createElement('div', { className: 'govuk-button-group' });
-        const saveButton = createElement('button', {
-          className: 'govuk-button scl-priority-save'
-        }, ['Save']);
-        const cancelButton = createElement('button', {
-          className: 'govuk-button govuk-button--secondary scl-priority-cancel'
-        }, ['Cancel']);
-
-        buttonGroup.appendChild(saveButton);
-        buttonGroup.appendChild(cancelButton);
-
-        // Assemble the form
-        editingDiv.appendChild(titleGroup);
-        editingDiv.appendChild(detailsGroup);
-        editingDiv.appendChild(buttonGroup);
-
-        newItem.appendChild(editingDiv);
-        priorityList.appendChild(newItem);
-
-        // Scroll to the new item
-        newItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        // Focus the title input
-        setTimeout(() => {
-          titleInput.focus();
-        }, 100);
-
-        // Setup save/cancel handlers
-        setupNewPriorityHandlers(newItem, duns, insightType);
-      });
-
-      // Setup handlers for a new priority item
-      const setupNewPriorityHandlers = (item, duns, insightType) => {
-        const saveButton = item.querySelector('.scl-priority-save');
-        const cancelButton = item.querySelector('.scl-priority-cancel');
-        const titleInput = item.querySelector('input[name="title"]');
-        const detailsInput = item.querySelector('textarea[name="details"]');
-
-        // Cancel adding
-        cancelButton.addEventListener('click', () => {
-          item.remove();
-
-          // Check if this was the only item and show "no priorities" message if needed
-          const listElement = document.getElementById(listId);
-          if (listElement && listElement.querySelectorAll('.scl-priority-item').length === 0) {
-            listElement.remove();
-            if (noMessage) {
-              noMessage.toggleAttribute('hidden', false);
-            }
-          }
-        });
-
-        // Save new priority
-        saveButton.addEventListener('click', async () => {
-          const title = titleInput.value.trim();
-          const details = detailsInput.value.trim();
-
-          if (!title) {
-            alert('Please enter a title for the priority');
-            return;
-          }
-
-          saveButton.textContent = 'Saving...';
-          saveButton.disabled = true;
-
-          const endpoint = `/api/v1/company/${duns}/insights/${insightType}`;
-
-          const { error, response } = await minTimeFetch(750, endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': token
-            },
-            body: JSON.stringify({ title, details })
-          });
-
-          if (error) {
-            saveButton.textContent = 'Error!';
-            await timeout(750);
-            saveButton.textContent = 'Save';
-            saveButton.disabled = false;
-            return;
-          }
-
-          const data = await response.json();
-
-          // Replace editing form with the saved priority content
-          item.setAttribute('data-priority-id', data.id);
-          item.removeAttribute('data-temp-id');
-          item.classList.remove('scl-priority-item--new');
-
-          // Clear existing content
-          while (item.firstChild) {
-            item.removeChild(item.firstChild);
-          }
-
-          // Create the content elements
-          const contentDiv = createElement('div', { className: 'scl-priority-content' });
-
-          // Title
-          const titleElement = createElement('b', {
-            className: 'scl-priority-title'
-          }, [data.title]);
-
-          // Details with line breaks
-          const detailsElement = createElement('div', { className: 'scl-priority-details' });
-          data.details.split('\n').forEach((line, index, array) => {
-            detailsElement.appendChild(document.createTextNode(line));
-            if (index < array.length - 1) {
-              detailsElement.appendChild(document.createElement('br'));
-            }
-          });
-
-          // Author info
-          const authorInfo = createElement('p', {
-            className: 'govuk-body-s govuk-!-margin-top-1'
-          }, [`Added by ${data.created_by} on ${new Date(data.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`]);
-
-          contentDiv.appendChild(titleElement);
-          contentDiv.appendChild(detailsElement);
-          contentDiv.appendChild(authorInfo);
-
-          // Action buttons
-          const actionsDiv = createElement('div', {
-            className: `scl-priority-actions ${!pageIsEditing ? 'scl-priority-actions--hidden' : ''}`
-          });
-
-          const editButton = createElement('button', {
-            className: 'govuk-button govuk-button--secondary scl-button-edit-priority'
-          }, ['Edit']);
-
-          const deleteButton = createElement('button', {
-            className: 'govuk-button govuk-button--warning scl-button-delete-priority'
-          }, ['Delete']);
-
-          actionsDiv.appendChild(editButton);
-          actionsDiv.appendChild(deleteButton);
-
-          item.appendChild(contentDiv);
-          item.appendChild(actionsDiv);
-
-          // Add event listeners to the new buttons
-          setupItemEventListeners(item);
-
-          // Hide "no priorities" message if it exists
-          if (noMessage) {
-            noMessage.toggleAttribute('hidden', true);
-          }
-
-          // Refresh the priority display
-          refreshPriorityDisplay();
-
-          // Update the last updated timestamp
-          updateLastUpdated();
-        });
-      };
-
-      // Setup edit/delete buttons for a priority item
-      const setupItemEventListeners = (item) => {
-        const editButton = item.querySelector('.scl-button-edit-priority');
-        const deleteButton = item.querySelector('.scl-button-delete-priority');
-        const priorityId = item.getAttribute('data-priority-id');
-
-        // Edit priority in place
-        editButton.addEventListener('click', async () => {
-          // Get current content
-          const titleElement = item.querySelector('.scl-priority-title');
-          const detailsElement = item.querySelector('.scl-priority-details');
-
-          const currentTitle = titleElement.textContent.trim();
-          // Get text content with newlines preserved
-          let currentDetails = '';
-          if (detailsElement) {
-            // Extract text and preserve line breaks
-            Array.from(detailsElement.childNodes).forEach(node => {
-              if (node.nodeType === Node.TEXT_NODE) {
-                currentDetails += node.textContent;
-              } else if (node.nodeName === 'BR') {
-                currentDetails += '\n';
-              }
-            });
-          }
-
-          // Save original DOM structure
-          item.setAttribute('data-original-structure', 'saved');
-          // Store the original elements for later restore
-          const origContent = item.cloneNode(true);
-
-          // Clear the item
-          while (item.firstChild) {
-            item.removeChild(item.firstChild);
-          }
-
-          // Create editing form
-          const editingDiv = createElement('div', { className: 'scl-priority-editing' });
-
-          // Title field
-          const titleGroup = createElement('div', { className: 'govuk-form-group' });
-          const titleLabel = createElement('label', {
-            className: 'govuk-label',
-            for: `edit-${priorityId}-title`
-          }, ['Priority']);
-          const titleInput = createElement('input', {
-            className: 'govuk-input',
-            id: `edit-${priorityId}-title`,
-            name: 'title',
-            type: 'text',
-            value: currentTitle
-          });
-
-          titleGroup.appendChild(titleLabel);
-          titleGroup.appendChild(titleInput);
-
-          // Details field
-          const detailsGroup = createElement('div', { className: 'govuk-form-group' });
-          const detailsLabel = createElement('label', {
-            className: 'govuk-label',
-            for: `edit-${priorityId}-details`
-          }, ['Details']);
-          const detailsTextarea = createElement('textarea', {
-            className: 'govuk-textarea',
-            id: `edit-${priorityId}-details`,
-            name: 'details',
-            rows: '5'
-          });
-          detailsTextarea.textContent = currentDetails.trim();
-
-          detailsGroup.appendChild(detailsLabel);
-          detailsGroup.appendChild(detailsTextarea);
-
-          // Buttons
-          const buttonGroup = createElement('div', { className: 'govuk-button-group' });
-          const saveButton = createElement('button', {
-            className: 'govuk-button scl-priority-update'
-          }, ['Save']);
-          const cancelButton = createElement('button', {
-            className: 'govuk-button govuk-button--secondary scl-priority-cancel-edit'
-          }, ['Cancel']);
-
-          buttonGroup.appendChild(saveButton);
-          buttonGroup.appendChild(cancelButton);
-
-          // Assemble the form
-          editingDiv.appendChild(titleGroup);
-          editingDiv.appendChild(detailsGroup);
-          editingDiv.appendChild(buttonGroup);
-
-          item.appendChild(editingDiv);
-
-          // Setup save/cancel handlers for editing
-          const updateButton = item.querySelector('.scl-priority-update');
-
-          // Cancel editing
-          cancelButton.addEventListener('click', () => {
-            // Restore original content by replacing the entire item
-            while (item.firstChild) {
-              item.removeChild(item.firstChild);
-            }
-
-            // Clone each child node from the original content
-            Array.from(origContent.childNodes).forEach(node => {
-              item.appendChild(node.cloneNode(true));
-            });
-
-            item.removeAttribute('data-original-structure');
-
-            // Re-setup event listeners
-            setupItemEventListeners(item);
-          });
-
-          // Update priority
-          updateButton.addEventListener('click', async () => {
-            const title = titleInput.value.trim();
-            const details = detailsTextarea.value.trim();
-
-            if (!title) {
-              alert('Please enter a title for the priority');
-              return;
-            }
-
-            updateButton.textContent = 'Saving...';
-            updateButton.disabled = true;
-
-            const endpoint = `/api/v1/insights/${priorityId}`;
-
-            const { error, response } = await minTimeFetch(750, endpoint, {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': token
-              },
-              body: JSON.stringify({ title, details })
-            });
-
-            if (error) {
-              updateButton.textContent = 'Error!';
-              await timeout(750);
-              updateButton.textContent = 'Save';
-              updateButton.disabled = false;
-              return;
-            }
-
-            const data = await response.json();
-
-            // Clear current content
-            while (item.firstChild) {
-              item.removeChild(item.firstChild);
-            }
-
-            // Create the content elements
-            const contentDiv = createElement('div', { className: 'scl-priority-content' });
-
-            // Title
-            const titleElement = createElement('b', {
-              className: 'scl-priority-title'
-            }, [data.title]);
-
-            // Details with line breaks
-            const detailsElement = createElement('div', { className: 'scl-priority-details' });
-            data.details.split('\n').forEach((line, index, array) => {
-              detailsElement.appendChild(document.createTextNode(line));
-              if (index < array.length - 1) {
-                detailsElement.appendChild(document.createElement('br'));
-              }
-            });
-
-            // Author info
-            const authorInfo = createElement('p', {
-              className: 'govuk-body-s govuk-!-margin-top-1'
-            }, [`Added by ${data.created_by} on ${new Date(data.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`]);
-
-            contentDiv.appendChild(titleElement);
-            contentDiv.appendChild(detailsElement);
-            contentDiv.appendChild(authorInfo);
-
-            // Action buttons
-            const actionsDiv = createElement('div', {
-              className: `scl-priority-actions ${!pageIsEditing ? 'scl-priority-actions--hidden' : ''}`
-            });
-
-            const editButton = createElement('button', {
-              className: 'govuk-button govuk-button--secondary scl-button-edit-priority'
-            }, ['Edit']);
-
-            const deleteButton = createElement('button', {
-              className: 'govuk-button govuk-button--warning scl-button-delete-priority'
-            }, ['Delete']);
-
-            actionsDiv.appendChild(editButton);
-            actionsDiv.appendChild(deleteButton);
-
-            item.appendChild(contentDiv);
-            item.appendChild(actionsDiv);
-
-            // Re-setup event listeners
-            setupItemEventListeners(item);
-
-            // Update the last updated timestamp
-            updateLastUpdated();
-          });
-        });
-
-        // Delete priority
-        deleteButton.addEventListener('click', async () => {
-          if (!confirm('Are you sure you want to delete this priority?')) {
-            return;
-          }
-
-          deleteButton.textContent = 'Deleting...';
-          deleteButton.disabled = true;
-
-          const { error } = await minTimeFetch(750, `/api/v1/insights/${priorityId}`, {
-            method: 'DELETE',
-            headers: {
-              'X-CSRFToken': token
-            }
-          });
-
-          if (error) {
-            deleteButton.textContent = 'Error!';
-            await timeout(750);
-            deleteButton.textContent = 'Delete';
-            deleteButton.disabled = false;
-            return;
-          }
-
-          // Remove item from UI
-          item.remove();
-
-          // Check if list is now empty
-          const listElement = document.getElementById(listId);
-          if (listElement && listElement.querySelectorAll('.scl-priority-item').length === 0) {
-            listElement.remove();
-            if (noMessage) {
-              noMessage.toggleAttribute('hidden', false);
-            }
-          } else if (listElement) {
-            // Refresh the priority display
-            refreshPriorityDisplay();
-          }
-
-          // Update the last updated timestamp
-          updateLastUpdated();
-        });
-      };
-
-      // Setup event listeners for existing items
-      const items = container.querySelectorAll('.scl-priority-item');
-      items.forEach(setupItemEventListeners);
-    };
-
-    // Initialize priority handlers when DOM is loaded
-    document.addEventListener('DOMContentLoaded', () => {
-      setupPriorityHandlers('#company-priorities-container', 'company_priority');
-      setupPriorityHandlers('#hmg-priorities-container', 'hmg_priority');
-
-      // Ensure initial state of "no priorities" messages is correct
-      refreshPriorityDisplay();
+    const end = performance.now();
+    await timeout(Math.max(750, performance.now() - start));
+
+    return { error, response };
+  };
+
+  // Helper function to safely create DOM elements
+  const createElement = (tag, attributes = {}, children = []) => {
+    const element = document.createElement(tag);
+
+    // Set attributes
+    Object.entries(attributes).forEach(([key, value]) => {
+      if (key === 'className') {
+        element.className = value;
+      } else if (key === 'textContent') {
+        element.textContent = value;
+      } else if (key === 'hidden') {
+        if (value) element.setAttribute('hidden', '');
+      } else {
+        element.setAttribute(key, value);
+      }
     });
 
-    // Function to refresh priority display across the page
-    const refreshPriorityDisplay = () => {
-      if (pageIsEditing) return; // Don't refresh during edit mode
+    // Append children
+    children.forEach(child => {
+      if (typeof child === 'string') {
+        element.appendChild(document.createTextNode(child));
+      } else {
+        element.appendChild(child);
+      }
+    });
 
-      const containers = ['#company-priorities-container', '#hmg-priorities-container'];
+    return element;
+  };
 
-      containers.forEach(containerSelector => {
-        const container = document.querySelector(containerSelector);
-        if (!container) return;
+  // Update the last updated timestamp
+  const updateLastUpdated = () => {
+    const lastUpdatedElement = document.getElementById('company-last-updated');
+    if (lastUpdatedElement) {
+      const now = new Date();
+      const month = now.toLocaleString('en-US', { month: 'long' });
+      const day = now.getDate();
+      const year = now.getFullYear();
+      const hour = now.getHours() % 12 || 12;
+      const minute = now.getMinutes().toString().padStart(2, '0');
+      const ampm = now.getHours() >= 12 ? 'p.m.' : 'a.m.';
 
-        const list = container.querySelector('.govuk-list');
-        const noMessage = container.querySelector('[id^="no-"][id$="-priorities-message"]');
+      lastUpdatedElement.textContent = `Last updated: ${day} ${month} ${year}, ${hour}:${minute} ${ampm}`;
+    }
+  };
 
-        // Update "no priorities" message visibility
-        if (noMessage) {
-          if (!list || !list.querySelectorAll('.scl-priority-item').length) {
-            noMessage.toggleAttribute('hidden', false);
-            if (list) list.remove();
-            return;
-          } else {
-            noMessage.toggleAttribute('hidden', true);
-          }
-        }
+  // Global editing state
+  let pageIsEditing = false;
 
-        if (!list) return;
+  // Insight types configuration
+  const insightTypes = {
+    'company_priority': {
+      endpoint: '/api/v1/company/{duns}/insights/company_priority',
+      itemEndpoint: '/api/v1/insights/{id}',
+      emptyMessage: 'No company priorities have been set.',
+      addButtonText: 'Add company priority',
+      titleLabel: 'Priority',
+      detailsLabel: 'Details',
+      addButtonId: 'add-company-priority-button',
+      listId: 'company-priorities-list',
+      emptyMessageId: 'company-priorities-empty-message',
+      showMoreText: 'Show all priorities',
+      showLessText: 'Show fewer priorities',
+      contentType: 'standard',
+      fields: [
+        { name: 'title', type: 'text', label: 'Priority', required: true },
+        { name: 'details', type: 'textarea', label: 'Details', required: false }
+      ]
+    },
+    'hmg_priority': {
+      endpoint: '/api/v1/company/{duns}/insights/hmg_priority',
+      itemEndpoint: '/api/v1/insights/{id}',
+      emptyMessage: 'No HMG priorities have been set.',
+      addButtonText: 'Add HMG priority',
+      titleLabel: 'Priority',
+      detailsLabel: 'Details',
+      addButtonId: 'add-hmg-priority-button',
+      listId: 'hmg-priorities-list',
+      emptyMessageId: 'hmg-priorities-empty-message',
+      showMoreText: 'Show all priorities',
+      showLessText: 'Show fewer priorities',
+      contentType: 'standard',
+      fields: [
+        { name: 'title', type: 'text', label: 'Priority', required: true },
+        { name: 'details', type: 'textarea', label: 'Details', required: false }
+      ]
+    },
+    'key_person': {
+      endpoint: '/api/v1/company/{duns}/insights/key_person',
+      itemEndpoint: '/api/v1/insights/{id}',
+      emptyMessage: 'No key people have been added.',
+      addButtonText: 'Add key person',
+      addButtonId: 'add-key-person-button',
+      listId: 'key-people-list',
+      emptyMessageId: 'key-people-empty-message',
+      showMoreText: 'Show all key people',
+      showLessText: 'Show fewer key people',
+      contentType: 'person',
+      fields: [
+        { name: 'title', type: 'text', label: 'Name', required: true },
+        { name: 'details', type: 'text', label: 'Role', required: false }
+      ]
+    }
+  };
 
-        const items = Array.from(list.querySelectorAll('.scl-priority-item'));
-        const moreToggle = list.querySelector('.scl-priority-more-toggle');
+  // Refresh display for a single insight container - Define this function BEFORE it's used
+  const refreshSingleInsightContainer = (container, typeConfig) => {
+    const list = container.querySelector('.scl-insight-list');
+    const noMessage = container.querySelector('.scl-insight-empty-message');
 
-        // Remove any existing "Show more" toggle
-        if (moreToggle) {
-          moreToggle.remove();
-        }
+    // Update empty message visibility
+    if (noMessage) {
+      const isEmpty = !list || list.querySelectorAll('.scl-insight-item').length === 0;
+      noMessage.toggleAttribute('hidden', !isEmpty);
 
-        // If we have more than 5 priorities, add the toggle and hide extras
-        if (items.length > 5) {
-          // Hide priorities beyond the first 5
-          items.forEach((item, index) => {
-            if (index >= 5) {
-              item.classList.add('scl-priority-item--beyond-initial');
-              item.toggleAttribute('hidden', true);
-            } else {
-              item.classList.remove('scl-priority-item--beyond-initial');
-              item.toggleAttribute('hidden', false);
-            }
-          });
+      if (isEmpty && list) {
+        list.remove();
+      }
 
-          // Create and add the "Show more" toggle
-          const newToggle = createElement('li', {
-            className: 'scl-priority-more-toggle'
-          });
+      if (isEmpty) return;
+    }
 
-          newToggle.dataset.moreText = 'Show all priorities';
-          newToggle.dataset.lessText = 'Show fewer priorities';
+    if (!list) return;
 
-          const toggleButton = createElement('button', {
-            className: 'govuk-button govuk-button--secondary',
-            textContent: 'Show all priorities'
-          });
+    const items = Array.from(list.querySelectorAll('.scl-insight-item'));
+    const moreToggle = list.querySelector('.scl-insight-more-toggle');
 
-          newToggle.appendChild(toggleButton);
+    // Remove any existing "Show more" toggle
+    if (moreToggle) {
+      moreToggle.remove();
+    }
 
-          // Insert after the 5th item
-          if (items[4] && items[4].nextSibling) {
-            list.insertBefore(newToggle, items[4].nextSibling);
-          } else {
-            list.appendChild(newToggle);
-          }
-
-          // Add toggle functionality
-          const button = newToggle.querySelector('button');
-          let isExpanded = false;
-
-          button.addEventListener('click', () => {
-            isExpanded = !isExpanded;
-            button.textContent = isExpanded ? newToggle.dataset.lessText : newToggle.dataset.moreText;
-
-            // Show/hide priorities beyond the first 5
-            items.forEach((item, index) => {
-              if (index >= 5) {
-                item.toggleAttribute('hidden', !isExpanded);
-              }
-            });
-          });
+    // If we have more than 5 insights, add the toggle and hide extras
+    if (items.length > 5) {
+      // Hide insights beyond the first 5
+      items.forEach((item, index) => {
+        if (index >= 5) {
+          item.classList.add('scl-insight-item--beyond-initial');
+          item.toggleAttribute('hidden', true);
         } else {
-          // Show all priorities if we have 5 or fewer
-          items.forEach(item => {
-            item.toggleAttribute('hidden', false);
-          });
+          item.classList.remove('scl-insight-item--beyond-initial');
+          item.toggleAttribute('hidden', false);
         }
       });
+
+      // Create and add the "Show more" toggle
+      const newToggle = createElement('li', {
+        className: 'scl-insight-more-toggle'
+      });
+
+      newToggle.dataset.moreText = typeConfig.showMoreText;
+      newToggle.dataset.lessText = typeConfig.showLessText;
+
+      const toggleButton = createElement('button', {
+        className: 'govuk-button govuk-button--secondary',
+        textContent: typeConfig.showMoreText
+      });
+
+      newToggle.appendChild(toggleButton);
+
+      // Insert after the 5th item
+      if (items[4] && items[4].nextSibling) {
+        list.insertBefore(newToggle, items[4].nextSibling);
+      } else {
+        list.appendChild(newToggle);
+      }
+
+      // Add toggle functionality
+      const button = newToggle.querySelector('button');
+      let isExpanded = false;
+
+      button.addEventListener('click', () => {
+        isExpanded = !isExpanded;
+        button.textContent = isExpanded ? newToggle.dataset.lessText : newToggle.dataset.moreText;
+
+        // Show/hide insights beyond the first 5
+        items.forEach((item, index) => {
+          if (index >= 5) {
+            item.toggleAttribute('hidden', !isExpanded);
+          }
+        });
+      });
+    } else {
+      // Show all insights if we have 5 or fewer
+      items.forEach(item => {
+        item.toggleAttribute('hidden', false);
+      });
+    }
+  };
+
+  // Function to refresh insight display for all containers - Define after refreshSingleInsightContainer
+  const refreshInsightDisplay = () => {
+    if (pageIsEditing) return; // Don't refresh during edit mode
+
+    document.querySelectorAll('.scl-insight-container').forEach(container => {
+      const insightType = container.getAttribute('data-insight-type');
+      const typeConfig = insightTypes[insightType];
+      if (typeConfig) {
+        refreshSingleInsightContainer(container, typeConfig);
+      }
+    });
+  };
+
+  // Create appropriate content for an insight based on its type
+  const createInsightContent = (item, data, typeConfig) => {
+    const contentDiv = createElement('div', { className: 'scl-insight-content' });
+    if (typeConfig.contentType === 'person') {
+      contentDiv.classList.add('scl-insight-content__person');
+
+      const nameLinkDiv = createElement('div', { className: 'scl-insight-name' });
+      const nameLink = createElement('a', {
+        className: 'govuk-link govuk-link--no-visited-state',
+        href: '##'
+      }, [data.title]);  // Using title as name
+      nameLinkDiv.appendChild(nameLink);
+
+      contentDiv.appendChild(nameLinkDiv);
+
+      if (data.details) {  // Using details as role
+        contentDiv.appendChild(document.createTextNode(' '));
+        const roleSpan = createElement('span', {
+          className: 'scl-insight-role'
+        }, [data.details]);
+        contentDiv.appendChild(roleSpan);
+      }
+    } else {
+      const titleElement = createElement('b', {
+        className: 'scl-insight-title'
+      }, [data.title]);
+
+      contentDiv.appendChild(titleElement);
+
+      if (data.details) {
+        const detailsElement = createElement('div', {
+          className: 'scl-insight-details'
+        });
+
+        data.details.split('\n').forEach((line, index, array) => {
+          detailsElement.appendChild(document.createTextNode(line));
+          if (index < array.length - 1) {
+            detailsElement.appendChild(document.createElement('br'));
+          }
+        });
+
+        contentDiv.appendChild(detailsElement);
+      }
+
+      // Author info for standard insights
+      const authorInfo = createElement('p', {
+        className: 'govuk-body-s govuk-!-margin-top-1'
+      }, [`Added by ${data.created_by} on ${new Date(data.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`]);
+
+      contentDiv.appendChild(authorInfo);
+    }
+
+    // Action buttons
+    const actionsDiv = createElement('div', {
+      className: `scl-insight-actions ${!pageIsEditing ? 'scl-insight-actions--hidden' : ''}`
+    });
+
+    const editButton = createElement('button', {
+      className: 'govuk-button govuk-button--secondary scl-button-edit-insight'
+    }, ['Edit']);
+
+    const deleteButton = createElement('button', {
+      className: 'govuk-button govuk-button--warning scl-button-delete-insight'
+    }, ['Delete']);
+
+    actionsDiv.appendChild(editButton);
+    actionsDiv.appendChild(deleteButton);
+
+    item.appendChild(contentDiv);
+    item.appendChild(actionsDiv);
+
+    // Add event listeners
+    setupItemEventListeners(item, typeConfig);
+  };
+
+  // Setup edit/delete buttons for an insight item
+  const setupItemEventListeners = (item, typeConfig) => {
+    const editButton = item.querySelector('.scl-button-edit-insight');
+    const deleteButton = item.querySelector('.scl-button-delete-insight');
+    const insightId = item.getAttribute('data-insight-id');
+
+    if (!editButton || !deleteButton) return;
+
+    // Edit insight
+    editButton.addEventListener('click', () => {
+      editInsight(item, insightId, typeConfig);
+    });
+
+    // Delete insight
+    deleteButton.addEventListener('click', () => {
+      deleteInsight(item, insightId, typeConfig);
+    });
+  };
+
+  // Toggle insight actions visibility based on edit mode
+  const editButton = document.querySelector('[data-module="scl-edit-button"]');
+  if (editButton) {
+    // Update insight visibility based on edit mode
+    const updateInsightVisibility = () => {
+      const insightActions = document.querySelectorAll('.scl-insight-actions');
+      const addButtons = document.querySelectorAll('.scl-add-insight-button');
+      const moreToggles = document.querySelectorAll('.scl-insight-more-toggle');
+
+      insightActions.forEach(action => {
+        action.classList.toggle('scl-insight-actions--hidden', !pageIsEditing);
+      });
+
+      addButtons.forEach(button => {
+        button.toggleAttribute('hidden', !pageIsEditing);
+      });
+
+      // When editing, show all insights
+      if (pageIsEditing) {
+        // Hide all "Show more" toggles
+        moreToggles.forEach(toggle => {
+          toggle.toggleAttribute('hidden', true);
+        });
+
+        // Make all insights visible
+        document.querySelectorAll('.scl-insight-item').forEach(item => {
+          item.toggleAttribute('hidden', false);
+        });
+      } else {
+        // When not editing, manage "Show more" toggles
+        refreshInsightDisplay();
+      }
     };
-  })();
+
+    // Initialize insight visibility
+    updateInsightVisibility();
+
+    // Listen for edit button clicks
+    editButton.addEventListener('click', () => {
+      pageIsEditing = !pageIsEditing;
+      updateInsightVisibility();
+
+      // Update the last updated timestamp when saving
+      if (!pageIsEditing) {
+        updateLastUpdated();
+
+        // Check each container for empty lists and update messages
+        document.querySelectorAll('.scl-insight-container').forEach(container => {
+          const insightType = container.getAttribute('data-insight-type');
+          const typeConfig = insightTypes[insightType];
+          if (!typeConfig) return;
+
+          const list = container.querySelector('.scl-insight-list');
+          const noMessage = container.querySelector('.scl-insight-empty-message');
+
+          // If list exists but has no items, or doesn't exist, show the message
+          if ((!list || list.querySelectorAll('.scl-insight-item').length === 0) && noMessage) {
+            noMessage.toggleAttribute('hidden', false);
+            if (list) list.remove();
+          }
+        });
+
+        // Then refresh the overall display
+        refreshInsightDisplay();
+      }
+    });
+  }
+
+  // Edit an existing insight
+  const editInsight = async (item, insightId, typeConfig) => {
+    // Extract current values based on insight type
+    let currentValues = {};
+
+    if (typeConfig.contentType === 'person') {
+      const nameElement = item.querySelector('.scl-insight-name');
+      const roleElement = item.querySelector('.scl-insight-role');
+
+      currentValues = {
+        title: nameElement ? nameElement.textContent.trim() : '',  // Using title for name
+        details: roleElement ? roleElement.textContent.trim() : ''  // Using details for role
+      };
+    } else {
+      const titleElement = item.querySelector('.scl-insight-title');
+      const detailsElement = item.querySelector('.scl-insight-details');
+
+      currentValues = {
+        title: titleElement ? titleElement.textContent.trim() : '',
+        details: ''
+      };
+
+      // Extract text with newlines preserved
+      if (detailsElement) {
+        let details = '';
+        Array.from(detailsElement.childNodes).forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            details += node.textContent;
+          } else if (node.nodeName === 'BR') {
+            details += '\n';
+          }
+        });
+        currentValues.details = details.trim();
+      }
+    }
+
+    // Save original DOM structure
+    const origContent = item.cloneNode(true);
+
+    // Clear the item
+    while (item.firstChild) {
+      item.removeChild(item.firstChild);
+    }
+
+    // Create editing form
+    const editingDiv = createElement('div', { className: 'scl-insight-editing' });
+
+    // Add form fields
+    typeConfig.fields.forEach(field => {
+      const fieldGroup = createElement('div', { className: 'govuk-form-group' });
+
+      const fieldLabel = createElement('label', {
+        className: 'govuk-label',
+        for: `edit-${insightId}-${field.name}`
+      }, [field.label]);
+
+      let fieldInput;
+
+      if (field.type === 'textarea') {
+        fieldInput = createElement('textarea', {
+          className: 'govuk-textarea',
+          id: `edit-${insightId}-${field.name}`,
+          name: field.name,
+          rows: '5'
+        });
+        fieldInput.textContent = currentValues[field.name] || '';
+      } else {
+        fieldInput = createElement('input', {
+          className: 'govuk-input',
+          id: `edit-${insightId}-${field.name}`,
+          name: field.name,
+          type: 'text',
+          value: currentValues[field.name] || ''
+        });
+      }
+
+      fieldGroup.appendChild(fieldLabel);
+      fieldGroup.appendChild(fieldInput);
+      editingDiv.appendChild(fieldGroup);
+    });
+
+    // Add buttons
+    const buttonGroup = createElement('div', { className: 'govuk-button-group' });
+
+    const saveButton = createElement('button', {
+      className: 'govuk-button scl-insight-update'
+    }, ['Save']);
+
+    const cancelButton = createElement('button', {
+      className: 'govuk-button govuk-button--secondary scl-insight-cancel-edit'
+    }, ['Cancel']);
+
+    buttonGroup.appendChild(saveButton);
+    buttonGroup.appendChild(cancelButton);
+    editingDiv.appendChild(buttonGroup);
+
+    item.appendChild(editingDiv);
+
+    // Cancel editing
+    cancelButton.addEventListener('click', () => {
+      // Restore original content
+      while (item.firstChild) {
+        item.removeChild(item.firstChild);
+      }
+
+      Array.from(origContent.childNodes).forEach(node => {
+        item.appendChild(node.cloneNode(true));
+      });
+
+      // Re-setup event listeners
+      setupItemEventListeners(item, typeConfig);
+    });
+
+    // Update insight
+    saveButton.addEventListener('click', async () => {
+      // Validate and collect form data
+      const data = {};
+      let hasErrors = false;
+
+      typeConfig.fields.forEach(field => {
+        const input = item.querySelector(`[name="${field.name}"]`);
+        const value = input.value.trim();
+
+        if (field.required && !value) {
+          alert(`Please enter a ${field.label.toLowerCase()}`);
+          input.focus();
+          hasErrors = true;
+          return;
+        }
+
+        data[field.name] = value;
+      });
+
+      if (hasErrors) return;
+
+      saveButton.textContent = 'Saving...';
+      saveButton.disabled = true;
+
+      const endpoint = typeConfig.itemEndpoint.replace('{id}', insightId);
+
+      const { error, response } = await minTimeFetch(750, endpoint, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': token
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (error) {
+        saveButton.textContent = 'Error!';
+        await timeout(750);
+        saveButton.textContent = 'Save';
+        saveButton.disabled = false;
+        return;
+      }
+
+      const responseData = await response.json();
+
+      // Clear current content
+      while (item.firstChild) {
+        item.removeChild(item.firstChild);
+      }
+
+      // Create new content based on insight type
+      createInsightContent(item, responseData, typeConfig);
+
+      // Update timestamp
+      updateLastUpdated();
+    });
+  };
+
+  // Delete an insight
+  const deleteInsight = async (item, insightId, typeConfig) => {
+    if (!confirm('Are you sure you want to delete this item?')) {
+      return;
+    }
+
+    const deleteButton = item.querySelector('.scl-button-delete-insight');
+    deleteButton.textContent = 'Deleting...';
+    deleteButton.disabled = true;
+
+    const endpoint = typeConfig.itemEndpoint.replace('{id}', insightId);
+
+    const { error } = await minTimeFetch(750, endpoint, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRFToken': token
+      }
+    });
+
+    if (error) {
+      deleteButton.textContent = 'Error!';
+      await timeout(750);
+      deleteButton.textContent = 'Delete';
+      deleteButton.disabled = false;
+      return;
+    }
+
+    // Remove item from UI
+    const container = item.closest('.scl-insight-container');
+    item.remove();
+
+    // Check if list is now empty
+    const list = container.querySelector('.scl-insight-list');
+    if (list && list.querySelectorAll('.scl-insight-item').length === 0) {
+      list.remove();
+      const noMessage = container.querySelector('.scl-insight-empty-message');
+      if (noMessage) {
+        noMessage.toggleAttribute('hidden', false);
+      }
+    } else if (list) {
+      // Refresh display
+      const insightType = container.getAttribute('data-insight-type');
+      refreshSingleInsightContainer(container, insightTypes[insightType]);
+    }
+
+    // Update timestamp
+    updateLastUpdated();
+  };
+
+  // Setup handlers for a new insight form
+  const setupNewInsightHandlers = (item, duns, typeConfig) => {
+    const saveButton = item.querySelector('.scl-insight-save');
+    const cancelButton = item.querySelector('.scl-insight-cancel');
+
+    // Get all form inputs
+    const inputs = {};
+    typeConfig.fields.forEach(field => {
+      inputs[field.name] = item.querySelector(`[name="${field.name}"]`);
+    });
+
+    // Cancel adding
+    cancelButton.addEventListener('click', () => {
+      const container = item.closest('.scl-insight-container');
+      item.remove();
+
+      // Check if this was the only item and show empty message if needed
+      const list = container.querySelector('.scl-insight-list');
+      if (list && list.querySelectorAll('.scl-insight-item').length === 0) {
+        list.remove();
+        const noMessage = container.querySelector('.scl-insight-empty-message');
+        if (noMessage) {
+          noMessage.toggleAttribute('hidden', false);
+        }
+      }
+    });
+
+    // Save new insight
+    saveButton.addEventListener('click', async () => {
+      // Validate and collect form data
+      const data = {};
+      let hasErrors = false;
+
+      typeConfig.fields.forEach(field => {
+        const input = inputs[field.name];
+        const value = input.value.trim();
+
+        if (field.required && !value) {
+          alert(`Please enter a ${field.label.toLowerCase()}`);
+          input.focus();
+          hasErrors = true;
+          return;
+        }
+
+        data[field.name] = value;
+      });
+
+      if (hasErrors) return;
+
+      saveButton.textContent = 'Saving...';
+      saveButton.disabled = true;
+
+      const endpoint = typeConfig.endpoint.replace('{duns}', duns);
+
+      const { error, response } = await minTimeFetch(750, endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': token
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (error) {
+        saveButton.textContent = 'Error!';
+        await timeout(750);
+        saveButton.textContent = 'Save';
+        saveButton.disabled = false;
+        return;
+      }
+
+      const responseData = await response.json();
+
+      // Replace editing form with saved insight content
+      item.setAttribute('data-insight-id', responseData.id);
+      item.removeAttribute('data-temp-id');
+      item.classList.remove('scl-insight-item--new');
+
+      // Clear existing content
+      while (item.firstChild) {
+        item.removeChild(item.firstChild);
+      }
+
+      // Create content based on insight type
+      createInsightContent(item, responseData, typeConfig);
+
+      // Hide empty message if it exists
+      const container = item.closest('.scl-insight-container');
+      const noMessage = container.querySelector('.scl-insight-empty-message');
+      if (noMessage) {
+        noMessage.toggleAttribute('hidden', true);
+      }
+
+      // Refresh display
+      refreshSingleInsightContainer(container, typeConfig);
+
+      // Update timestamp
+      updateLastUpdated();
+    });
+  };
+
+  // Create a new insight form
+  const createNewInsightForm = (container, duns, typeConfig) => {
+    const noMessage = container.querySelector('.scl-insight-empty-message');
+    if (noMessage) {
+      noMessage.toggleAttribute('hidden', true);
+    }
+
+    // Create or get list
+    const addButton = document.getElementById(typeConfig.addButtonId);
+    let insightList = container.querySelector('.scl-insight-list');
+
+    if (!insightList) {
+      insightList = createElement('ul', {
+        id: typeConfig.listId,
+        className: 'govuk-list scl-insight-list'
+      });
+      container.insertBefore(insightList, addButton);
+    }
+
+    // Create a new insight item
+    const newItem = createElement('li', {
+      className: 'scl-insight-item scl-insight-item--new'
+    });
+
+    // Generate temporary ID
+    const tempId = `new-${typeConfig.addButtonId}-${Date.now()}`;
+    newItem.setAttribute('data-temp-id', tempId);
+
+    // Create the form elements
+    const editingDiv = createElement('div', { className: 'scl-insight-editing' });
+
+    // Add form fields based on configuration
+    typeConfig.fields.forEach(field => {
+      const fieldGroup = createElement('div', { className: 'govuk-form-group' });
+
+      const fieldLabel = createElement('label', {
+        className: 'govuk-label',
+        for: `${tempId}-${field.name}`
+      }, [field.label]);
+
+      let fieldInput;
+
+      if (field.type === 'textarea') {
+        fieldInput = createElement('textarea', {
+          className: 'govuk-textarea',
+          id: `${tempId}-${field.name}`,
+          name: field.name,
+          rows: '5'
+        });
+      } else {
+        fieldInput = createElement('input', {
+          className: 'govuk-input',
+          id: `${tempId}-${field.name}`,
+          name: field.name,
+          type: 'text'
+        });
+      }
+
+      fieldGroup.appendChild(fieldLabel);
+      fieldGroup.appendChild(fieldInput);
+      editingDiv.appendChild(fieldGroup);
+    });
+
+    // Add buttons
+    const buttonGroup = createElement('div', { className: 'govuk-button-group' });
+
+    const saveButton = createElement('button', {
+      className: 'govuk-button scl-insight-save'
+    }, ['Save']);
+
+    const cancelButton = createElement('button', {
+      className: 'govuk-button govuk-button--secondary scl-insight-cancel'
+    }, ['Cancel']);
+
+    buttonGroup.appendChild(saveButton);
+    buttonGroup.appendChild(cancelButton);
+    editingDiv.appendChild(buttonGroup);
+
+    newItem.appendChild(editingDiv);
+    insightList.appendChild(newItem);
+
+    // Scroll to the new item
+    newItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Focus the first input
+    setTimeout(() => {
+      const firstInput = newItem.querySelector('input, textarea');
+      if (firstInput) firstInput.focus();
+    }, 100);
+
+    // Setup save/cancel handlers
+    setupNewInsightHandlers(newItem, duns, typeConfig);
+  };
+
+  // Setup handlers for a specific insight type container
+  const setupInsightHandlers = (container) => {
+    if (!container) return;
+
+    const insightType = container.getAttribute('data-insight-type');
+    const typeConfig = insightTypes[insightType];
+    if (!typeConfig) return;
+
+    const duns = container.getAttribute('data-company-duns');
+    const addButton = document.getElementById(typeConfig.addButtonId);
+
+    if (!addButton) return;
+
+    // Add new insight
+    addButton.addEventListener('click', () => {
+      createNewInsightForm(container, duns, typeConfig);
+    });
+
+    // Setup event listeners for existing items
+    const items = container.querySelectorAll('.scl-insight-item');
+    items.forEach(item => setupItemEventListeners(item, typeConfig));
+  };
+
+  // Initialize all insight containers
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.scl-insight-container').forEach(setupInsightHandlers);
+    refreshInsightDisplay();
+  });
+})();
 </script>
 
 <style nonce="{{request.csp_nonce}}">
-.scl-priority-item {
+/* Common styles for all insight containers */
+.scl-insight-container {
   margin-bottom: 1.5rem;
+}
+
+/* Insight items styling */
+.scl-insight-item {
+  margin-bottom: 1rem;
   padding: 1rem;
   border: 1px solid #b1b4b6;
   list-style-type: none;
 }
 
-.govuk-list .scl-priority-item:before {
+/* Remove default list styling */
+.govuk-list .scl-insight-item:before {
   content: none;
 }
 
-.scl-priority-actions {
-  margin-top: 1rem;
+/* Content area for insights */
+.scl-insight-content {
+  margin-bottom: 0.5rem;
+}
+
+/* Title styling for standard insights */
+.scl-insight-title {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+/* Details area for standard insights */
+.scl-insight-details {
+  margin-bottom: 0.5rem;
+}
+
+/* Role styling for person insights */
+.scl-insight-content__person {
+  display: flex;
+  align-items: center;
+}
+
+.scl-insight-name {
+  flex-grow: 1;
+}
+
+.scl-insight-role {
+  font-weight: bold;
+  font-size: 0.90rem;
+}
+
+/* Action buttons container */
+.scl-insight-actions {
+  margin-top: 0.5rem;
   display: flex;
   gap: 0.5rem;
 }
 
-.scl-priority-actions--hidden {
+/* Hide actions when not in edit mode */
+.scl-insight-actions--hidden {
   display: none;
 }
 
-.scl-priority-editing {
-  margin-top: 1rem;
+/* Form area when editing insights */
+.scl-insight-editing {
+  margin-top: 0.5rem;
 }
 
-.scl-priority-more-toggle {
+/* Toggle for showing more insights */
+.scl-insight-more-toggle {
   margin: 1rem 0;
   list-style: none;
 }
 
-.govuk-list .scl-priority-more-toggle:before {
+/* Remove default list styling for toggle */
+.govuk-list .scl-insight-more-toggle:before {
   content: none;
 }
 
+/* Warning button styling */
 .govuk-button--warning {
   background-color: #d4351c;
 }
@@ -1089,8 +1140,25 @@
   background-color: #aa2a16;
 }
 
+/* Add button styling */
+.scl-add-insight-button {
+  margin-top: 1rem;
+}
+
+/* Empty state message */
+.scl-insight-empty-message {
+  font-style: italic;
+  color: #505a5f;
+}
+
+/* Hide elements */
 [hidden] {
   display: none !important;
+}
+
+/* Items beyond initial display */
+.scl-insight-item--beyond-initial.hidden {
+  display: none;
 }
 </style>
 {% endblock %}
