@@ -1,3 +1,4 @@
+from scl.core.models import Company, Engagement, EngagementNote
 import json
 import time
 import uuid
@@ -6,8 +7,6 @@ import boto3
 from django.conf import settings
 from django.http import JsonResponse
 import reversion
-
-from scl.core.models import Company, Engagement, EngagementNote
 
 
 def aws_credentials_api(request):
@@ -62,7 +61,7 @@ def company_api(request, duns_number):
 
     if request.method == 'PATCH':
         with reversion.create_revision():
-            company.name = data.get('page_title').strip()
+            company.name = data.get('title').strip()
             company.key_people = data.get('key_people').strip()
             company.hmg_priorities = data.get('hmg_priorities').strip()
             company.company_priorities = data.get('company_priorities').strip()
@@ -94,8 +93,8 @@ def engagement_api(request, engagement_id):
 
     if request.method == 'PATCH':
         with reversion.create_revision():
-            engagement.title = data.get('page_title').strip()
-            engagement.details = data.get('engagement_details').strip()
+            engagement.title = data.get('title').strip()
+            engagement.details = data.get('details').strip()
             engagement.save()
 
             reversion.set_user(request.user)
@@ -122,6 +121,18 @@ def engagement_note_api(request, engagement_id):
     if not is_privileged:
         return JsonResponse(403, safe=False)
 
+    if request.method == 'PATCH':
+        with reversion.create_revision():
+            note = EngagementNote.objects.get(id=data.get('id'))
+            note.contents = data.get('contents')
+            note.save()
+
+            reversion.set_user(request.user)
+            reversion.set_comment(
+                "Note updated"
+                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+
     if request.method == 'POST':
         with reversion.create_revision():
             note = EngagementNote.objects.create(contents=data.get(
@@ -129,7 +140,7 @@ def engagement_note_api(request, engagement_id):
 
             reversion.set_user(request.user)
             reversion.set_comment(
-                "Note added to engagement"
+                "Note added"
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
     if request.method == 'DELETE':
@@ -139,7 +150,7 @@ def engagement_note_api(request, engagement_id):
 
             reversion.set_user(request.user)
             reversion.set_comment(
-                "Note deleted from engagement"
+                "Note deleted"
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 

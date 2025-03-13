@@ -28,34 +28,37 @@
 
     return { error, response };
   };
-  
+
   const registerEditButton = (editButton) => {
-    const token = getToken()
-    const editableSection = Array.from(
-      document.querySelectorAll(
-        editButton.getAttribute("data-scl-edit-button-target")
-      )
-    );
-
     let isEditable = false;
+    const token = getToken();
 
-    const toggleEdit = async () => {
+    const save = async () => {
       isEditable = !isEditable;
-      const endpoint = editButton.getAttribute("data-scl-endpoint");
-      editButton.innerHTML = isEditable ? "Save" : "Edit";
-      editableSection.map((item) => {
-        item.toggleAttribute("contenteditable", isEditable);
-      });
 
-      // Only try to save it it's not editable, i.e. we're saving
+      const data = {};
+      const id = editButton.getAttribute("data-scl-edit-id");
+      const target = editButton.getAttribute("data-scl-edit-target");
+      const method = editButton.getAttribute("data-scl-method");
+      const endpoint = editButton.getAttribute("data-scl-endpoint");
+
+      editButton.innerHTML = isEditable ? "Save" : "Edit";
+
+      const contentSource = Array.from(
+        document.querySelectorAll(`[data-scl-edit-source="${target}"]`)
+      );
+      contentSource.map((source) =>
+        source.toggleAttribute("contenteditable", isEditable)
+      );
+
       if (isEditable) return;
 
       editButton.disabled = true;
       editButton.innerHTML = "Saving...";
 
-      const data = {};
-      editableSection.forEach((item) => {
-        data[item.getAttribute("data-scl-editable-field")] = item.innerHTML;
+      contentSource.forEach((item) => {
+        data["id"] = id;
+        data[item.getAttribute("data-scl-payload")] = item.innerHTML;
       });
 
       const { error, response } = await minTimeFetch(750, endpoint, {
@@ -63,7 +66,7 @@
           "Content-Type": "application/json",
           "X-CSRFToken": token,
         },
-        method: "PATCH",
+        method: method,
         body: JSON.stringify(data),
       });
 
@@ -74,7 +77,7 @@
       editButton.innerHTML = "Edit";
     };
 
-    editButton.addEventListener("click", toggleEdit);
+    editButton.addEventListener("click", save);
   };
 
   const registerSaveTranscriptButton = (button) => {
@@ -105,6 +108,7 @@
   };
 
   const registerDeleteTranscriptButton = (button) => {
+    const token = getToken();
     noteId = button.getAttribute("data-scl-notes-id");
     endPoint = button.getAttribute("data-scl-endpoint");
     const deleteNote = async () => {
@@ -112,7 +116,7 @@
       const { error, response } = await minTimeFetch(750, endPoint, {
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}",
+          "X-CSRFToken": token,
         },
         method: "DELETE",
         body: JSON.stringify({ id: noteId }),
@@ -133,7 +137,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     document
       .querySelectorAll('[data-module="scl-edit-button"]')
-      .forEach(registerEditButton);
+      .forEach(registerEditButton);   
     document
       .querySelectorAll('[data-module="scl-save-transcript"]')
       .forEach(registerSaveTranscriptButton);

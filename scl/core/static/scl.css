@@ -569,6 +569,6 @@ h1.scl-editable[contenteditable] {
 
 .scl-note button {
   margin-bottom: 0;
-  width: 100%;
-  max-width: 100px;
+  width: auto;
+  max-width: 60px;
 }
