@@ -276,6 +276,10 @@
 
       // Show "Show more" toggle buttons only when not in edit mode
       const updatePriorityVisibility = () => {
+        const priorityActions = document.querySelectorAll('.scl-priority-actions');
+        const addButtons = document.querySelectorAll('.scl-priority-button--hidden');
+        const moreToggles = document.querySelectorAll('.scl-priority-more-toggle');
+
         priorityActions.forEach(action => {
           action.classList.toggle('scl-priority-actions--hidden', !pageIsEditing);
         });
