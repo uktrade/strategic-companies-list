@@ -1,4 +1,4 @@
-from scl.core.models import Company, Engagement, EngagementNote, Insight
+from scl.core.models import Company, Engagement, EngagementNote
 import json
 import time
 import uuid
@@ -63,11 +63,13 @@ def company_api(request, duns_number):
         with reversion.create_revision():
             company.name = data.get('title').strip()
             company.key_people = data.get('key_people').strip()
+            company.hmg_priorities = data.get('hmg_priorities').strip()
+            company.company_priorities = data.get('company_priorities').strip()
             company.save()
 
             reversion.set_user(request.user)
             reversion.set_comment(
-                "Updated company name and key_people via API "
+                "Updated key_people, hmg_priorities, and company_priorities via API "
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
@@ -78,128 +80,6 @@ def company_api(request, duns_number):
         },
         status=200,
     )
-
-
-def company_insight_api(request, duns_number, insight_type):
-    company = Company.objects.get(duns_number=duns_number)
-
-    account_managers = list(company.account_manager.all())
-    is_privileged = request.user in account_managers
-    if not is_privileged:
-        return JsonResponse(403, safe=False)
-
-    if request.method == 'GET':
-        insights = list(company.insights.filter(
-            insight_type=insight_type).order_by('order'))
-        return JsonResponse({
-            'insights': [
-                {
-                    'id': str(insight.id),
-                    'title': insight.title,
-                    'details': insight.details,
-                    'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
-                    'created_at': insight.created_at.isoformat(),
-                    'order': insight.order
-                } for insight in insights
-            ]
-        })
-
-    elif request.method == 'POST':
-        data = json.loads(request.body)
-
-        with reversion.create_revision():
-            model_insight_type = insight_type
-            if insight_type == 'company_priority':
-                model_insight_type = Insight.TYPE_COMPANY_PRIORITY
-            elif insight_type == 'hmg_priority':
-                model_insight_type = Insight.TYPE_HMG_PRIORITY
-
-            insight = Insight.objects.create(
-                company=company,
-                created_by=request.user,
-                insight_type=model_insight_type,
-                title=data.get('title', '').strip(),
-                details=data.get('details', '').strip(),
-                order=data.get('order', 0)
-            )
-
-            reversion.set_user(request.user)
-            reversion.set_comment(
-                f"Created {insight_type} insight via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
-            )
-
-        return JsonResponse({
-            'id': str(insight.id),
-            'title': insight.title,
-            'details': insight.details,
-            'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
-            'created_at': insight.created_at.isoformat(),
-            'order': insight.order
-        }, status=201)
-
-
-def insight_api(request, insight_id):
-    try:
-        insight = Insight.objects.get(id=insight_id)
-    except Insight.DoesNotExist:
-        return JsonResponse({'error': 'Insight not found'}, status=404)
-
-    account_managers = list(insight.company.account_manager.all())
-    is_privileged = request.user in account_managers
-    if not is_privileged:
-        return JsonResponse(403, safe=False)
-
-    if request.method == 'GET':
-        return JsonResponse({
-            'id': str(insight.id),
-            'title': insight.title,
-            'details': insight.details,
-            'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
-            'created_at': insight.created_at.isoformat(),
-            'order': insight.order
-        })
-
-    elif request.method == 'PATCH':
-        data = json.loads(request.body)
-
-        with reversion.create_revision():
-            if 'title' in data:
-                insight.title = data['title'].strip()
-            if 'details' in data:
-                insight.details = data['details'].strip()
-            if 'order' in data:
-                insight.order = data['order']
-
-            insight.save()
-
-            reversion.set_user(request.user)
-            reversion.set_comment(
-                f"Updated {insight.insight_type} insight via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
-            )
-
-        return JsonResponse({
-            'id': str(insight.id),
-            'title': insight.title,
-            'details': insight.details,
-            'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
-            'created_at': insight.created_at.isoformat(),
-            'order': insight.order
-        })
-
-    elif request.method == 'DELETE':
-        with reversion.create_revision():
-            insight_type = insight.insight_type
-            insight.delete()
-
-            reversion.set_user(request.user)
-            reversion.set_comment(
-                f"Deleted {insight_type} insight via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
-            )
-
-        return JsonResponse({'status': 'success'})
 
 
 def engagement_api(request, engagement_id):
