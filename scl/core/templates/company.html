@@ -37,7 +37,7 @@
         {% if company.sectors %}
         <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">Sectors: {{ company.get_sectors_display }}</p>
         {% endif %}
-        <p class="govuk-body govuk-body-s" id="company-last-updated">Last updated: {{ current_version.revision.date_created|date:"j F Y, g:i a" }}</p>
+        <p class="govuk-body govuk-body-s" id="company-last-updated">Last updated: {{ current_version.revision.date_created }}</p>
       </div>
     </div>
     <div class="govuk-grid-row">
