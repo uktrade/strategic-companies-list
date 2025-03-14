@@ -46,9 +46,9 @@ jmespath==1.0.1
     #   botocore
 oauthlib==3.2.2
     # via requests-oauthlib
-psycopg[binary, pool]==3.2.6
+psycopg[binary, pool]==3.2.5
     # via -r requirements.in
-psycopg-binary==3.2.6
+psycopg-binary==3.2.5
     # via psycopg
 psycopg-pool==3.2.6
     # via psycopg

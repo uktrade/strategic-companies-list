@@ -9,7 +9,7 @@
     "readable-stream": "^4.7.0"
   },
   "devDependencies": {
-    "sass": "^1.85.1",
-    "@types/bun": "latest"
+    "bun-types": "latest",
+    "sass": "^1.85.1"
   }
 }
