@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django import forms
-from .models import User, Company, Engagement, EngagementNote, Insight
+from .models import User, Company, Engagement, EngagementNote
 from .constants import SECTORS
 
 from reversion.admin import VersionAdmin
@@ -68,17 +68,3 @@ class EngagementAdmin(VersionAdmin):
         "company",
     )
     inlines = (EngagementNoteManagerInline,)
-
-
-@admin.register(Insight)
-class InsightAdmin(VersionAdmin):
-    list_display = (
-        "title",
-        "company",
-        "insight_type",
-        "created_by",
-        "created_at",
-    )
-    list_filter = ("insight_type", "company")
-    search_fields = ("title", "details", "company__name")
-    ordering = ("-created_at",)
