@@ -61,12 +61,13 @@ def company_api(request, duns_number):
 
     if request.method == 'PATCH':
         with reversion.create_revision():
+            company.name = data.get('title').strip()
             company.key_people = data.get('key_people').strip()
             company.save()
 
             reversion.set_user(request.user)
             reversion.set_comment(
-                "Updated key_people via API "
+                "Updated company name and key_people via API "
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
