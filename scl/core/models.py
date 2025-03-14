@@ -90,12 +90,10 @@ class Insight(models.Model):
 
     TYPE_COMPANY_PRIORITY = 'company_priority'
     TYPE_HMG_PRIORITY = 'hmg_priority'
-    TYPE_KEY_PERSON = 'key_person'
 
     INSIGHT_TYPES = [
         (TYPE_COMPANY_PRIORITY, 'Company Priority'),
         (TYPE_HMG_PRIORITY, 'HMG Priority'),
-        (TYPE_KEY_PERSON, 'Key Person'),
     ]
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='insights')
