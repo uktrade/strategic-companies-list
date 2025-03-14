@@ -475,12 +475,12 @@
         }
 
         // Create or get list
-        let priorityList = container.querySelector('.govuk-list');
+        let priorityList = list;
         if (!priorityList) {
-            priorityList = document.createElement('ul');
-            priorityList.id = listId;
-            priorityList.className = 'govuk-list';
-            container.insertBefore(priorityList, addButton);
+          priorityList = document.createElement('ul');
+          priorityList.id = listId;
+          priorityList.className = 'govuk-list';
+          container.insertBefore(priorityList, addButton);
         }
 
         // Create a new priority item at the end of the list
@@ -1085,6 +1085,12 @@
   background-color: #aa2a16;
 }
 
+/* Add specific styles for the hidden class - this can be useful for transitions later */
+.scl-priority-item--beyond-initial.hidden {
+  display: none;
+}
+
+/* For browsers that don't fully support the hidden attribute (rare nowadays) */
 [hidden] {
   display: none !important;
 }
