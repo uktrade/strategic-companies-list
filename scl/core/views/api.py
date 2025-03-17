@@ -62,7 +62,6 @@ def company_api(request, duns_number):
     if request.method == 'PATCH':
         with reversion.create_revision():
             company.name = data.get('title').strip()
-            company.key_people = data.get('key_people').strip()
             company.save()
 
             reversion.set_user(request.user)
@@ -282,3 +281,26 @@ def engagement_note_api(request, engagement_id):
         },
         status=200,
     )
+
+
+def key_people_api(request, duns_number):
+    company = Company.objects.get(duns_number=duns_number)
+
+    account_managers = list(company.account_manager.all())
+    key_people = list(company.key_people.all())
+    is_privileged = request.user in account_managers
+    if not is_privileged:
+        return JsonResponse(403, safe=False)
+
+    if request.method == 'GET':
+        return JsonResponse(
+            {
+                "keyPeople": [
+                    {
+                        'name': people.name,
+                        'role': people.role,
+                    } for people in key_people
+                ]
+            },
+            status=200,
+        )

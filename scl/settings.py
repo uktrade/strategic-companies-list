@@ -38,11 +38,17 @@ SESSION_COOKIE_NAME = 'scl-session-id'
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_NAME = 'scl-csrf-token'
 
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_CONNECT_SRC = (
-    "'self'", "wss://transcribestreaming.eu-west-2.amazonaws.com:8443",)
+CSP_DEFAULT_SRC = ("'self'")
+
+if DEBUG:
+    CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'")
+
+CSP_CONNECT_SRC = [
+    "'self'", "wss://transcribestreaming.eu-west-2.amazonaws.com:8443"]
 CSP_FRAME_ANCESTORS = ("'none'",)
 CSP_FORM_ACTION = ("'self'",)
+
+APPLICATION_ROOT_DOMAIN = os.environ.get("APPLICATION_ROOT_DOMAIN", '')
 
 # Staff SSO / Authentication
 
@@ -138,6 +144,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'scl.wsgi.application'
 
 
@@ -219,7 +226,8 @@ LOGGING = {
 AWS_TRANSCRIBE_ROLE_ARN = os.environ.get('AWS_TRANSCRIBE_ROLE_ARN')
 
 AWS_TRANSCRIBE_ACCESS_KEY_ID = os.environ.get('AWS_TRANSCRIBE_ACCESS_KEY_ID')
-AWS_TRANSCRIBE_SECRET_ACCESS_KEY = os.environ.get('AWS_TRANSCRIBE_SECRET_ACCESS_KEY')
+AWS_TRANSCRIBE_SECRET_ACCESS_KEY = os.environ.get(
+    'AWS_TRANSCRIBE_SECRET_ACCESS_KEY')
 
 
 # Cleaning up HTML
@@ -230,3 +238,15 @@ BLEACH_ALLOWED_STYLES = []
 BLEACH_ALLOWED_PROTOCOLS = []
 BLEACH_STRIP_TAGS = True
 BLEACH_STRIP_COMMENTS = True
+
+
+WEBPACK_STATS_FILE = "react_apps-stats.json" if not DEBUG else "react_apps-stats-hot.json"
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'webpack_bundles/',
+        'CACHE': not DEBUG,
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+    }
+}

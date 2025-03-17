@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django import forms
-from .models import User, Company, Engagement, EngagementNote, Insight
+from .models import KeyPeople, User, Company, Engagement, EngagementNote, Insight
 from .constants import SECTORS
 
 from reversion.admin import VersionAdmin
@@ -32,6 +32,11 @@ class CompanyAccountManagerInline(admin.TabularInline):
     fields = ["account_manager", "is_lead"]
 
 
+class KeyPeopleInline(admin.TabularInline):
+    model = KeyPeople
+    extra = 1
+
+
 class CompanyAdminForm(forms.ModelForm):
     sectors = forms.MultipleChoiceField(
         choices=SECTORS,
@@ -52,7 +57,7 @@ class CompanyAdmin(VersionAdmin):
         "name",
         "id",
     )
-    inlines = (CompanyAccountManagerInline,)
+    inlines = (CompanyAccountManagerInline, KeyPeopleInline)
 
 
 class EngagementNoteManagerInline(admin.TabularInline):
@@ -82,3 +87,9 @@ class InsightAdmin(VersionAdmin):
     list_filter = ("insight_type", "company")
     search_fields = ("title", "details", "company__name")
     ordering = ("-created_at",)
+
+
+@admin.register(KeyPeople)
+class KeyPeopleAdmin(admin.ModelAdmin):
+    list_display = ("name", "role")
+    list_filter = ("company",)

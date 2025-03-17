@@ -73,8 +73,10 @@
     } from '{% static 'govuk-frontend.min.js' %}'
     initAll()
   </script>
-  <script type="module" src="{% static 'bundle.js' %}"></script>
+  <script type="module" src="{% static 'js/browser.js' %}"></script>
   <script type="module" src="{% static 'js/scl.js' %}"></script>
+  {% block scripts %}
+  {% endblock %}
 </body>
 
 </html>

@@ -20,8 +20,8 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from scl.core.views.html import index, company_briefing, engagement, add_engagement, company_engagements, your_engagements
-from scl.core.views.api import aws_credentials_api, company_api, engagement_api, engagement_note_api, company_insight_api, insight_api
+from scl.core.views.html import index, company_briefing, engagement, add_engagement, company_engagements, your_engagements, company_briefing_react
+from scl.core.views.api import aws_credentials_api, company_api, engagement_api, engagement_note_api, company_insight_api, insight_api, key_people_api
 from scl.core.views.healthcheck import lb_healthcheck
 
 
@@ -36,6 +36,8 @@ urlpatterns = [
     path("", index, name="home-page"),
     path("company-briefing/<str:duns_number>",
          company_briefing, name='company-briefing'),
+    path("company-briefing-react/<str:duns_number>",
+         company_briefing_react, name='company-briefing-react'),
     path("engagement/<uuid:engagement_id>", engagement, name='engagement'),
     path("your-engagements", your_engagements, name='your-engagements'),
     path("company-briefing/<str:duns_number>/add-engagement",
@@ -45,11 +47,13 @@ urlpatterns = [
 
     # API
     path("api/v1/company/<str:duns_number>", company_api),
-    path("api/v1/company/<str:duns_number>/insights/<str:insight_type>", company_insight_api),
+    path("api/v1/company/<str:duns_number>/insights/<str:insight_type>",
+         company_insight_api),
     path("api/v1/insights/<uuid:insight_id>", insight_api),
     path("api/v1/engagement/<uuid:engagement_id>", engagement_api),
     path("api/v1/engagement/<uuid:engagement_id>/note", engagement_note_api),
     path("api/v1/aws-credentials", aws_credentials_api),
+    path("api/v1/key-people/<str:duns_number>", key_people_api),
 
     # Healthcheck
     path('lb-healthcheck', lb_healthcheck),

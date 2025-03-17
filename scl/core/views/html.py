@@ -34,7 +34,8 @@ def company_briefing(request, duns_number):
 
     account_managers_with_lead = []
     for am in account_managers:
-        is_lead = CompanyAccountManager.objects.filter(company=company, account_manager=am, is_lead=True).exists()
+        is_lead = CompanyAccountManager.objects.filter(
+            company=company, account_manager=am, is_lead=True).exists()
         account_managers_with_lead.append((am, is_lead))
 
     past_engagements = list(company.engagements.filter(
@@ -44,8 +45,10 @@ def company_briefing(request, duns_number):
     versions = Version.objects.get_for_object(company)
     current_version = versions.first()
 
-    company_priorities = list(company.insights.filter(insight_type=Insight.TYPE_COMPANY_PRIORITY).order_by('order'))
-    hmg_priorities = list(company.insights.filter(insight_type=Insight.TYPE_HMG_PRIORITY).order_by('order'))
+    company_priorities = list(company.insights.filter(
+        insight_type=Insight.TYPE_COMPANY_PRIORITY).order_by('order'))
+    hmg_priorities = list(company.insights.filter(
+        insight_type=Insight.TYPE_HMG_PRIORITY).order_by('order'))
 
     context = {
         "company": company,
@@ -149,3 +152,41 @@ def add_engagement(request, duns_number):
         "company": company,
         "form": form
     })
+
+
+def company_briefing_react(request, duns_number):
+    today = date.today()
+
+    company = Company.objects.get(duns_number=duns_number)
+    account_managers = list(company.account_manager.all())
+
+    account_managers_with_lead = []
+    for am in account_managers:
+        is_lead = CompanyAccountManager.objects.filter(
+            company=company, account_manager=am, is_lead=True).exists()
+        account_managers_with_lead.append((am, is_lead))
+
+    past_engagements = list(company.engagements.filter(
+        date__lte=today).order_by('-date'))[0:4]
+    is_privileged = request.user in account_managers
+
+    versions = Version.objects.get_for_object(company)
+    current_version = versions.first()
+
+    company_priorities = list(company.insights.filter(
+        insight_type=Insight.TYPE_COMPANY_PRIORITY).order_by('order'))
+    hmg_priorities = list(company.insights.filter(
+        insight_type=Insight.TYPE_HMG_PRIORITY).order_by('order'))
+
+    context = {
+        "company": company,
+        "edit_endpoint": f'/api/v1/company/{company.duns_number}',
+        "add_engagement_link": f'/company-briefing/{company.duns_number}/add-engagement',
+        "past_engagements": past_engagements,
+        "is_privileged": is_privileged,
+        "account_managers_with_lead": account_managers_with_lead,
+        "current_version": current_version,
+        "company_priorities": company_priorities,
+        "hmg_priorities": hmg_priorities,
+    }
+    return render(request, "company-2.html", context)
