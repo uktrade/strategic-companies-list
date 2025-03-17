@@ -23,14 +23,17 @@ class Company(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     name = models.CharField(blank=False, null=False, max_length=128)
-    duns_number = models.CharField(blank=False, null=False, max_length=9, verbose_name='DUNS number')
+    duns_number = models.CharField(
+        blank=False, null=False, max_length=9, verbose_name='DUNS number')
 
-    key_people = models.TextField(blank=True, null=False, default='')
-
-    global_hq_name = models.CharField(max_length=128, blank=True, null=False, default='', verbose_name="Global HQ name")
-    global_hq_country = models.CharField(max_length=5, null=True, blank=True, choices=COUNTRIES_AND_TERRITORIES, verbose_name="Global HQ country")
-    global_turnover_millions_usd = models.BigIntegerField(null=True, blank=True, verbose_name="Global turnover (millions USD)")
-    global_number_of_employees = models.BigIntegerField(null=True, blank=True, verbose_name="Global number of employees")
+    global_hq_name = models.CharField(
+        max_length=128, blank=True, null=False, default='', verbose_name="Global HQ name")
+    global_hq_country = models.CharField(
+        max_length=5, null=True, blank=True, choices=COUNTRIES_AND_TERRITORIES, verbose_name="Global HQ country")
+    global_turnover_millions_usd = models.BigIntegerField(
+        null=True, blank=True, verbose_name="Global turnover (millions USD)")
+    global_number_of_employees = models.BigIntegerField(
+        null=True, blank=True, verbose_name="Global number of employees")
 
     sectors = ArrayField(
         models.CharField(max_length=3, choices=SECTORS),
@@ -96,8 +99,10 @@ class Insight(models.Model):
         (TYPE_HMG_PRIORITY, 'HMG Priority'),
     ]
 
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='insights')
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_insights')
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name='insights')
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='created_insights')
     insight_type = models.CharField(max_length=20, choices=INSIGHT_TYPES)
     title = models.CharField(max_length=255)
     details = models.TextField(blank=True)
@@ -115,7 +120,8 @@ class Engagement(models.Model):
     title = models.CharField(blank=False, null=False, max_length=128)
     date = models.DateField(null=True, blank=False)
 
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="engagements")
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="engagements")
     details = models.TextField(null=True, blank=True)
 
 
@@ -123,5 +129,20 @@ class Engagement(models.Model):
 class EngagementNote(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    engagement = models.ForeignKey(Engagement, on_delete=models.CASCADE, related_name="notes")
+    engagement = models.ForeignKey(
+        Engagement, on_delete=models.CASCADE, related_name="notes")
     contents = models.TextField(null=False, blank=True, default='')
+
+
+@reversion.register()
+class KeyPeople(models.Model):
+    name = models.CharField(blank=False, null=False, max_length=128)
+    role = models.CharField(blank=False, null=False, max_length=128)
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="key_people")
+
+    class Meta:
+        verbose_name_plural = 'Key people'
+
+    def __str__(self):
+        return f"{self.name} ({self.role}) - {self.company.name}"
