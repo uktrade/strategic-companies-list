@@ -18,91 +18,11 @@
         </ol>
       </nav>
       <div>
-        <button class="govuk-button scl-breadcrumb__button">Print</button>
+        <button class="govuk-button govuk-!-margin-bottom-0">Print</button>
       </div>
   </div>
   <main class="govuk-main-wrapper" id="main-content">
     {% include "./partials/react-slot.html" with mount_id="company-briefing" id=company.duns_number props=props %}
-    {% comment %} {% if request.GET.success %}
-    <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-      <div class="govuk-notification-banner__header">
-        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-          Success
-        </h2>
-      </div>
-      <div class="govuk-notification-banner__content">
-        <p class="govuk-notification-banner__heading">
-          Your changes have been saved
-        </p>
-      </div>
-    </div>
-    {% endif %}
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-        <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">D-U-N-S: {{ company.duns_number }}{% if company.global_hq_name %}, {{ company.global_hq_name}}{% endif %}</p>
-        {% if company.sectors %}
-        <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">Sectors: {{ company.get_sectors_display }}</p>
-        {% endif %}
-        <p class="govuk-body govuk-body-s" id="company-last-updated">Last updated: {{ current_version.revision.date_created }}</p>
-      </div>
-    </div>
-    <div class="govuk-grid-row">
-      <section class="govuk-grid-column-two-thirds">
-   
-            {% include "./partials/react-slot.html" with mount_id="key-people" id=company.duns_number %}
-      
-      
-      
-      
-      </section>
-
-
-
-      <aside class="govuk-grid-column-one-third" role="complementary">
-        <hr class="govuk-section-break govuk-section-break--m govuk-!-margin-top-0 govuk-section-break--visible govuk-!-margin-bottom-0">
-        {% if is_privileged %}
-        <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
-        <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-2">
-          Recent top-level engagements across HMG
-        </h2>
-        <ul class="scl-multiline-list govuk-!-margin-bottom-2">
-          {% if past_engagements %}
-          {% for engagement in past_engagements %}
-          <li>
-            <a href="/engagement/{{engagement.id}}" class="govuk-link govuk-link--no-visited-state scl-multiline-list__link">
-              <strong class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date">{{engagement.date}}</strong>
-              <span class="scl-multiline-list__link_text">{{engagement.title}}</span>
-            </a>
-          </li>
-          {% endfor %}
-          {% else %}
-          <p class="govuk-body">No current engagements.</p>
-          {% endif %}
-        </ul>
-
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-1 govuk-!-margin-bottom-1">
-        <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small"><a href="/company-briefing/{{ company.duns_number }}/engagements" class="govuk-link govuk-link--no-visited-state scl-link--no-underline">View working-level engagements</a></p>
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-5 govuk-!-margin-bottom-2">
-        {% endif %}
-        <h2 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-margin-top-{% if is_privileged %}2{% else %}4{% endif %}">Account managers</h2>
-        {% if account_managers_with_lead %}
-        <ul class="govuk-list scl-list--small">
-          {% for account_manager, is_lead in account_managers_with_lead %}
-          <li>
-            <div class="scl-key-list__item_header">
-              <a class="govuk-link govuk-link--no-visited-state scl-link--no-underline" href="##">{{ account_manager.first_name }} {{ account_manager.last_name }}</a>
-              {% if is_lead %}
-              <strong class="govuk-tag govuk-tag--turquoise scl-tag scl-tag--small govuk-!-static-margin-left-1">Lead</strong>
-              {% endif %}
-            </div>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small">No account managers</p>
-        {% endif %}
-      </aside>
-    </div> {% endcomment %}
   </main>
 </div>
 {% endblock %}

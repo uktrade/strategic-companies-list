@@ -27,7 +27,13 @@ const Page = ({ data, id, csrf_token }) => {
             >
               {isEditing ? "Cancel" : "Edit"}
             </button>
-            <button className="govuk-button">Add engagement</button>
+            <a
+              href={`/company-briefing/${data.duns_number}/add-engagement`}
+              role="button"
+              className="govuk-button"
+            >
+              Add engagement
+            </a>
           </div>
         </div>
       </div>
