@@ -20,10 +20,12 @@ export default class ApiProxy {
     return { data, status };
   }
 
-  static async delete(endpoint, token) {
+  static async delete(endpoint, object, token) {
+    const jsonData = JSON.stringify(object);
     const requestOptions = {
       method: "DELETE",
       headers: ApiProxy.getHeaders(token),
+      body: jsonData,
     };
     return await ApiProxy.handleFetch(endpoint, requestOptions);
   }
@@ -32,6 +34,16 @@ export default class ApiProxy {
     const jsonData = JSON.stringify(object);
     const requestOptions = {
       method: "POST",
+      headers: ApiProxy.getHeaders(token),
+      body: jsonData,
+    };
+    return await ApiProxy.handleFetch(endpoint, requestOptions);
+  }
+
+  static async update(endpoint, object, token) {
+    const jsonData = JSON.stringify(object);
+    const requestOptions = {
+      method: "PATCH",
       headers: ApiProxy.getHeaders(token),
       body: jsonData,
     };

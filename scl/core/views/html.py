@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import date, datetime, timedelta
 
@@ -180,6 +181,12 @@ def company_briefing_react(request, duns_number):
 
     context = {
         "company": company,
+        "props": json.dumps({
+            "name": company.name,
+            "duns_number": company.duns_number,
+            "sectors": company.get_sectors_display,
+            "last_updated": current_version.revision.date_created.strftime("%B %d, %Y, %H:%M")
+        }),
         "edit_endpoint": f'/api/v1/company/{company.duns_number}',
         "add_engagement_link": f'/company-briefing/{company.duns_number}/add-engagement',
         "past_engagements": past_engagements,
