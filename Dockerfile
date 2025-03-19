@@ -31,6 +31,7 @@ COPY manage.py .
 COPY scl ./scl
 
 # Copy in assets (images and fonts), stylesheets and JavaScript files to where they're expected
+COPY --from=static-resources /app/scl/core/static ./scl/static/static
 COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/assets ./scl/static/static
 COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.* ./scl/static/static
 RUN \
