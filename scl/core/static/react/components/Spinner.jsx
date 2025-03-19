@@ -1,17 +1,20 @@
 import React from "react";
 
-
 const styles = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "20px 0"
-}
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "20px 0",
+};
 
 const LoadingSpinner = ({ isLoading = true, children }) => {
   return isLoading ? (
     <div style={styles}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style={{width: "20%"}}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 200 200"
+        style={{ width: "20%" }}
+      >
         <radialGradient
           id="a12"
           cx=".66"
