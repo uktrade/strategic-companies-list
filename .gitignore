@@ -176,3 +176,7 @@ bundle.js
 
 # macOS
 .DS_Store
+
+# Static
+scl/core/static/css
+scl/core/static/js
