@@ -1,12 +1,15 @@
-from scl.core.models import Company, Engagement, EngagementNote, Insight
+from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
 import json
 import time
 import uuid
+import logging
 
 import boto3
 from django.conf import settings
 from django.http import JsonResponse
 import reversion
+
+logger = logging.getLogger().warning
 
 
 def aws_credentials_api(request):
@@ -292,6 +295,94 @@ def key_people_api(request, duns_number):
     if not is_privileged:
         return JsonResponse(403, safe=False)
 
+    if request.method == 'POST':
+        with reversion.create_revision():
+            data = json.loads(request.body)
+            logger(data)
+
+            person = KeyPeople.objects.create(
+                name=data.get("name"),
+                role=data.get("role"),
+                company=company
+            )
+
+            updated_people = list(company.key_people.all())
+
+            reversion.set_user(request.user)
+            reversion.set_comment(
+                "Person created"
+                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+            return JsonResponse(
+                {
+                    "keyPeople": [
+                        {
+                            'name': people.name,
+                            'role': people.role,
+                            'id': people.id
+                        } for people in updated_people
+                    ]
+                },
+                status=200,
+            )
+
+    if request.method == 'DELETE':
+        with reversion.create_revision():
+            data = json.loads(request.body)
+            logger(data)
+
+            person = KeyPeople.objects.get(id=data["id"])
+            person.delete()
+
+            updated_people = list(company.key_people.all())
+
+            reversion.set_user(request.user)
+            reversion.set_comment(
+                "Person deleted"
+                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+            return JsonResponse(
+                {
+                    "keyPeople": [
+                        {
+                            'name': people.name,
+                            'role': people.role,
+                            'id': people.id
+                        } for people in updated_people
+                    ]
+                },
+                status=200,
+            )
+
+    if request.method == 'PATCH':
+        with reversion.create_revision():
+            data = json.loads(request.body)
+            for d in data:
+                person = KeyPeople.objects.get(id=d["id"])
+                person.name = d["name"]
+                person.role = d["role"]
+                person.save()
+
+            updated_people = list(company.key_people.all())
+
+            reversion.set_user(request.user)
+            reversion.set_comment(
+                "Key people updated"
+                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+            return JsonResponse(
+                {
+                    "keyPeople": [
+                        {
+                            'name': people.name,
+                            'role': people.role,
+                            'id': people.id
+                        } for people in updated_people
+                    ]
+                },
+                status=200,
+            )
+
     if request.method == 'GET':
         return JsonResponse(
             {
@@ -299,6 +390,7 @@ def key_people_api(request, duns_number):
                     {
                         'name': people.name,
                         'role': people.role,
+                        'id': people.id
                     } for people in key_people
                 ]
             },

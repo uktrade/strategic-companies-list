@@ -2,7 +2,8 @@
   "scripts": {
     "dev": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
     "build": "./node_modules/.bin/webpack build --config webpack.prod.js",
-    "sass:watch": "sass scl/core/sass/scl.scss scl/core/static/css/scl.css -w --style=compressed"
+    "sass:watch": "sass scl/core/sass/scl.scss scl/core/static/css/scl.css -w",
+    "sass:build": "sass scl/core/sass/scl.scss scl/core/static/css/scl.css --style=compressed"
   },
   "dependencies": {
     "@aws-sdk/client-transcribe-streaming": "^3.758.0",
