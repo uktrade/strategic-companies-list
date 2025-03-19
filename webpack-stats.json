@@ -1,0 +1,28 @@
+{
+  "status": "done",
+  "assets": {
+    "browser.js": {
+      "name": "browser.js",
+      "path": "/Users/ianleggett/repos/strategic-companies-list/scl/core/static/js/browser.js"
+    },
+    "company-briefing.js": {
+      "name": "company-briefing.js",
+      "path": "/Users/ianleggett/repos/strategic-companies-list/scl/core/static/js/company-briefing.js"
+    },
+    "scl.js": {
+      "name": "scl.js",
+      "path": "/Users/ianleggett/repos/strategic-companies-list/scl/core/static/js/scl.js"
+    }
+  },
+  "chunks": {
+    "browser": [
+      "browser.js"
+    ],
+    "company-briefing": [
+      "company-briefing.js"
+    ],
+    "scl": [
+      "scl.js"
+    ]
+  }
+}
