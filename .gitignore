@@ -177,6 +177,9 @@ bundle.js
 # macOS
 .DS_Store
 
+# Webpack
+webpack-stats.json
+
 # Static
 scl/core/static/css
 scl/core/static/js
