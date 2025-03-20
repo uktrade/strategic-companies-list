@@ -83,6 +83,7 @@ def company_api(request, duns_number):
 
 
 def company_insight_api(request, duns_number, insight_type):
+    data = json.loads(request.body)
     company = Company.objects.get(duns_number=duns_number)
 
     account_managers = list(company.account_manager.all())
@@ -90,40 +91,71 @@ def company_insight_api(request, duns_number, insight_type):
     if not is_privileged:
         return JsonResponse(403, safe=False)
 
-    if request.method == 'GET':
-        insights = list(company.insights.filter(
-            insight_type=insight_type).order_by('order'))
-        return JsonResponse({
-            'insights': [
-                {
-                    'id': str(insight.id),
-                    'title': insight.title,
-                    'details': insight.details,
-                    'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
-                    'created_at': insight.created_at.isoformat(),
-                    'order': insight.order
-                } for insight in insights
-            ]
-        })
-
-    elif request.method == 'POST':
-        data = json.loads(request.body)
-
+    if request.method == 'DELETE':
         with reversion.create_revision():
-            model_insight_type = insight_type
-            if insight_type == 'company_priority':
-                model_insight_type = Insight.TYPE_COMPANY_PRIORITY
-            elif insight_type == 'hmg_priority':
-                model_insight_type = Insight.TYPE_HMG_PRIORITY
+            insight = Insight.objects.get(id=data["insightId"])
+            insight.delete()
 
+            updated_insights = list(company.insights.filter(
+                insight_type=insight_type))
+
+            reversion.set_user(request.user)
+            reversion.set_comment(
+                f"Deleted {insight_type} insight via API "
+                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+
+        return JsonResponse({
+            'data': [
+                {
+                    'insightId': str(insight.id),
+                    'title': insight.title,
+                    'details': insight.details
+                } for insight in updated_insights
+
+            ]
+        }, status=200)
+
+    if request.method == 'PATCH':
+        with reversion.create_revision():
+            for d in data:
+                insight = Insight.objects.get(id=d["insightId"])
+                insight.title = d["title"]
+                insight.details = d["details"]
+                insight.save()
+
+            updated_insights = list(company.insights.filter(
+                insight_type=insight_type))
+
+            reversion.set_user(request.user)
+            reversion.set_comment(
+                f"Updated {insight_type} insight via API "
+                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+
+        return JsonResponse({
+            'data': [
+                {
+                    'insightId': str(insight.id),
+                    'title': insight.title,
+                    'details': insight.details
+                } for insight in updated_insights
+
+            ]
+        }, status=200)
+
+    if request.method == 'POST':
+        with reversion.create_revision():
             insight = Insight.objects.create(
                 company=company,
                 created_by=request.user,
-                insight_type=model_insight_type,
+                insight_type=insight_type,
                 title=data.get('title', '').strip(),
-                details=data.get('details', '').strip(),
-                order=data.get('order', 0)
+                details=data.get('details', '').strip()
             )
+
+            updated_insights = list(company.insights.filter(
+                insight_type=insight_type))
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -132,13 +164,31 @@ def company_insight_api(request, duns_number, insight_type):
             )
 
         return JsonResponse({
-            'id': str(insight.id),
-            'title': insight.title,
-            'details': insight.details,
-            'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
-            'created_at': insight.created_at.isoformat(),
-            'order': insight.order
-        }, status=201)
+            'data': [
+                {
+                    'insightId': str(insight.id),
+                    'title': insight.title,
+                    'details': insight.details
+                } for insight in updated_insights
+
+            ]
+        }, status=200)
+
+    if request.method == 'GET':
+        insights = list(company.insights.filter(
+            insight_type=insight_type).order_by('order'))
+        return JsonResponse({
+            'insights': [
+                {
+                    'insightId': str(insight.id),
+                    'title': insight.title,
+                    'details': insight.details,
+                    'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
+                    'created_at': insight.created_at.isoformat(),
+                    'order': insight.order
+                } for insight in insights
+            ]
+        })
 
 
 def insight_api(request, insight_id):
@@ -298,7 +348,6 @@ def key_people_api(request, duns_number):
     if request.method == 'POST':
         with reversion.create_revision():
             data = json.loads(request.body)
-            logger(data)
 
             person = KeyPeople.objects.create(
                 name=data.get("name"),
@@ -315,11 +364,11 @@ def key_people_api(request, duns_number):
             )
             return JsonResponse(
                 {
-                    "keyPeople": [
+                    "data": [
                         {
                             'name': people.name,
                             'role': people.role,
-                            'id': people.id
+                            'userId': people.id
                         } for people in updated_people
                     ]
                 },
@@ -329,7 +378,6 @@ def key_people_api(request, duns_number):
     if request.method == 'DELETE':
         with reversion.create_revision():
             data = json.loads(request.body)
-            logger(data)
 
             person = KeyPeople.objects.get(id=data["id"])
             person.delete()
@@ -343,11 +391,11 @@ def key_people_api(request, duns_number):
             )
             return JsonResponse(
                 {
-                    "keyPeople": [
+                    "data": [
                         {
                             'name': people.name,
                             'role': people.role,
-                            'id': people.id
+                            'userId': people.id
                         } for people in updated_people
                     ]
                 },
@@ -358,7 +406,7 @@ def key_people_api(request, duns_number):
         with reversion.create_revision():
             data = json.loads(request.body)
             for d in data:
-                person = KeyPeople.objects.get(id=d["id"])
+                person = KeyPeople.objects.get(id=d["userId"])
                 person.name = d["name"]
                 person.role = d["role"]
                 person.save()
@@ -372,11 +420,11 @@ def key_people_api(request, duns_number):
             )
             return JsonResponse(
                 {
-                    "keyPeople": [
+                    "data": [
                         {
                             'name': people.name,
                             'role': people.role,
-                            'id': people.id
+                            'userId': people.id
                         } for people in updated_people
                     ]
                 },
@@ -390,7 +438,7 @@ def key_people_api(request, duns_number):
                     {
                         'name': people.name,
                         'role': people.role,
-                        'id': people.id
+                        'userId': people.id
                     } for people in key_people
                 ]
             },

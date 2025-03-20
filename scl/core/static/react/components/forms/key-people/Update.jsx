@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 
-const Update = ({ people, onSubmit, SetIsUpdating }) => {
+const Update = ({ data, onSubmit, onDelete, SetIsUpdating }) => {
   const {
     register,
     handleSubmit,
@@ -10,13 +10,13 @@ const Update = ({ people, onSubmit, SetIsUpdating }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      people: people.keyPeople,
+      people: data,
     },
   });
 
   useEffect(() => {
-    reset({ people: people.keyPeople });
-  }, [people, reset]);
+    reset({ people: data });
+  }, [data, reset]);
 
   const { fields } = useFieldArray({
     control,
@@ -24,75 +24,93 @@ const Update = ({ people, onSubmit, SetIsUpdating }) => {
   });
 
   return (
-    <form
-      onSubmit={handleSubmit((data) => onSubmit(data, "update"))}
-      className="scl-inine-form"
-    >
-      {fields.map((field, index) => {
-        return (
-          <fieldset
-            className="govuk-fieldset scl-inine-form__fieldset"
-            key={`${field.name}-${index}`}
-          >
-            <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
-              <h2 className="govuk-fieldset__heading">Update: {field.name}</h2>
-            </legend>
-            <label className="govuk-label" htmlFor="name">
-              Name
-            </label>
-            {errors.people && (
-              <p className="govuk-error-message">
-                <span className="govuk-visually-hidden">Error:</span>
-                {errors.people?.[index]?.name?.message}
-              </p>
-            )}
-            <input
-              className="govuk-input govuk-!-margin-bottom-4"
-              id={`people.${index}.name`}
-              type="text"
-              {...register(`people.${index}.name`, {
-                required: "Name is required",
-              })}
-            />
-            <label className="govuk-label" htmlFor="role">
-              Role
-            </label>
-            {errors.people && (
-              <p className="govuk-error-message">
-                <span className="govuk-visually-hidden">Error:</span>
-                {errors.people?.[index]?.role?.message}
-              </p>
-            )}
-            <input
-              className="govuk-input govuk-!-margin-bottom-4"
-              id="role"
-              type="text"
-              {...register(`people.${index}.role`, {
-                required: "Role is required",
-              })}
-            />
-            <input
-              className="govuk-input govuk-!-margin-bottom-4"
-              id={`people.${index}.id`}
-              type="hidden"
-              {...register(`people.${index}.id`)}
-            />
-          </fieldset>
-        );
-      })}
-
-      <div className="govuk-!-margin-top-2">
-        <button type="submit" className="govuk-button govuk-!-margin-right-2">
-          Save
-        </button>
-        <button
-          className="govuk-button govuk-button--secondary"
-          onClick={() => SetIsUpdating(false)}
+    <>
+      {Boolean(fields.length) && (
+        <form
+          onSubmit={handleSubmit((data) => onSubmit(data, "update"))}
+          className="scl-inine-form"
         >
-          Cancel
-        </button>
-      </div>
-    </form>
+          {fields.map((field, index) => {
+            return (
+              <div key={field.id} class="scl-inine-form__fieldset">
+                <a
+                  className="govuk-button govuk-button--warning govuk-!-margin-bottom-0 scl-inine-form__delete"
+                  onClick={() => onDelete(field.userId)}
+                >
+                  Delete
+                </a>
+
+                <fieldset
+                  className="govuk-fieldset"
+                  key={`${field.name}-${index}`}
+                >
+                  <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
+                    <h2 className="govuk-fieldset__heading">
+                      Update: {field.name}
+                    </h2>
+                  </legend>
+                  <label className="govuk-label" htmlFor="name">
+                    Name
+                  </label>
+                  {errors.people && (
+                    <p className="govuk-error-message">
+                      <span className="govuk-visually-hidden">Error:</span>
+                      {errors.people?.[index]?.name?.message}
+                    </p>
+                  )}
+                  <input
+                    className="govuk-input govuk-!-margin-bottom-4"
+                    id={`people.${index}.name`}
+                    type="text"
+                    {...register(`people.${index}.name`, {
+                      required: "Name is required",
+                    })}
+                  />
+                  <label className="govuk-label" htmlFor="role">
+                    Role
+                  </label>
+                  {errors.people && (
+                    <p className="govuk-error-message">
+                      <span className="govuk-visually-hidden">Error:</span>
+                      {errors.people?.[index]?.role?.message}
+                    </p>
+                  )}
+                  <input
+                    className="govuk-input govuk-!-margin-bottom-4"
+                    id="role"
+                    type="text"
+                    {...register(`people.${index}.role`, {
+                      required: "Role is required",
+                    })}
+                  />
+                  <input
+                    className="govuk-input govuk-!-margin-bottom-4"
+                    id={`people.${index}.id`}
+                    type="hidden"
+                    {...register(`people.${index}.id`)}
+                  />
+                </fieldset>
+              </div>
+            );
+          })}
+
+          <div className="govuk-!-margin-top-2">
+            <button
+              type="submit"
+              className="govuk-button govuk-!-margin-right-2"
+            >
+              Save
+            </button>
+            <button
+              className="govuk-button govuk-button--secondary"
+              onClick={() => SetIsUpdating(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+    </>
   );
 };
 

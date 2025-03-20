@@ -1,30 +1,33 @@
 import React, { useEffect, useState } from "react";
 import ApiProxy from "../../proxy";
 import LoadingSpinner from "../../components/Spinner";
-import Update from "../../components/forms/key-people/Update";
-import Create from "../../components/forms/key-people/Create";
 import Section from "../../components/Section";
+import Card from "../../components/Card";
+import Update from "../../components/forms/company-priorites/Update";
+import Create from "../../components/forms/company-priorites/Create";
 import SectionActions from "../../components/SectionActions";
 
-const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
-  const [people, setPeople] = useState(keyPeople);
+const CompanyPriorities = ({
+  id,
+  csrf_token,
+  isEditing,
+  companyPriorities,
+}) => {
+  const [priorities, setPriorities] = useState(companyPriorities);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, SetIsUpdating] = useState(false);
   const [isCreating, SetIsCreating] = useState(false);
 
-  const resetFormState = () => {
-    SetIsUpdating(false);
-    SetIsCreating(false);
-  };
+  const ENDPOINT = `/api/v1/company/${id}/insights/company_priority`;
 
-  const onDelete = async (userId) => {
+  const onDelete = async (insightId) => {
     setIsLoading(true);
     const { data, status } = await ApiProxy.delete(
-      `/api/v1/key-people/${id}`,
-      { id: userId },
+      ENDPOINT,
+      { insightId },
       csrf_token
     );
-    setPeople(data.data);
+    setPriorities(data.data);
     setIsLoading(false);
   };
 
@@ -32,25 +35,30 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
     if (method === "create") {
       setIsLoading(true);
       const { data, status } = await ApiProxy.post(
-        `/api/v1/key-people/${id}`,
+        ENDPOINT,
         payload,
         csrf_token
       );
-      setPeople(data.data);
+      setPriorities(data.data);
       setIsLoading(false);
       SetIsCreating(false);
     }
     if (method === "update") {
       setIsLoading(true);
       const { data, status } = await ApiProxy.update(
-        `/api/v1/key-people/${id}`,
-        payload.people,
+        ENDPOINT,
+        payload.priorities,
         csrf_token
       );
-      setPeople(data.data);
+      setPriorities(data.data);
       setIsLoading(false);
       SetIsUpdating(false);
     }
+  };
+
+  const resetFormState = () => {
+    SetIsUpdating(false);
+    SetIsCreating(false);
   };
 
   useEffect(() => {
@@ -59,42 +67,39 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
 
   return (
     <LoadingSpinner isLoading={isLoading}>
-      <Section title="Key People">
-        {!people?.length ? (
-          <p className="govuk-body">Currently no key people are assigned.</p>
+      <Section isPrivaliged title="Company Priorities">
+        {!priorities.length ? (
+          <p>moo</p>
         ) : (
           !isCreating &&
-          !isUpdating && (
-            <ul className="govuk-list govuk-list--bullet scl-key-people-list">
-              {people.map((people, index) => (
-                <li key={index} className="scl-key-people-list__item">
-                  <div>
-                    <span>
-                      {people.role}: {people.name}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )
+          !isUpdating &&
+          priorities.map((priority, index) => (
+            <Card
+              key={`${priority.title}-${index}`}
+              title={priority.title}
+              className="govuk-!-margin-bottom-4"
+            >
+              <p className="govuk-body">{priority.details}</p>
+            </Card>
+          ))
         )}
+
         {isEditing && isCreating && (
           <Create onSubmit={onSubmit} SetIsCreating={SetIsCreating} />
         )}
         {isEditing && isUpdating && (
           <Update
-            id={id}
-            data={people}
+            data={priorities}
             onSubmit={onSubmit}
             onDelete={onDelete}
             SetIsUpdating={SetIsUpdating}
           />
         )}
         <SectionActions
-          addLabel="Add people"
-          editLabel="Edit people"
+          addLabel="Add priority"
+          editLabel="Edit priority"
           showActions={isEditing && !isCreating && !isUpdating}
-          showEdit={Boolean(people.length)}
+          showEdit={Boolean(priorities.length)}
           setIsCreating={() => SetIsCreating(!isCreating)}
           setIsUpdating={() => SetIsUpdating(!isUpdating)}
         />
@@ -103,4 +108,4 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
   );
 };
 
-export default KeyPeople;
+export default CompanyPriorities;

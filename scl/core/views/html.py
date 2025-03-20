@@ -178,6 +178,7 @@ def company_briefing_react(request, duns_number):
         insight_type=Insight.TYPE_COMPANY_PRIORITY).order_by('order'))
     hmg_priorities = list(company.insights.filter(
         insight_type=Insight.TYPE_HMG_PRIORITY).order_by('order'))
+    key_people = list(company.key_people.all())
 
     context = {
         "company": company,
@@ -185,7 +186,22 @@ def company_briefing_react(request, duns_number):
             "name": company.name,
             "duns_number": company.duns_number,
             "sectors": company.get_sectors_display,
-            "last_updated": current_version.revision.date_created.strftime("%B %d, %Y, %H:%M")
+            "last_updated": current_version.revision.date_created.strftime("%B %d, %Y, %H:%M"),
+            "key_people": [
+                {
+                    'name': people.name,
+                    'role': people.role,
+                    'userId': people.id
+                } for people in key_people
+            ],
+            "company_priorities": [
+                {
+                    'title': priority.title,
+                    'details': priority.details,
+                    'insightId': str(priority.id)
+                } for priority in company_priorities
+            ],
+            "is_privileged": is_privileged
         }),
         "edit_endpoint": f'/api/v1/company/{company.duns_number}',
         "add_engagement_link": f'/company-briefing/{company.duns_number}/add-engagement',

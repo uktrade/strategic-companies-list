@@ -10,45 +10,46 @@ const Create = ({ onSubmit, SetIsCreating }) => {
 
   return (
     <>
-      <h2 className="govuk-heading-m">Add new key person</h2>
+      <h2 className="govuk-heading-m">Add new company priority</h2>
       <form
         onSubmit={handleSubmit((data) => onSubmit(data, "create"))}
         className="scl-inine-form"
       >
-        <label className="govuk-label" htmlFor="name">
-          Name
+        <label className="govuk-label" htmlFor="title">
+          Title
         </label>
         {errors && (
           <p className="govuk-error-message">
             <span className="govuk-visually-hidden">Error:</span>
-            {errors?.name?.message}
+            {errors?.title?.message}
           </p>
         )}
         <input
           className="govuk-input govuk-!-margin-bottom-4"
-          id="name"
+          id="title"
           type="text"
-          {...register("name", {
-            required: "Name is required",
+          {...register("title", {
+            required: "Title is required",
           })}
         />
-        <label className="govuk-label" htmlFor="role">
-          Role
+        <label className="govuk-label" htmlFor="details">
+          Details
         </label>
         {errors && (
           <p className="govuk-error-message">
             <span className="govuk-visually-hidden">Error:</span>
-            {errors?.role?.message}
+            {errors?.details?.message}
           </p>
         )}
-        <input
-          className="govuk-input govuk-!-margin-bottom-4"
-          id="role"
+        <textarea
+          className="govuk-textarea govuk-!-margin-bottom-4"
+          id="details"
           type="text"
-          {...register("role", {
-            required: "Role is required",
+          rows="5"
+          {...register("details", {
+            required: "Details are required",
           })}
-        />
+        ></textarea>
 
         <div className="govuk-!-margin-top-2">
           <button type="submit" className="govuk-button govuk-!-margin-right-2">
