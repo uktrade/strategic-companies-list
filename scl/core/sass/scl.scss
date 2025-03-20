@@ -1,3 +1,4 @@
+@use "./colours.scss";
 @use "./layout/container.scss";
 
 @use "./components/header.scss";
@@ -13,6 +14,8 @@
 @use "./components/editable-elements.scss";
 @use "./components/insights.scss";
 @use "./components/breadcrumb.scss";
+@use "./components/section.scss";
+@use "./components/card.scss";
 @use "./components/lists/key-list.scss";
 @use "./components/lists/multi-line-list.scss";
 @use "./components/lists/multi-column-list.scss";

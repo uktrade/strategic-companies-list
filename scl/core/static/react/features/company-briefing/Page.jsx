@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
 import KeyPeople from "./KeyPeople";
+import CompanyPriorities from "./CompanyPriorities";
+import PageActions from "../../components/PageActions";
 
 const Page = ({ data, id, csrf_token }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const toggleIsEditing = () => setIsEditing(!isEditing);
 
   return (
     <>
@@ -18,23 +19,14 @@ const Page = ({ data, id, csrf_token }) => {
           />
         </div>
         <div className="govuk-grid-column-one-third">
-          <div className="scl-page-actions">
-            <button
-              className={`govuk-button ${
-                isEditing ? "govuk-button--warning" : ""
-              }`}
-              onClick={toggleIsEditing}
-            >
-              {isEditing ? "Cancel" : "Edit"}
-            </button>
-            <a
-              href={`/company-briefing/${data.duns_number}/add-engagement`}
-              role="button"
-              className="govuk-button"
-            >
-              Add engagement
-            </a>
-          </div>
+          {data.is_privileged && (
+            <PageActions
+              link={`/company-briefing/${data.duns_number}/add-engagement`}
+              label="Add engagement"
+              toggleIsEditing={() => setIsEditing(!isEditing)}
+              isEditing={isEditing}
+            />
+          )}
         </div>
       </div>
       <div className="govuk-grid-row">
@@ -43,8 +35,16 @@ const Page = ({ data, id, csrf_token }) => {
             id={id}
             csrf_token={csrf_token}
             isEditing={isEditing}
-            toggleIsEditing={toggleIsEditing}
+            keyPeople={data.key_people}
           />
+          {data.is_privileged && (
+            <CompanyPriorities
+              id={id}
+              csrf_token={csrf_token}
+              isEditing={isEditing}
+              companyPriorities={data.company_priorities}
+            />
+          )}
         </div>
       </div>
     </>
