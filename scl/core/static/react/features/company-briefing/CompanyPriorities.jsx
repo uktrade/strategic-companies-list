@@ -69,7 +69,7 @@ const CompanyPriorities = ({
     <LoadingSpinner isLoading={isLoading}>
       <Section isPrivaliged title="Company Priorities">
         {!priorities.length ? (
-          <p>moo</p>
+          <p class="govuk-body">Currently no company priorites are assigned.</p>
         ) : (
           !isCreating &&
           !isUpdating &&
