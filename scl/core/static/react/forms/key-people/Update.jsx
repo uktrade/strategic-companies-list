@@ -32,7 +32,7 @@ const Update = ({ data, onSubmit, onDelete, SetIsUpdating }) => {
         >
           {fields.map((field, index) => {
             return (
-              <div key={field.id} class="scl-inine-form__fieldset">
+              <div key={field.id} className="scl-inine-form__fieldset">
                 <a
                   className="govuk-button govuk-button--warning govuk-!-margin-bottom-0 scl-inine-form__delete"
                   onClick={() => onDelete(field.userId)}

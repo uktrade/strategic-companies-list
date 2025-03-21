@@ -12,10 +12,12 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
   const [isUpdating, SetIsUpdating] = useState(false);
   const [isCreating, SetIsCreating] = useState(false);
 
+  const ENDPOINT = `/api/v1/key-people/${id}`;
+
   const onDelete = async (userId) => {
     setIsLoading(true);
     const { data, status } = await ApiProxy.delete(
-      `/api/v1/key-people/${id}`,
+      ENDPOINT,
       { id: userId },
       csrf_token
     );
@@ -27,7 +29,7 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
     if (method === "create") {
       setIsLoading(true);
       const { data, status } = await ApiProxy.post(
-        `/api/v1/key-people/${id}`,
+        ENDPOINT,
         payload,
         csrf_token
       );
@@ -38,7 +40,7 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
     if (method === "update") {
       setIsLoading(true);
       const { data, status } = await ApiProxy.update(
-        `/api/v1/key-people/${id}`,
+        ENDPOINT,
         payload.people,
         csrf_token
       );

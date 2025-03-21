@@ -183,7 +183,7 @@ def company_briefing_react(request, duns_number):
     context = {
         "company": company,
         "props": json.dumps({
-            "name": company.name,
+            "title": company.name,
             "duns_number": company.duns_number,
             "sectors": company.get_sectors_display,
             "last_updated": current_version.revision.date_created.strftime("%B %d, %Y, %H:%M"),
