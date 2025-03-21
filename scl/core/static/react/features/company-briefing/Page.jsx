@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
 import KeyPeople from "./KeyPeople";
-import CompanyPriorities from "./CompanyPriorities";
 import PageActions from "../../components/PageActions";
+import Priorities from "./Priorities";
 
 const Page = ({ data, id, csrf_token }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -38,12 +38,26 @@ const Page = ({ data, id, csrf_token }) => {
             keyPeople={data.key_people}
           />
           {data.is_privileged && (
-            <CompanyPriorities
-              id={id}
-              csrf_token={csrf_token}
-              isEditing={isEditing}
-              companyPriorities={data.company_priorities}
-            />
+            <>
+              <Priorities
+                id={id}
+                insightType="company_priority"
+                title="Company Priorities"
+                emptyMessage="Currently no company priorites are assigned."
+                csrf_token={csrf_token}
+                isEditing={isEditing}
+                companyPriorities={data.company_priorities}
+              />
+              <Priorities
+                id={id}
+                title="HMG Priorities"
+                insightType="hmg_priority"
+                emptyMessage="Currently no HMG priorites are assigned."
+                csrf_token={csrf_token}
+                isEditing={isEditing}
+                companyPriorities={data.hmg_priorities}
+              />
+            </>
           )}
         </div>
       </div>

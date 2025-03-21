@@ -201,6 +201,13 @@ def company_briefing_react(request, duns_number):
                     'insightId': str(priority.id)
                 } for priority in company_priorities
             ],
+            "hmg_priorities": [
+                {
+                    'title': priority.title,
+                    'details': priority.details,
+                    'insightId': str(priority.id)
+                } for priority in hmg_priorities
+            ],
             "is_privileged": is_privileged
         }),
         "edit_endpoint": f'/api/v1/company/{company.duns_number}',
