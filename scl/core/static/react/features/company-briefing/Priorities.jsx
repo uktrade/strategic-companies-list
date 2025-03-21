@@ -3,22 +3,25 @@ import ApiProxy from "../../proxy";
 import LoadingSpinner from "../../components/Spinner";
 import Section from "../../components/Section";
 import Card from "../../components/Card";
-import Update from "../../components/forms/company-priorites/Update";
-import Create from "../../components/forms/company-priorites/Create";
+import Update from "../../forms/company-priorites/Update";
+import Create from "../../forms/company-priorites/Create";
 import SectionActions from "../../components/SectionActions";
 
-const CompanyPriorities = ({
+const Priorities = ({
   id,
   csrf_token,
   isEditing,
+  insightType,
   companyPriorities,
+  emptyMessage,
+  title,
 }) => {
   const [priorities, setPriorities] = useState(companyPriorities);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, SetIsUpdating] = useState(false);
   const [isCreating, SetIsCreating] = useState(false);
 
-  const ENDPOINT = `/api/v1/company/${id}/insights/company_priority`;
+  const ENDPOINT = `/api/v1/company/${id}/insights/${insightType}`;
 
   const onDelete = async (insightId) => {
     setIsLoading(true);
@@ -67,9 +70,9 @@ const CompanyPriorities = ({
 
   return (
     <LoadingSpinner isLoading={isLoading}>
-      <Section isPrivaliged title="Company Priorities">
+      <Section isPrivaliged title={title}>
         {!priorities.length ? (
-          <p class="govuk-body">Currently no company priorites are assigned.</p>
+          <p class="govuk-body">{emptyMessage}</p>
         ) : (
           !isCreating &&
           !isUpdating &&
@@ -95,17 +98,18 @@ const CompanyPriorities = ({
             SetIsUpdating={SetIsUpdating}
           />
         )}
-        <SectionActions
-          addLabel="Add priority"
-          editLabel="Edit priority"
-          showActions={isEditing && !isCreating && !isUpdating}
-          showEdit={Boolean(priorities.length)}
-          setIsCreating={() => SetIsCreating(!isCreating)}
-          setIsUpdating={() => SetIsUpdating(!isUpdating)}
-        />
+        {isEditing && !isCreating && !isUpdating && (
+            <SectionActions
+              addLabel="Add priority"
+              editLabel="Edit priority"
+              showEdit={Boolean(priorities.length)}
+              setIsCreating={() => SetIsCreating(!isCreating)}
+              setIsUpdating={() => SetIsUpdating(!isUpdating)}
+            />
+          )}
       </Section>
     </LoadingSpinner>
   );
 };
 
-export default CompanyPriorities;
+export default Priorities;

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ApiProxy from "../../proxy";
 import LoadingSpinner from "../../components/Spinner";
-import Update from "../../components/forms/key-people/Update";
-import Create from "../../components/forms/key-people/Create";
+import Update from "../../forms/key-people/Update";
+import Create from "../../forms/key-people/Create";
 import Section from "../../components/Section";
 import SectionActions from "../../components/SectionActions";
 
@@ -11,11 +11,6 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, SetIsUpdating] = useState(false);
   const [isCreating, SetIsCreating] = useState(false);
-
-  const resetFormState = () => {
-    SetIsUpdating(false);
-    SetIsCreating(false);
-  };
 
   const onDelete = async (userId) => {
     setIsLoading(true);
@@ -51,6 +46,11 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
       setIsLoading(false);
       SetIsUpdating(false);
     }
+  };
+
+  const resetFormState = () => {
+    SetIsUpdating(false);
+    SetIsCreating(false);
   };
 
   useEffect(() => {
@@ -90,14 +90,15 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
             SetIsUpdating={SetIsUpdating}
           />
         )}
-        <SectionActions
-          addLabel="Add people"
-          editLabel="Edit people"
-          showActions={isEditing && !isCreating && !isUpdating}
-          showEdit={Boolean(people.length)}
-          setIsCreating={() => SetIsCreating(!isCreating)}
-          setIsUpdating={() => SetIsUpdating(!isUpdating)}
-        />
+        {isEditing && !isCreating && !isUpdating && (
+          <SectionActions
+            addLabel="Add people"
+            editLabel="Edit people"
+            showEdit={Boolean(people.length)}
+            setIsCreating={() => SetIsCreating(!isCreating)}
+            setIsUpdating={() => SetIsUpdating(!isUpdating)}
+          />
+        )}
       </Section>
     </LoadingSpinner>
   );
