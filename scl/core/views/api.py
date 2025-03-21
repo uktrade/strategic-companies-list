@@ -67,15 +67,27 @@ def company_api(request, duns_number):
             company.name = data.get('title').strip()
             company.save()
 
+            updated_company = Company.objects.get(duns_number=duns_number)
+
             reversion.set_user(request.user)
             reversion.set_comment(
-                "Updated company name and key_people via API "
+                "Updated company via API "
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+
+            return JsonResponse(
+                {
+                    "title": updated_company.name,
+                    "duns_number": updated_company.duns_number,
+                    "sectors": updated_company.get_sectors_display,
+                    "last_updated": updated_company.last_updated.strftime("%B %d, %Y, %H:%M"),
+                },
+                status=200,
             )
 
     return JsonResponse(
         {
-            "company": company.name,
+            "title": company.name,
             "duns_number": company.duns_number,
         },
         status=200,

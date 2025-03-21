@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Header from "../../components/Header";
 import KeyPeople from "./KeyPeople";
 import PageActions from "../../components/PageActions";
 import Priorities from "./Priorities";
+import CompanyDetails from "./CompanyDetails";
 
 const Page = ({ data, id, csrf_token }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -11,11 +11,10 @@ const Page = ({ data, id, csrf_token }) => {
     <>
       <div className="govuk-grid-row">
         <div className="govuk-grid-column-two-thirds">
-          <Header
-            title={data.name}
-            duns_number={data.duns_number}
-            sectors={data.sectors}
-            last_updated={data.last_updated}
+          <CompanyDetails
+            data={data}
+            isEditing={isEditing}
+            csrf_token={csrf_token}
           />
         </div>
         <div className="govuk-grid-column-one-third">
