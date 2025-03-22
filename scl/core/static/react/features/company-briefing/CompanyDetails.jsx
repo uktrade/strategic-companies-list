@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import ApiProxy from "../../proxy";
 import Header from "../../components/Header";
 import Update from "../../forms/company-details/Update";
+import LoadingSpinner from "../../components/Spinner";
 
 const CompanyDetails = ({ data, isEditing, csrf_token }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isUpdating, SetIsUpdating] = useState(true);
-  const [companyDetails, setCompanyDetails] = useState(data)
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [companyDetails, setCompanyDetails] = useState(data);
 
   const ENDPOINT = `/api/v1/company/${data.duns_number}`;
 
@@ -19,32 +20,36 @@ const CompanyDetails = ({ data, isEditing, csrf_token }) => {
       csrf_token
     );
 
-
     setCompanyDetails(data);
     setIsLoading(false);
-    SetIsUpdating(false);
+    setIsUpdating(false);
   };
 
   return (
-    <>
+    <LoadingSpinner isLoading={false}>
       <Header
         title={companyDetails.title}
         duns_number={companyDetails.duns_number}
         sectors={companyDetails.sectors}
         last_updated={companyDetails.last_updated}
       />
-      {true && isUpdating && (
-        <Update data={companyDetails} onSubmit={onSubmit} />
+
+      {isEditing && isUpdating && (
+        <Update
+          data={companyDetails}
+          onSubmit={onSubmit}
+          setIsUpdating={setIsUpdating}
+        />
       )}
       {isEditing && !isUpdating && (
         <button
           className="govuk-button"
-          onClick={() => SetIsUpdating(!isUpdating)}
+          onClick={() => setIsUpdating(!isUpdating)}
         >
           Edit company details
         </button>
       )}
-    </>
+    </LoadingSpinner>
   );
 };
 

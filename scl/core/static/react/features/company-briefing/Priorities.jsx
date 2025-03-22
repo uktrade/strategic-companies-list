@@ -18,8 +18,8 @@ const Priorities = ({
 }) => {
   const [priorities, setPriorities] = useState(companyPriorities);
   const [isLoading, setIsLoading] = useState(false);
-  const [isUpdating, SetIsUpdating] = useState(false);
-  const [isCreating, SetIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const ENDPOINT = `/api/v1/company/${id}/insights/${insightType}`;
 
@@ -31,6 +31,10 @@ const Priorities = ({
       csrf_token
     );
     setPriorities(data.data);
+    if (data.data.length <= 0) {
+        setIsUpdating(false);
+        setIsCreating(false);
+    }
     setIsLoading(false);
   };
 
@@ -44,7 +48,7 @@ const Priorities = ({
       );
       setPriorities(data.data);
       setIsLoading(false);
-      SetIsCreating(false);
+      setIsCreating(false);
     }
     if (method === "update") {
       setIsLoading(true);
@@ -55,13 +59,13 @@ const Priorities = ({
       );
       setPriorities(data.data);
       setIsLoading(false);
-      SetIsUpdating(false);
+      setIsUpdating(false);
     }
   };
 
   const resetFormState = () => {
-    SetIsUpdating(false);
-    SetIsCreating(false);
+    setIsUpdating(false);
+    setIsCreating(false);
   };
 
   useEffect(() => {
@@ -88,14 +92,14 @@ const Priorities = ({
         )}
 
         {isEditing && isCreating && (
-          <Create onSubmit={onSubmit} SetIsCreating={SetIsCreating} />
+          <Create onSubmit={onSubmit} setIsCreating={setIsCreating} />
         )}
         {isEditing && isUpdating && (
           <Update
             data={priorities}
             onSubmit={onSubmit}
             onDelete={onDelete}
-            SetIsUpdating={SetIsUpdating}
+            setIsUpdating={setIsUpdating}
           />
         )}
         {isEditing && !isCreating && !isUpdating && (
@@ -103,8 +107,8 @@ const Priorities = ({
               addLabel="Add priority"
               editLabel="Edit priority"
               showEdit={Boolean(priorities.length)}
-              setIsCreating={() => SetIsCreating(!isCreating)}
-              setIsUpdating={() => SetIsUpdating(!isUpdating)}
+              setIsCreating={() => setIsCreating(!isCreating)}
+              setIsUpdating={() => setIsUpdating(!isUpdating)}
             />
           )}
       </Section>

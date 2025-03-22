@@ -1,239 +1,30 @@
 {% extends "base.html" %}
+{% load static %}
 {% load bleach_tags %}
 {% load humanize %}
 {% load scl_html %}
 
 {% block content %}
 <div class="govuk-width-container">
-  <nav class="govuk-breadcrumbs" aria-label="Breadcrumb">
-    <ol class="govuk-breadcrumbs__list">
-      <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="/">Home</a>
-      </li>
-      <li class="govuk-breadcrumbs__list-item">
-        {{company.name}}
-      </li>
-    </ol>
-  </nav>
-  <main class="govuk-main-wrapper" id="main-content">
-    {% if request.GET.success %}
-    <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-      <div class="govuk-notification-banner__header">
-        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-          Success
-        </h2>
-      </div>
-      <div class="govuk-notification-banner__content">
-        <p class="govuk-notification-banner__heading">
-          Your changes have been saved
-        </p>
-      </div>
-    </div>
-    {% endif %}
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
-        {% include './partials/header.html' with edit=True edit_endpoint=edit_endpoint title=company.name add_engagement_link=add_engagement_link id=company.id %}
-        <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">D-U-N-S: {{ company.duns_number }}{% if company.global_hq_name %}, {{ company.global_hq_name}}{% endif %}</p>
-        {% if company.sectors %}
-        <p class="govuk-body govuk-body-s govuk-!-margin-bottom-1">Sectors: {{ company.get_sectors_display }}</p>
-        {% endif %}
-        <p class="govuk-body govuk-body-s" id="company-last-updated">Last updated: {{ current_version.revision.date_created }}</p>
-      </div>
-    </div>
-    <div class="govuk-grid-row">
-      <section class="govuk-grid-column-two-thirds">
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
-        {% if company.global_hq_country or company.global_turnover_millions_usd or global_number_of_employees.global_number_of_employees %}
-        <h2 class="govuk-heading-m">Key facts</h2>
-        <ul class="govuk-list govuk-list--bullet">
-          {% if company.global_hq_country %}
-          <li>Headquartered in {{ company.get_global_hq_country_display }}</li>
-          {% endif %}
-          {% if company.global_turnover_millions_usd %}
-          <li>Has global turnover of {% if company.global_turnover_millions_usd > 1000 %}${{ company.global_turnover_billions_usd |floatformat:1|intcomma }} billion{% else %}${{ company.global_turnover_millions_usd |intcomma }} million{% endif %}</li>
-          {% endif %}
-          {% if company.global_number_of_employees %}
-          <li>Employs {{ company.global_number_of_employees|intcomma }} people globally</li>
-          {% endif %}
-        </ul>
-        {% endif %}
-        <h2 class="govuk-heading-m">Key People</h2>
-        <ul class="govuk-list govuk-list--bullet scl-editable">
-          {% if company.key_people %}
-            {% for people in company.key_people.all %}
-                <li>{{people.role}}: {{people.name}}</li>
-            {% endfor %}
-          {% else %}
-          <li>No key people information available.</li>
-          {% endif %}
-        </ul>
-        {% if is_privileged %}
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--visible govuk-!-margin-top-7 govuk-!-margin-bottom-0">
-        <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
-        <h2 class="govuk-heading-m govuk-!-margin-top-3">Company Priorities</h2>
-
-        <div id="company-priorities-container" data-company-duns="{{ company.duns_number }}" data-insight-type="company_priority">
-          {% if company_priorities %}
-          <ul class="govuk-list" id="company-priorities-list">
-            {% for priority in company_priorities %}
-            <li class="scl-priority-item" data-priority-id="{{ priority.id }}">
-              <div class="scl-priority-content">
-                <b class="scl-priority-title">{{ priority.title }}</b>
-                <div class="scl-priority-details">{{ priority.details|linebreaks }}</div>
-                <p class="govuk-body-s govuk-!-margin-top-1">
-                  Added by {{ priority.created_by.first_name }} {{ priority.created_by.last_name }} on {{ priority.created_at|date:"j M Y" }}
-                </p>
-              </div>
-              <div class="scl-priority-actions scl-priority-actions--hidden">
-                <button class="govuk-button govuk-button--secondary scl-button-edit-priority">Edit</button>
-                <button class="govuk-button govuk-button--warning scl-button-delete-priority">Delete</button>
-              </div>
-            </li>
-            {% if forloop.counter == 5 and company_priorities|length > 5 %}
-            <li class="scl-priority-more-toggle" data-more-text="Show all priorities" data-less-text="Show fewer priorities">
-              <button class="govuk-button govuk-button--secondary">Show all priorities</button>
-            </li>
-            {% endif %}
-            {% endfor %}
-          </ul>
-          <p class="govuk-body" id="no-company-priorities-message" style="display: none;">No company priorities have been set.</p>
-          {% else %}
-          <p class="govuk-body" id="no-company-priorities-message">No company priorities have been set.</p>
-          {% endif %}
-
-          <button id="add-company-priority-button" class="govuk-button govuk-!-margin-top-2 scl-priority-button--hidden">
-            Add company priority
-          </button>
-        </div>
-
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--visible govuk-!-margin-top-7 govuk-!-margin-bottom-0">
-        <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
-        <h2 class="govuk-heading-m govuk-!-margin-top-3">HMG Priorities</h2>
-
-        <div id="hmg-priorities-container" data-company-duns="{{ company.duns_number }}" data-insight-type="hmg_priority">
-          {% if hmg_priorities %}
-          <ul class="govuk-list" id="hmg-priorities-list">
-            {% for priority in hmg_priorities %}
-            <li class="scl-priority-item" data-priority-id="{{ priority.id }}">
-              <div class="scl-priority-content">
-                <b class="scl-priority-title">{{ priority.title }}</b>
-                <div class="scl-priority-details">{{ priority.details|linebreaks }}</div>
-                <p class="govuk-body-s govuk-!-margin-top-1">
-                  Added by {{ priority.created_by.first_name }} {{ priority.created_by.last_name }} on {{ priority.created_at|date:"j M Y" }}
-                </p>
-              </div>
-              <div class="scl-priority-actions scl-priority-actions--hidden">
-                <button class="govuk-button govuk-button--secondary scl-button-edit-priority">Edit</button>
-                <button class="govuk-button govuk-button--warning scl-button-delete-priority">Delete</button>
-              </div>
-            </li>
-            {% if forloop.counter == 5 and hmg_priorities|length > 5 %}
-            <li class="scl-priority-more-toggle" data-more-text="Show all priorities" data-less-text="Show fewer priorities">
-              <button class="govuk-button govuk-button--secondary">Show all priorities</button>
-            </li>
-            {% endif %}
-            {% endfor %}
-          </ul>
-          <p class="govuk-body" id="no-hmg-priorities-message" style="display: none;">No HMG priorities have been set.</p>
-          {% else %}
-          <p class="govuk-body" id="no-hmg-priorities-message">No HMG priorities have been set.</p>
-          {% endif %}
-
-          <button id="add-hmg-priority-button" class="govuk-button govuk-!-margin-top-2 scl-priority-button--hidden">
-            Add HMG priority
-          </button>
-        </div>
-        {% endif %}
-      </section>
-      <aside class="govuk-grid-column-one-third" role="complementary">
-        <hr class="govuk-section-break govuk-section-break--m govuk-!-margin-top-0 govuk-section-break--visible govuk-!-margin-bottom-0">
-        {% if is_privileged %}
-        <strong class="govuk-tag govuk-tag--red scl-tag scl-tag--security scl-tag--hanging">PRIVILEGED</strong>
-        <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-2">
-          Recent top-level engagements across HMG
-        </h2>
-        <ul class="scl-multiline-list govuk-!-margin-bottom-2">
-          {% if past_engagements %}
-          {% for engagement in past_engagements %}
-          <li>
-            <a href="/engagement/{{engagement.id}}" class="govuk-link govuk-link--no-visited-state scl-multiline-list__link">
-              <strong class="govuk-tag govuk-tag--grey govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date">{{engagement.date}}</strong>
-              <span class="scl-multiline-list__link_text">{{engagement.title}}</span>
-            </a>
+  <div class="scl-breadcrumb">
+      <nav class="govuk-breadcrumbs" aria-label="Breadcrumb">
+        <ol class="govuk-breadcrumbs__list">
+          <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/">Home</a>
           </li>
-          {% endfor %}
-          {% else %}
-          <p class="govuk-body">No current engagements.</p>
-          {% endif %}
-        </ul>
-
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-1 govuk-!-margin-bottom-1">
-        <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small"><a href="/company-briefing/{{ company.duns_number }}/engagements" class="govuk-link govuk-link--no-visited-state scl-link--no-underline">View working-level engagements</a></p>
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-5 govuk-!-margin-bottom-2">
-        {% endif %}
-        <h2 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-margin-top-{% if is_privileged %}2{% else %}4{% endif %}">Account managers</h2>
-        {% if account_managers_with_lead %}
-        <ul class="govuk-list scl-list--small">
-          {% for account_manager, is_lead in account_managers_with_lead %}
-          <li>
-            <div class="scl-key-list__item_header">
-              <a class="govuk-link govuk-link--no-visited-state scl-link--no-underline" href="##">{{ account_manager.first_name }} {{ account_manager.last_name }}</a>
-              {% if is_lead %}
-              <strong class="govuk-tag govuk-tag--turquoise scl-tag scl-tag--small govuk-!-static-margin-left-1">Lead</strong>
-              {% endif %}
-            </div>
+          <li class="govuk-breadcrumbs__list-item">
+            {{company.name}}
           </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p class="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small">No account managers</p>
-        {% endif %}
-      </aside>
-    </div>
-  </main>
+        </ol>
+      </nav>
+      <div>
+        <button class="govuk-button govuk-!-margin-bottom-0">Print</button>
+      </div>
+  </div>
+  {% include "./partials/react-slot.html" with mount_id="company-briefing" id=company.duns_number props=props %}
 </div>
+{% endblock %}
 
-<style nonce="{{request.csp_nonce}}">
-.scl-priority-item {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border: 1px solid #b1b4b6;
-  list-style-type: none;
-}
-
-  .govuk-list .scl-priority-item:before {
-    content: none;
-  }
-
-  .scl-priority-actions {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .scl-priority-actions--hidden {
-    display: none;
-  }
-
-  .scl-priority-editing {
-    margin-top: 1rem;
-  }
-
-  .scl-priority-more-toggle {
-    margin: 1rem 0;
-    list-style: none;
-  }
-
-  .govuk-list .scl-priority-more-toggle:before {
-    content: none;
-  }
-
-  .govuk-button--warning {
-    background-color: #d4351c;
-  }
-
-  .govuk-button--warning:hover {
-    background-color: #aa2a16;
-  }
-</style>
+{% block scripts %}
+  <script type="module" src="{% static 'js/company-briefing.js' %}"></script>
 {% endblock %}

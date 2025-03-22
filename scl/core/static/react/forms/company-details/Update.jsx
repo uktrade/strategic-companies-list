@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const Update = ({ data, onSubmit, SetIsUpdating }) => {
+const Update = ({ data, onSubmit, setIsUpdating }) => {
   const {
     register,
     handleSubmit,
@@ -14,7 +14,7 @@ const Update = ({ data, onSubmit, SetIsUpdating }) => {
 
   return (
     <>
-      <h2 className="govuk-heading-m">Update: {data.name}</h2>
+      <h2 className="govuk-heading-m">Update: {data.title}</h2>
       <form
         onSubmit={handleSubmit((data) => onSubmit(data, "update"))}
         className="scl-inine-form govuk-!-margin-top-0"
@@ -22,10 +22,10 @@ const Update = ({ data, onSubmit, SetIsUpdating }) => {
         <label className="govuk-label" htmlFor="title">
           Title
         </label>
-        {errors.priorities && (
+        {errors.title && (
           <p className="govuk-error-message">
             <span className="govuk-visually-hidden">Error:</span>
-            {errors.priorities?.message}
+            {errors.title?.message}
           </p>
         )}
         <input
@@ -40,12 +40,12 @@ const Update = ({ data, onSubmit, SetIsUpdating }) => {
           <button type="submit" className="govuk-button govuk-!-margin-right-2">
             Save
           </button>
-          <button
+          <a
             className="govuk-button govuk-button--secondary"
-            onClick={() => SetIsUpdating(false)}
+            onClick={() => setIsUpdating(false)}
           >
             Cancel
-          </button>
+          </a>
         </div>
       </form>
     </>

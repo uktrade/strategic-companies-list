@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
 import json
 import time
@@ -8,6 +9,8 @@ import boto3
 from django.conf import settings
 from django.http import JsonResponse
 import reversion
+
+today = date.today()
 
 logger = logging.getLogger().warning
 
@@ -294,6 +297,44 @@ def engagement_api(request, engagement_id):
         },
         status=200,
     )
+
+
+def add_engagement_api(request, duns_number):
+    data = json.loads(request.body)
+    company = Company.objects.get(duns_number=duns_number)
+    is_privileged = request.user in company.account_manager.all()
+
+    if not is_privileged:
+        return JsonResponse(403, safe=False)
+
+    if request.method == 'POST':
+        with reversion.create_revision():
+            title = data.get("title")
+            date = datetime.strptime(data.get("date"), "%Y-%m-%d").date()
+            details = data.get("details")
+            logger(company.id)
+            Engagement.objects.create(
+                company_id=company.id,
+                title=title, date=date, details=details)
+
+            engagements = list(Engagement.objects.filter(
+                company=company, date__gte=today).order_by('date'))[0:4]
+
+            reversion.set_user(request.user)
+            reversion.set_comment(
+                "Engagement added via API "
+                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+            )
+
+            return JsonResponse({
+                "data": [
+                    {
+                        'title': engagement.title,
+                        'date': engagement.date.strftime("%B %d, %Y"),
+                    } for engagement in engagements
+                ]},
+                status=200,
+            )
 
 
 def engagement_note_api(request, engagement_id):

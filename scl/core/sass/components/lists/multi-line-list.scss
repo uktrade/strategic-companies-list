@@ -1,19 +1,20 @@
 .scl-multiline-list {
   list-style-type: none;
-  margin: 0;
   padding: 0;
-  font-size: 14px;
+  font-size: 16px;
+}
+
+.scl-multiline-list__item {
+  margin-bottom: 15px;
 }
 
 .scl-multiline-list__date {
-  margin-bottom: 2px;
+  margin-bottom: 5px;
 }
 
 .scl-multiline-list__link {
   display: block;
   text-decoration-line: none;
-  padding: 5px 15px;
-  margin: 0 -15px 2px -15px;
 }
 
 .scl-multiline-list__link:hover {
@@ -26,11 +27,4 @@
 
 .scl-multiline-list__link_text {
   display: block;
-}
-
-@media (min-width: 40.0625em) {
-  .scl-multiline-list__link {
-    padding: 5px;
-    margin: 0 -5px 2px -5px;
-  }
 }
