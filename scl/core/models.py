@@ -63,6 +63,10 @@ class Company(models.Model):
             return ""
         return ", ".join(dict(SECTORS).get(sector, sector) for sector in self.sectors)
 
+    @property
+    def get_global_hq_country(self):
+        return dict(COUNTRIES_AND_TERRITORIES).get(self.global_hq_country, self.global_hq_country)
+
     class Meta:
         verbose_name_plural = "companies"
         ordering = ["name", "duns_number", "id"]

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 
-const Update = ({ data, onSubmit, onDelete, SetIsUpdating }) => {
+const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
   const {
     register,
     handleSubmit,
@@ -97,7 +97,7 @@ const Update = ({ data, onSubmit, onDelete, SetIsUpdating }) => {
             </button>
             <button
               className="govuk-button govuk-button--secondary"
-              onClick={() => SetIsUpdating(false)}
+              onClick={() => setIsUpdating(false)}
             >
               Cancel
             </button>

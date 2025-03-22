@@ -9,8 +9,8 @@ import SectionActions from "../../components/SectionActions";
 const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
   const [people, setPeople] = useState(keyPeople);
   const [isLoading, setIsLoading] = useState(false);
-  const [isUpdating, SetIsUpdating] = useState(false);
-  const [isCreating, SetIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const ENDPOINT = `/api/v1/key-people/${id}`;
 
@@ -22,6 +22,10 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
       csrf_token
     );
     setPeople(data.data);
+    if (data.data.length <= 0) {
+      setIsUpdating(false);
+      setIsCreating(false);
+    }
     setIsLoading(false);
   };
 
@@ -35,7 +39,7 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
       );
       setPeople(data.data);
       setIsLoading(false);
-      SetIsCreating(false);
+      setIsCreating(false);
     }
     if (method === "update") {
       setIsLoading(true);
@@ -46,13 +50,13 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
       );
       setPeople(data.data);
       setIsLoading(false);
-      SetIsUpdating(false);
+      setIsUpdating(false);
     }
   };
 
   const resetFormState = () => {
-    SetIsUpdating(false);
-    SetIsCreating(false);
+    setIsUpdating(false);
+    setIsCreating(false);
   };
 
   useEffect(() => {
@@ -81,7 +85,7 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
           )
         )}
         {isEditing && isCreating && (
-          <Create onSubmit={onSubmit} SetIsCreating={SetIsCreating} />
+          <Create onSubmit={onSubmit} setIsCreating={setIsCreating} />
         )}
         {isEditing && isUpdating && (
           <Update
@@ -89,7 +93,7 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
             data={people}
             onSubmit={onSubmit}
             onDelete={onDelete}
-            SetIsUpdating={SetIsUpdating}
+            setIsUpdating={setIsUpdating}
           />
         )}
         {isEditing && !isCreating && !isUpdating && (
@@ -97,8 +101,8 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
             addLabel="Add people"
             editLabel="Edit people"
             showEdit={Boolean(people.length)}
-            setIsCreating={() => SetIsCreating(!isCreating)}
-            setIsUpdating={() => SetIsUpdating(!isUpdating)}
+            setIsCreating={() => setIsCreating(!isCreating)}
+            setIsUpdating={() => setIsUpdating(!isUpdating)}
           />
         )}
       </Section>

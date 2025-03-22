@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const Create = ({ onSubmit, SetIsCreating }) => {
+const Create = ({ onSubmit, setIsCreating }) => {
   const {
     register,
     handleSubmit,
@@ -57,7 +57,7 @@ const Create = ({ onSubmit, SetIsCreating }) => {
           </button>
           <button
             className="govuk-button govuk-button--secondary"
-            onClick={() => SetIsCreating(false)}
+            onClick={() => setIsCreating(false)}
           >
             Cancel
           </button>

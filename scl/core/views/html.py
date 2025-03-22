@@ -2,11 +2,10 @@ import json
 import logging
 from datetime import date, datetime, timedelta
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from reversion.models import Version
 from django.http import JsonResponse
 
-from scl.core.forms import EngagementForm
 from scl.core.models import Company, Engagement, CompanyAccountManager, Insight
 
 logger = logging.getLogger().warning
@@ -25,44 +24,6 @@ def index(request):
         "your_companies": your_companies,
         "your_future_enagements": your_future_enagements,
     })
-
-
-def company_briefing(request, duns_number):
-    today = date.today()
-
-    company = Company.objects.get(duns_number=duns_number)
-    account_managers = list(company.account_manager.all())
-
-    account_managers_with_lead = []
-    for am in account_managers:
-        is_lead = CompanyAccountManager.objects.filter(
-            company=company, account_manager=am, is_lead=True).exists()
-        account_managers_with_lead.append((am, is_lead))
-
-    past_engagements = list(company.engagements.filter(
-        date__lte=today).order_by('-date'))[0:4]
-    is_privileged = request.user in account_managers
-
-    versions = Version.objects.get_for_object(company)
-    current_version = versions.first()
-
-    company_priorities = list(company.insights.filter(
-        insight_type=Insight.TYPE_COMPANY_PRIORITY).order_by('order'))
-    hmg_priorities = list(company.insights.filter(
-        insight_type=Insight.TYPE_HMG_PRIORITY).order_by('order'))
-
-    context = {
-        "company": company,
-        "edit_endpoint": f'/api/v1/company/{company.duns_number}',
-        "add_engagement_link": f'/company-briefing/{company.duns_number}/add-engagement',
-        "past_engagements": past_engagements,
-        "is_privileged": is_privileged,
-        "account_managers_with_lead": account_managers_with_lead,
-        "current_version": current_version,
-        "company_priorities": company_priorities,
-        "hmg_priorities": hmg_priorities,
-    }
-    return render(request, "company.html", context)
 
 
 def engagement(request, engagement_id):
@@ -128,34 +89,7 @@ def company_engagements(request, duns_number):
     })
 
 
-def add_engagement(request, duns_number):
-    company = Company.objects.get(duns_number=duns_number)
-    is_privileged = request.user in company.account_manager.all()
-
-    if not is_privileged:
-        return JsonResponse(403, safe=False)
-
-    if request.method == 'POST':
-        form = EngagementForm(request.POST)
-        if form.is_valid():
-            title = form.cleaned_data["title"]
-            date = form.cleaned_data['date']
-            details = form.cleaned_data['details']
-            Engagement.objects.create(
-                company_id=company.id,
-                title=title, date=date, details=details)
-            return redirect(f'/company-briefing/{company.duns_number}?success=1')
-
-    else:
-        form = EngagementForm()
-
-    return render(request, "add_engagements.html", {
-        "company": company,
-        "form": form
-    })
-
-
-def company_briefing_react(request, duns_number):
+def company_briefing(request, duns_number):
     today = date.today()
 
     company = Company.objects.get(duns_number=duns_number)
@@ -165,11 +99,17 @@ def company_briefing_react(request, duns_number):
     for am in account_managers:
         is_lead = CompanyAccountManager.objects.filter(
             company=company, account_manager=am, is_lead=True).exists()
-        account_managers_with_lead.append((am, is_lead))
+        account_managers_with_lead.append({
+            "name": f"{am.first_name} {am.last_name}",
+            "is_lead": "true" if is_lead else "false"
+        })
 
-    past_engagements = list(company.engagements.filter(
-        date__lte=today).order_by('-date'))[0:4]
+    engagements = list(company.engagements.filter(
+        date__gte=today).order_by('date'))[0:4]
     is_privileged = request.user in account_managers
+
+    for e in engagements:
+        logger(e.date)
 
     versions = Version.objects.get_for_object(company)
     current_version = versions.first()
@@ -187,6 +127,9 @@ def company_briefing_react(request, duns_number):
             "duns_number": company.duns_number,
             "sectors": company.get_sectors_display,
             "last_updated": current_version.revision.date_created.strftime("%B %d, %Y, %H:%M"),
+            "global_hq_country": company.get_global_hq_country,
+            "turn_over": company.global_turnover_millions_usd,
+            "employees": '{:,}'.format(company.global_number_of_employees),
             "key_people": [
                 {
                     'name': people.name,
@@ -208,15 +151,15 @@ def company_briefing_react(request, duns_number):
                     'insightId': str(priority.id)
                 } for priority in hmg_priorities
             ],
-            "is_privileged": is_privileged
-        }),
-        "edit_endpoint": f'/api/v1/company/{company.duns_number}',
-        "add_engagement_link": f'/company-briefing/{company.duns_number}/add-engagement',
-        "past_engagements": past_engagements,
-        "is_privileged": is_privileged,
-        "account_managers_with_lead": account_managers_with_lead,
-        "current_version": current_version,
-        "company_priorities": company_priorities,
-        "hmg_priorities": hmg_priorities,
+            "is_privileged": is_privileged,
+            "engagements": [
+                {
+                    'id': str(engagement.id),
+                    'title': engagement.title,
+                    'date': engagement.date.strftime("%B %d, %Y"),
+                } for engagement in engagements
+            ],
+            "account_managers": account_managers_with_lead
+        })
     }
-    return render(request, "company-2.html", context)
+    return render(request, "company.html", context)
