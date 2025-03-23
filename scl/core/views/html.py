@@ -119,6 +119,8 @@ def company_briefing(request, duns_number):
     hmg_priorities = list(company.insights.filter(
         insight_type=Insight.TYPE_HMG_PRIORITY).order_by('order'))
     key_people = list(company.key_people.all())
+    employees = '{:,}'.format(
+        company.global_number_of_employees) if company.global_number_of_employees else ''
 
     context = {
         "company": company,
@@ -129,7 +131,7 @@ def company_briefing(request, duns_number):
             "last_updated": current_version.revision.date_created.strftime("%B %d, %Y, %H:%M"),
             "global_hq_country": company.get_global_hq_country,
             "turn_over": company.global_turnover_millions_usd,
-            "employees": '{:,}'.format(company.global_number_of_employees),
+            "employees": employees,
             "key_people": [
                 {
                     'name': people.name,
@@ -143,7 +145,7 @@ def company_briefing(request, duns_number):
                     'details': priority.details,
                     'insightId': str(priority.id)
                 } for priority in company_priorities
-            ],
+            ] if is_privileged else [],
             "hmg_priorities": [
                 {
                     'title': priority.title,
@@ -158,7 +160,7 @@ def company_briefing(request, duns_number):
                     'title': engagement.title,
                     'date': engagement.date.strftime("%B %d, %Y"),
                 } for engagement in engagements
-            ],
+            ] if is_privileged else [],
             "account_managers": account_managers_with_lead
         })
     }

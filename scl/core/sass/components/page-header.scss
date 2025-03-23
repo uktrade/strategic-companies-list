@@ -1,0 +1,36 @@
+.scl-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 15px;
+  @media (min-width: 40.0625em) {
+    padding: 0;
+    flex-wrap: nowrap;
+  }
+}
+
+.scl-page-header__two-thirds {
+  width: 100%;
+  order: 2;
+  @media (min-width: 40.0625em) {
+    width: 66.6666666667%;
+    padding: 0 15px;
+    order: 1;
+  }
+}
+
+.scl-page-header__one-third {
+  width: 100%;
+  order: 1;
+  @media (min-width: 40.0625em) {
+    order: 2;
+    width: 33.3333333333%;
+    padding: 0 15px;
+  }
+}
+
+.scl-page-header__actions {
+  display: flex;
+  gap: 15px;
+  justify-content: end;
+  margin-bottom: 10px;
+}
