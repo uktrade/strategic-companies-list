@@ -6,21 +6,6 @@
 
 {% block content %}
 <div class="govuk-width-container">
-  <div class="scl-breadcrumb">
-      <nav class="govuk-breadcrumbs" aria-label="Breadcrumb">
-        <ol class="govuk-breadcrumbs__list">
-          <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/">Home</a>
-          </li>
-          <li class="govuk-breadcrumbs__list-item">
-            {{company.name}}
-          </li>
-        </ol>
-      </nav>
-      <div>
-        <button class="govuk-button govuk-!-margin-bottom-0">Print</button>
-      </div>
-  </div>
   {% include "./partials/react-slot.html" with mount_id="company-briefing" id=company.duns_number props=props %}
 </div>
 {% endblock %}

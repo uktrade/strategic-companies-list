@@ -8,7 +8,7 @@ const PageActions = ({
   label,
 }) => {
   return (
-    <div className="scl-page-actions">
+    <div className="scl-page-header__actions">
       <button
         className={`govuk-button ${isEditing ? "govuk-button--secondary" : ""}`}
         onClick={() => {

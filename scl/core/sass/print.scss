@@ -3,7 +3,22 @@
     background: none;
   }
 
+  .govuk-header,
+  .scl-page-header__actions,
+  .scl-breadcrumb,
   .scl-footer {
     display: none;
+  }
+
+  a[href]:after {
+    content: none !important;
+  }
+
+  .scl-tag {
+    padding: 0;
+  }
+
+  .scl-tag--date {
+    text-align: left;
   }
 }
