@@ -12,35 +12,60 @@ import CompanyDetails from "./CompanyDetails";
 import RecentTopLevelEngagements from "./RecentTopLevelEngagements";
 import AccountManagers from "./AccountManagers";
 import AddEngagement from "./AddEngagement";
+import NotificationBanner from "../../components/NotificationBanner";
 
 const Page = ({ data, id, csrf_token }) => {
+  const [notificationMessage, setNotificationMessage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [engagements, setEngagements] = useState(data.engagements);
   const [isAddingEngagement, setIsAddingEngagement] = useState(false);
 
-  const ENDPOINT = `/api/v1/engagement/${data.duns_number}`;
+  const showUpdateNotification = (notificationMessage)=> {
+    setNotificationMessage(notificationMessage);
+    setIsUpdated(!isUpdated);
+    setTimeout(()=>{
+      setIsUpdated(false);
+    }, 2000)
+  }
 
+  const showDeleteNotification = (notificationMessage) => {
+    setNotificationMessage(notificationMessage);
+    setIsDeleted(!isDeleted);
+    setTimeout(() => {
+      setIsDeleted(false);
+    }, 2000);
+  };
+
+  const ENDPOINT = `/api/v1/engagement/${data.duns_number}`;
+  
   const onSubmitAddEngagement = async (payload) => {
+
     setIsLoading(true);
     const { data, status } = await ApiProxy.post(ENDPOINT, payload, csrf_token);
 
     setEngagements(data.data);
     setIsLoading(false);
     setIsAddingEngagement(false);
+    showUpdateNotification('Engagement added');
   };
 
   return (
     <>
+      {isUpdated && <NotificationBanner message={notificationMessage} />}
+      {isDeleted && <NotificationBanner message={notificationMessage} />}
       <Breadcrumb company={data.title} />
       <main className="govuk-main-wrapper" id="main-content">
         <div className="govuk-grid-row">
-          <div class="scl-page-header">
+          <div className="scl-page-header">
             <div className="scl-page-header__two-thirds">
               <CompanyDetails
                 data={data}
                 isEditing={isEditing}
                 csrf_token={csrf_token}
+                showUpdateNotification={showUpdateNotification}
               />
             </div>
             <div className="scl-page-header__one-third">
@@ -68,6 +93,8 @@ const Page = ({ data, id, csrf_token }) => {
                 <KeyFacts data={data} />
                 <KeyPeople
                   id={id}
+                  showUpdateNotification={showUpdateNotification}
+                  showDeleteNotification={showDeleteNotification}
                   csrf_token={csrf_token}
                   isEditing={isEditing}
                   keyPeople={data.key_people}
@@ -82,6 +109,8 @@ const Page = ({ data, id, csrf_token }) => {
                       csrf_token={csrf_token}
                       isEditing={isEditing}
                       companyPriorities={data.company_priorities}
+                      showUpdateNotification={showUpdateNotification}
+                      showDeleteNotification={showDeleteNotification}
                     />
                     <Priorities
                       id={id}
@@ -91,6 +120,8 @@ const Page = ({ data, id, csrf_token }) => {
                       csrf_token={csrf_token}
                       isEditing={isEditing}
                       companyPriorities={data.hmg_priorities}
+                      showUpdateNotification={showUpdateNotification}
+                      showDeleteNotification={showDeleteNotification}
                     />
                   </>
                 )}

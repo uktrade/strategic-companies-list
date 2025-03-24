@@ -15,6 +15,8 @@ const Priorities = ({
   companyPriorities,
   emptyMessage,
   title,
+  showUpdateNotification,
+  showDeleteNotification,
 }) => {
   const [priorities, setPriorities] = useState(companyPriorities);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,10 +34,11 @@ const Priorities = ({
     );
     setPriorities(data.data);
     if (data.data.length <= 0) {
-        setIsUpdating(false);
-        setIsCreating(false);
+      setIsUpdating(false);
+      setIsCreating(false);
     }
     setIsLoading(false);
+    showDeleteNotification("Priority deleted");
   };
 
   const onSubmit = async (payload, method) => {
@@ -49,6 +52,7 @@ const Priorities = ({
       setPriorities(data.data);
       setIsLoading(false);
       setIsCreating(false);
+      showUpdateNotification('Priority created');
     }
     if (method === "update") {
       setIsLoading(true);
@@ -60,6 +64,7 @@ const Priorities = ({
       setPriorities(data.data);
       setIsLoading(false);
       setIsUpdating(false);
+      showUpdateNotification("Priority updated");
     }
   };
 
@@ -103,14 +108,14 @@ const Priorities = ({
           />
         )}
         {isEditing && !isCreating && !isUpdating && (
-            <SectionActions
-              addLabel="Add priority"
-              editLabel="Edit priority"
-              showEdit={Boolean(priorities.length)}
-              setIsCreating={() => setIsCreating(!isCreating)}
-              setIsUpdating={() => setIsUpdating(!isUpdating)}
-            />
-          )}
+          <SectionActions
+            addLabel="Add priority"
+            editLabel="Edit priority"
+            showEdit={Boolean(priorities.length)}
+            setIsCreating={() => setIsCreating(!isCreating)}
+            setIsUpdating={() => setIsUpdating(!isUpdating)}
+          />
+        )}
       </Section>
     </LoadingSpinner>
   );

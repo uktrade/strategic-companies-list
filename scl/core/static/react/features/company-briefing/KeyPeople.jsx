@@ -6,7 +6,14 @@ import Create from "../../forms/key-people/Create";
 import Section from "../../components/Section";
 import SectionActions from "../../components/SectionActions";
 
-const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
+const KeyPeople = ({
+  id,
+  csrf_token,
+  isEditing,
+  keyPeople,
+  showUpdateNotification,
+  showDeleteNotification,
+}) => {
   const [people, setPeople] = useState(keyPeople);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -27,6 +34,7 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
       setIsCreating(false);
     }
     setIsLoading(false);
+    showDeleteNotification('Key person deleted');
   };
 
   const onSubmit = async (payload, method) => {
@@ -40,6 +48,7 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
       setPeople(data.data);
       setIsLoading(false);
       setIsCreating(false);
+      showUpdateNotification('Key person created');
     }
     if (method === "update") {
       setIsLoading(true);
@@ -51,6 +60,7 @@ const KeyPeople = ({ id, csrf_token, isEditing, keyPeople }) => {
       setPeople(data.data);
       setIsLoading(false);
       setIsUpdating(false);
+      showUpdateNotification('Key person updated');
     }
   };
 
