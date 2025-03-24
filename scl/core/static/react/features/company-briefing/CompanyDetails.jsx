@@ -5,7 +5,12 @@ import Header from "../../components/Header";
 import Update from "../../forms/company-details/Update";
 import LoadingSpinner from "../../components/Spinner";
 
-const CompanyDetails = ({ data, isEditing, csrf_token }) => {
+const CompanyDetails = ({
+  data,
+  isEditing,
+  csrf_token,
+  showUpdateNotification,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [companyDetails, setCompanyDetails] = useState(data);
@@ -23,6 +28,7 @@ const CompanyDetails = ({ data, isEditing, csrf_token }) => {
     setCompanyDetails(data);
     setIsLoading(false);
     setIsUpdating(false);
+    showUpdateNotification('Company updated');
   };
 
   return (
