@@ -29,8 +29,11 @@ def index(request):
 def engagement(request, engagement_id):
     engagement = Engagement.objects.get(id=engagement_id)
 
-    is_privileged = request.user in engagement.company.account_manager.all()
-    if not is_privileged:
+    is_viewer = request.user.in_group('Viewer')
+    is_account_manager = request.user in engagement.company.account_manager.all()
+    can_view = is_viewer or is_account_manager
+
+    if not can_view:
         return JsonResponse(403, safe=False)
 
     versions = Version.objects.get_for_object(engagement)
@@ -44,25 +47,10 @@ def engagement(request, engagement_id):
 
     return render(request, "engagements.html", {
         "engagement": engagement,
+        "is_account_manager": is_account_manager,
         "edit_endpoint": f'/api/v1/engagement/{engagement.id}',
         "engagement_first_version": engagement_first_version,
         "notes_versions": notes_versions,
-    })
-
-
-def your_engagements(request):
-    companies = list(Company.objects.filter(account_manager=request.user))
-
-    your_companies = []
-    for company in companies:
-        your_companies.append({
-            'name': company.name,
-            'duns_number': company.duns_number,
-            'engagements': company.engagements.all().order_by('-date'),
-        })
-
-    return render(request, "your_engagements.html", {
-        "your_companies": your_companies,
     })
 
 
@@ -93,9 +81,15 @@ def company_briefing(request, duns_number):
     today = date.today()
 
     company = Company.objects.get(duns_number=duns_number)
+
+    is_viewer = request.user.in_group('Viewer')
+    is_account_manager = request.user in company.account_manager.all()
+    can_view = is_viewer or is_account_manager
+
     account_managers = list(company.account_manager.all())
 
     account_managers_with_lead = []
+
     for am in account_managers:
         is_lead = CompanyAccountManager.objects.filter(
             company=company, account_manager=am, is_lead=True).exists()
@@ -106,10 +100,6 @@ def company_briefing(request, duns_number):
 
     engagements = list(company.engagements.filter(
         date__gte=today).order_by('date'))[0:4]
-    is_privileged = request.user in account_managers
-
-    for e in engagements:
-        logger(e.date)
 
     versions = Version.objects.get_for_object(company)
     current_version = versions.first()
@@ -145,7 +135,7 @@ def company_briefing(request, duns_number):
                     'details': priority.details,
                     'insightId': str(priority.id)
                 } for priority in company_priorities
-            ] if is_privileged else [],
+            ] if can_view else [],
             "hmg_priorities": [
                 {
                     'title': priority.title,
@@ -153,14 +143,15 @@ def company_briefing(request, duns_number):
                     'insightId': str(priority.id)
                 } for priority in hmg_priorities
             ],
-            "is_privileged": is_privileged,
+            "can_view": can_view,
+            "is_account_manager": is_account_manager,
             "engagements": [
                 {
                     'id': str(engagement.id),
                     'title': engagement.title,
                     'date': engagement.date.strftime("%B %d, %Y"),
                 } for engagement in engagements
-            ] if is_privileged else [],
+            ] if can_view else [],
             "account_managers": account_managers_with_lead
         })
     }

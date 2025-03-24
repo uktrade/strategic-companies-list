@@ -69,7 +69,7 @@ const Page = ({ data, id, csrf_token }) => {
               />
             </div>
             <div className="scl-page-header__one-third">
-              {data.is_privileged && (
+              {data.is_account_manager && (
                 <PageActions
                   setIsEditing={setIsEditing}
                   setIsAddingEngagement={setIsAddingEngagement}
@@ -99,7 +99,7 @@ const Page = ({ data, id, csrf_token }) => {
                   isEditing={isEditing}
                   keyPeople={data.key_people}
                 />
-                {data.is_privileged && (
+                {data.can_view && (
                   <>
                     <Priorities
                       id={id}
@@ -129,7 +129,7 @@ const Page = ({ data, id, csrf_token }) => {
             )}
           </div>
           <div className="govuk-grid-column-one-third">
-            {data.is_privileged && (
+            {data.can_view && (
               <RecentTopLevelEngagements
                 engagements={engagements}
                 duns_number={data.duns_number}
