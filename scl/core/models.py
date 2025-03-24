@@ -13,6 +13,10 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
 
+    def in_group(self, group_name):
+        """Check if a user belongs to a specific group."""
+        return self.groups.filter(name=group_name).exists()
+
     class Meta:
         ordering = ["last_name", "first_name", "email", "id"]
 

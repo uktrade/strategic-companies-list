@@ -61,8 +61,8 @@ def company_api(request, duns_number):
     company = Company.objects.get(duns_number=duns_number)
 
     account_managers = list(company.account_manager.all())
-    is_privileged = request.user in account_managers
-    if not is_privileged:
+    is_account_manager = request.user in account_managers
+    if not is_account_manager:
         return JsonResponse(403, safe=False)
 
     if request.method == 'PATCH':
@@ -102,8 +102,8 @@ def company_insight_api(request, duns_number, insight_type):
     company = Company.objects.get(duns_number=duns_number)
 
     account_managers = list(company.account_manager.all())
-    is_privileged = request.user in account_managers
-    if not is_privileged:
+    is_account_manager = request.user in account_managers
+    if not is_account_manager:
         return JsonResponse(403, safe=False)
 
     if request.method == 'DELETE':
@@ -213,8 +213,8 @@ def insight_api(request, insight_id):
         return JsonResponse({'error': 'Insight not found'}, status=404)
 
     account_managers = list(insight.company.account_manager.all())
-    is_privileged = request.user in account_managers
-    if not is_privileged:
+    is_account_manager = request.user in account_managers
+    if not is_account_manager:
         return JsonResponse(403, safe=False)
 
     if request.method == 'GET':
@@ -274,8 +274,9 @@ def engagement_api(request, engagement_id):
     engagement = Engagement.objects.get(id=engagement_id)
 
     account_managers = engagement.company.account_manager.all()
-    is_privileged = request.user in account_managers
-    if not is_privileged:
+
+    is_account_manager = request.user in account_managers
+    if not is_account_manager:
         return JsonResponse(403, safe=False)
 
     if request.method == 'PATCH':
@@ -302,9 +303,9 @@ def engagement_api(request, engagement_id):
 def add_engagement_api(request, duns_number):
     data = json.loads(request.body)
     company = Company.objects.get(duns_number=duns_number)
-    is_privileged = request.user in company.account_manager.all()
+    is_account_manager = request.user in company.account_manager.all()
 
-    if not is_privileged:
+    if not is_account_manager:
         return JsonResponse(403, safe=False)
 
     if request.method == 'POST':
