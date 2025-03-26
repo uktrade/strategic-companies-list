@@ -96,7 +96,7 @@
           "X-CSRFToken": token,
         },
         method: "POST",
-        body: JSON.stringify({ note: data }),
+        body: JSON.stringify({ contents: data }),
       });
 
       button.innerHTML = error ? "Error!" : "Saved";
