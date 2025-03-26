@@ -24,6 +24,8 @@ def aws_credentials_api(request):
             {
                 "AccessKeyId": settings.AWS_TRANSCRIBE_ACCESS_KEY_ID,
                 "SecretAccessKey": settings.AWS_TRANSCRIBE_SECRET_ACCESS_KEY,
+                "SessionToken": settings.AWS_SESSION_TOKEN,
+                "Expiration": settings.AWS_EXPIRATION_TIMESTAMP
             },
             status=200,
         )
