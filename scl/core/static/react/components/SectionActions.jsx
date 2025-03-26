@@ -17,7 +17,7 @@ const SectionActions = ({
           {addLabel}
         </button>
         {showEdit && (
-          <button className="govuk-button" onClick={() => setIsUpdating()}>
+          <button className="govuk-button" onClick={() => setIsUpdating(false)}>
             {editLabel}
           </button>
         )}

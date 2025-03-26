@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
+from reversion.models import Version
 import json
 import time
 import uuid
@@ -274,8 +275,8 @@ def engagement_api(request, engagement_id):
     engagement = Engagement.objects.get(id=engagement_id)
 
     account_managers = engagement.company.account_manager.all()
-
     is_account_manager = request.user in account_managers
+
     if not is_account_manager:
         return JsonResponse(403, safe=False)
 
@@ -291,11 +292,12 @@ def engagement_api(request, engagement_id):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-    return JsonResponse(
-        {
-            "engagement": engagement.title,
-            "id": engagement.id,
-        },
+    return JsonResponse({
+        "data": {
+            "title": engagement.title,
+            "details": engagement.details,
+        }
+    },
         status=200,
     )
 
@@ -342,16 +344,20 @@ def engagement_note_api(request, engagement_id):
     data = json.loads(request.body)
     engagement = Engagement.objects.get(id=engagement_id)
 
-    account_managers = engagement.company.account_manager.all()
-    is_privileged = request.user in account_managers
-    if not is_privileged:
+    is_account_manager = request.user in engagement.company.account_manager.all()
+
+    if not is_account_manager:
         return JsonResponse(403, safe=False)
 
     if request.method == 'PATCH':
         with reversion.create_revision():
-            note = EngagementNote.objects.get(id=data.get('id'))
-            note.contents = data.get('contents')
-            note.save()
+            for d in data['notes']:
+                note = EngagementNote.objects.get(id=d.get('id'))
+                note.contents = d["contents"]
+                note.save()
+
+            updated_engagements = Engagement.objects.get(id=engagement_id)
+            updated_notes = updated_engagements.notes.all()
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -359,16 +365,43 @@ def engagement_note_api(request, engagement_id):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
+            return JsonResponse(
+                {
+                    "data": [
+                        {
+                            'noteId': str(note.id),
+                            'contents': note.contents,
+                        } for note in updated_notes
+                    ],
+                },
+                status=200,
+            )
+
     if request.method == 'POST':
         with reversion.create_revision():
             note = EngagementNote.objects.create(contents=data.get(
-                'note').strip(), engagement=engagement)
+                'contents').strip(), engagement=engagement)
 
             reversion.set_user(request.user)
             reversion.set_comment(
                 "Note added"
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
+
+            notes = engagement.notes.all()
+
+            return JsonResponse(
+                {
+                    "data": [
+                        {
+                            'noteId': str(note.id),
+                            'contents': note.contents,
+                        } for note in notes
+                    ],
+                },
+                status=200,
+            )
+
     if request.method == 'DELETE':
         with reversion.create_revision():
             note = EngagementNote.objects.get(id=data.get('id'))
@@ -380,14 +413,19 @@ def engagement_note_api(request, engagement_id):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-    return JsonResponse(
-        {
-            "engagement": engagement.title,
-            "id": engagement.id,
-            "note": note.id
-        },
-        status=200,
-    )
+            notes = engagement.notes.all()
+
+            return JsonResponse(
+                {
+                    "data": [
+                        {
+                            'noteId': str(note.id),
+                            'contents': note.contents,
+                        } for note in notes
+                    ],
+                },
+                status=200,
+            )
 
 
 def key_people_api(request, duns_number):

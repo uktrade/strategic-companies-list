@@ -28,17 +28,22 @@ const CompanyDetails = ({
     setCompanyDetails(data);
     setIsLoading(false);
     setIsUpdating(false);
-    showUpdateNotification('Company updated');
+    showUpdateNotification("Company updated");
   };
 
   return (
-    <LoadingSpinner isLoading={false}>
-      <Header
-        title={companyDetails.title}
-        duns_number={companyDetails.duns_number}
-        sectors={companyDetails.sectors}
-        last_updated={companyDetails.last_updated}
-      />
+    <LoadingSpinner isLoading={isLoading}>
+      <Header title={companyDetails.title}>
+        <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
+          <strong>D-U-N-S:</strong> {companyDetails.duns_number}
+        </p>
+        <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
+          <strong>Sectors:</strong> {companyDetails.sectors}
+        </p>
+        <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
+          <strong>Last updated:</strong> {companyDetails.last_updated}
+        </p>
+      </Header>
 
       {isEditing && isUpdating && (
         <Update

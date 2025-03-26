@@ -4,6 +4,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 
 const REACT_APPS = [
   "company-briefing",
+  "engagement",
 ].reduce(
   (prev, acc) => ({
     ...prev,

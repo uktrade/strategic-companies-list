@@ -37,20 +37,40 @@ def engagement(request, engagement_id):
         return JsonResponse(403, safe=False)
 
     versions = Version.objects.get_for_object(engagement)
-    engagement_first_version = versions.last()
+
+    last_updated = versions.first().revision
+    first_created = versions.last().revision
 
     notes = engagement.notes.all()
-    notes_versions = [
-        (note, Version.objects.get_for_object(engagement).last())
-        for note in notes
-    ]
 
-    return render(request, "engagements.html", {
-        "engagement": engagement,
-        "is_account_manager": is_account_manager,
-        "edit_endpoint": f'/api/v1/engagement/{engagement.id}',
-        "engagement_first_version": engagement_first_version,
-        "notes_versions": notes_versions,
+    return render(request, "engagement.html", context={
+        "props": json.dumps({
+            "id": str(engagement.id),
+            "title": engagement.title,
+            "details": engagement.details,
+            "created": {
+                "name": f"{first_created.user.first_name} {first_created.user.last_name}",
+                "date": first_created.date_created.strftime(
+                    "%B %d, %Y,%H:%M")
+            },
+            "last_updated": {
+                "name": f"{last_updated.user.first_name} {last_updated.user.last_name}",
+                "date": last_updated.date_created.strftime(
+                    "%B %d, %Y, %H:%M")
+            },
+            "is_account_manager": is_account_manager,
+            "can_view": can_view,
+            "company": {
+                "name": engagement.company.name,
+                "duns_number": engagement.company.duns_number
+            },
+            "notes": [
+                {
+                    'noteId': str(note.id),
+                    'contents': note.contents,
+                } for note in notes
+            ],
+        })
     })
 
 

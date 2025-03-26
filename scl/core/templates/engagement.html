@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bleach_tags %}
+{% load humanize %}
+{% load scl_html %}
+
+{% block content %}
+<div class="govuk-width-container">
+  {% include "./partials/react-slot.html" with mount_id="engagement" id=company.duns_number props=props %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script type="module" src="{% static 'js/engagement.js' %}"></script>
+{% endblock %}

@@ -84,7 +84,6 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
                     })}
                   />
                   <input
-                    className="govuk-input govuk-!-margin-bottom-4"
                     id={`people.${index}.id`}
                     type="hidden"
                     {...register(`people.${index}.id`)}

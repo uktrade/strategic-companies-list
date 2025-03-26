@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Breadcrumb = ({company}) => {
+const Breadcrumb = ({links}) => {
   return (
     <div className="scl-breadcrumb">
       <nav className="govuk-breadcrumbs" aria-label="Breadcrumb">
@@ -10,7 +10,22 @@ const Breadcrumb = ({company}) => {
               Home
             </a>
           </li>
-          <li className="govuk-breadcrumbs__list-item">{company}</li>
+          {links.map((link, index)=>{
+            return (
+              <li
+                className="govuk-breadcrumbs__list-item"
+                key={`${link.label}-${index}`}
+              >
+                {link.href ? (
+                  <a href={link.href} className="govuk-breadcrumbs__link">
+                    {link.label}
+                  </a>
+                ) : (
+                  link.label
+                )}
+              </li>
+            );
+          })}
         </ol>
       </nav>
       <div>

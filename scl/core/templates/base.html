@@ -1,5 +1,4 @@
 {% load static %}
-{% load svg_tags %}
 <!DOCTYPE html>
 <html lang="en" class="govuk-template scl-template">
 
@@ -26,7 +25,7 @@
     <div class="govuk-header__container govuk-width-container scl-header__container scl-header__full-width_container">
       <div class="govuk-header__logo scl-header__logo">
         <a href="/" class="govuk-header__link govuk-header__link--homepage scl-header__link">
-          {% svg 'dbt-logo' %}
+            {% include './icons/dbt-logo.svg.html' %}
           <span class="govuk-header__product-name scl-header__product-name">
             Strategic Companies List
           </span>
@@ -47,7 +46,7 @@
     <div class="govuk-width-container">
       <div class="govuk-footer__meta">
         <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
-          {% svg 'ogl' %}
+          {% include './icons/ogl.svg.html' %}
           <span class="govuk-footer__licence-description">
             All content is available under the
             <a
