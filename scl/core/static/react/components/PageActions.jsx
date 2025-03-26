@@ -5,7 +5,7 @@ const PageActions = ({
   isAddingEngagement,
   setIsEditing,
   setIsAddingEngagement,
-  label,
+  showAddEngagementBtn = true,
 }) => {
   return (
     <div className="scl-page-header__actions">
@@ -18,17 +18,19 @@ const PageActions = ({
       >
         {isEditing ? "Cancel" : "Edit"}
       </button>
-      <button
-        className={`govuk-button ${
-          isAddingEngagement ? "govuk-button--secondary" : ""
-        }`}
-        onClick={() => {
-          setIsAddingEngagement(!isAddingEngagement);
-          setIsEditing(false);
-        }}
-      >
-        {isAddingEngagement ? "Cancel" : "Add engagement"}
-      </button>
+      {showAddEngagementBtn && (
+        <button
+          className={`govuk-button ${
+            isAddingEngagement ? "govuk-button--secondary" : ""
+          }`}
+          onClick={() => {
+            setIsAddingEngagement(!isAddingEngagement);
+            setIsEditing(false);
+          }}
+        >
+          {isAddingEngagement ? "Cancel" : "Add engagement"}
+        </button>
+      )}
     </div>
   );
 };

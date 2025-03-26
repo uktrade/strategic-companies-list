@@ -56,7 +56,13 @@ const Page = ({ data, id, csrf_token }) => {
     <>
       {isUpdated && <NotificationBanner message={notificationMessage} />}
       {isDeleted && <NotificationBanner message={notificationMessage} />}
-      <Breadcrumb company={data.title} />
+      <Breadcrumb
+        links={[
+          {
+            label: data.title,
+          },
+        ]}
+      />
       <main className="govuk-main-wrapper" id="main-content">
         <div className="govuk-grid-row">
           <div className="scl-page-header">
