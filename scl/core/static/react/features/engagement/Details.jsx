@@ -17,7 +17,6 @@ const Details = ({
   setIsUpdatingDetails,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const ENDPOINT = `/api/v1/engagement/${data.id}`;
 
@@ -30,7 +29,7 @@ const Details = ({
     );
     setEngagement(data.data);
     setIsLoading(false);
-    setIsUpdating(false);
+    setIsUpdatingDetails(false);
     showUpdateNotification("Engagement updated");
   };
 
@@ -60,7 +59,6 @@ const Details = ({
           id={data.id}
           data={engagement}
           onSubmit={onSubmit}
-          setIsUpdating={setIsUpdating}
           setIsUpdatingDetails={setIsUpdatingDetails}
         />
       )}

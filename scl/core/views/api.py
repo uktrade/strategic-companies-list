@@ -354,7 +354,7 @@ def engagement_note_api(request, engagement_id):
     if request.method == 'PATCH':
         with reversion.create_revision():
             for d in data['notes']:
-                note = EngagementNote.objects.get(id=d.get('id'))
+                note = EngagementNote.objects.get(id=d.get('noteId'))
                 note.contents = d["contents"]
                 note.save()
 
