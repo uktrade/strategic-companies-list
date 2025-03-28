@@ -8,3 +8,4 @@ django-staff-sso-client
 sentry-sdk
 uvicorn
 psycopg[binary,pool]
+django-log-formatter-asim
