@@ -171,6 +171,19 @@ DATABASES = {
     }
 }
 
+if os.environ.get('DATABASE_CREDENTIALS', ''):
+    database = json.loads(os.environ['DATABASE_CREDENTIALS'])
+    DATABASES = {
+        "default": {
+            "ENGINE": f"django.db.backends.postgresql",
+            "NAME": database["dbname"],
+            "USER": database["username"],
+            "PASSWORD": database["password"],
+            "HOST": database["host"],
+            "PORT": database["port"],
+        }
+    }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
