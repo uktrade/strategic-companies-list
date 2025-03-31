@@ -16,7 +16,6 @@ const Priorities = ({
   emptyMessage,
   title,
   showUpdateNotification,
-  showDeleteNotification,
 }) => {
   const [priorities, setPriorities] = useState(companyPriorities);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +37,7 @@ const Priorities = ({
       setIsCreating(false);
     }
     setIsLoading(false);
-    showDeleteNotification("Priority deleted");
+    showUpdateNotification("Priority deleted");
   };
 
   const onSubmit = async (payload, method) => {
