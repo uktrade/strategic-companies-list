@@ -1,12 +1,26 @@
 import React from "react";
-import { useForm } from "react-hook-form";
 
-const Create = ({ onSubmit, setIsCreating }) => {
+import { useForm } from "react-hook-form";
+import TranscriptButton from "../../components/TranscriptButton";
+
+const Create = ({
+  onSubmit,
+  setIsCreating,
+  transcript,
+  handleOnTranscribe,
+  isTranscribing,
+  partialTranscript,
+  hasFinalisedTranscription,
+}) => {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm();
+
+  setValue("contents", transcript + " " + partialTranscript);
 
   return (
     <>
@@ -35,9 +49,19 @@ const Create = ({ onSubmit, setIsCreating }) => {
         ></textarea>
 
         <div className="govuk-!-margin-top-2">
-          <button type="submit" className="govuk-button govuk-!-margin-right-2">
+          <button
+            type="submit"
+            disabled={isTranscribing && !hasFinalisedTranscription}
+            className="govuk-button govuk-!-margin-right-3"
+          >
             Save
           </button>
+          <TranscriptButton
+            className="govuk-!-margin-right-4"
+            onClick={handleOnTranscribe}
+            isTranscribing={isTranscribing}
+            disabled={isTranscribing && !hasFinalisedTranscription}
+          />
           <button
             className="govuk-button govuk-button--secondary"
             onClick={() => setIsCreating(false)}

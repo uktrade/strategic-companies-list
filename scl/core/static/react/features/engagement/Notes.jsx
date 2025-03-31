@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+
+import {
+  TranscribeStreamingClient,
+  StartStreamTranscriptionCommand,
+} from "@aws-sdk/client-transcribe-streaming";
+import { Readable } from "readable-stream";
 
 import ApiProxy from "../../proxy";
 
@@ -21,8 +27,134 @@ const Notes = ({
 }) => {
   const [notes, setNotes] = useState(data);
   const [isLoading, setIsLoading] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [hasFinalisedTranscription, setHasFinalisedTranscription] =
+    useState(false);
+  const [partialTranscription, setPartialTranscription] = useState("");
+  const [finalTranscription, setFinalTranscription] = useState("");
+  const stream = useRef(null);
+  const client = useRef(null);
+  const isRecording = useRef(null);
 
   const ENDPOINT = `/api/v1/engagement/${id}/note`;
+
+  useEffect(() => {
+    client.current = new TranscribeStreamingClient({
+      region: "eu-west-2",
+      credentials: async function () {
+        const response = await (await fetch("/api/v1/aws-credentials")).json();
+        const credentials = {
+          accessKeyId: response.AccessKeyId,
+          secretAccessKey: response.SecretAccessKey,
+        };
+        if (!!response.SessionToken && !!response.Expiration) {
+          credentials.sessionToken = response.SessionToken;
+          credentials.expiration = new Date(Date.parse(response.Expiration));
+        }
+        return credentials;
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isTranscribing) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  }, [isTranscribing]);
+
+  useEffect(() => {
+    setFinalTranscription("");
+    setPartialTranscription("");
+  }, [isCreatingNotes]);
+
+  const handleOnTranscribe = async (e) => {
+    e.preventDefault()
+    setIsTranscribing(!isTranscribing);
+  };
+
+  async function stopRecording() {
+    if (stream.current) {
+      console.log("Stopped transcribing...");
+      isRecording.current = false;
+      stream.current.getTracks()[0].stop();
+    }
+  }
+
+  async function startRecording() {
+    console.log("Started transcribing...");
+    isRecording.current = true;
+
+    const audioContext = new AudioContext({ sampleRate: 16000 });
+    const newStream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: false,
+    });
+
+    stream.current = newStream;
+
+    const input = audioContext.createMediaStreamSource(stream.current);
+    const processor = audioContext.createScriptProcessor(1024, 1, 1);
+    input.connect(processor);
+    processor.connect(audioContext.destination);
+
+    const readableStream = Readable();
+
+    processor.onaudioprocess = (e) => {
+      const float32Array = e.inputBuffer.getChannelData(0);
+      const int16Array = new Int16Array(float32Array.length);
+      for (let i = 0; i < float32Array.length; i++) {
+        int16Array[i] =
+          float32Array[i] < 0
+            ? float32Array[i] * 0x8000
+            : float32Array[i] * 0x7fff;
+      }
+      readableStream.emit("audioData", new Int8Array(int16Array.buffer));
+    };
+
+    const audioStream = async function* () {
+      while (isRecording.current) {
+        const chunk = await new Promise((resolve) =>
+          readableStream.once("audioData", resolve)
+        );
+        if (chunk === null) break;
+        yield { AudioEvent: { AudioChunk: chunk } };
+      }
+    };
+
+    const command = new StartStreamTranscriptionCommand({
+      LanguageCode: "en-GB",
+      MediaSampleRateHertz: 16000,
+      MediaEncoding: "pcm",
+      EnablePartialResultsStabilization: true,
+      PartialResultsStability: "low",
+      AudioStream: audioStream(),
+    });
+
+    const response = await client.current.send(command);
+    for await (const event of response.TranscriptResultStream) {
+      if (event.TranscriptEvent) {
+        const results = event.TranscriptEvent.Transcript.Results;
+        results.forEach((result) => {
+          const transcriptChunk = (result.Alternatives || []).map(
+            (alternative) => {
+              return alternative.Transcript;
+            }
+          )[0];
+
+          if (result.IsPartial) {
+            setHasFinalisedTranscription(false);
+            setPartialTranscription(transcriptChunk);
+          } else {
+            setHasFinalisedTranscription(true);
+            setPartialTranscription("");
+            setFinalTranscription((p) => `${p} ${transcriptChunk}`.trim());
+          }
+        });
+      }
+    }
+  }
 
   const onSubmit = async (payload, method) => {
     if (method === "create") {
@@ -64,8 +196,9 @@ const Notes = ({
       setIsCreatingNotes(false);
     }
     setIsLoading(false);
-    showDeleteNotification("Note deleted");
+    showUpdateNotification("Note deleted");
   };
+
   return (
     <>
       {!isCreatingNotes && !isUpdatingNotes && (
@@ -88,7 +221,15 @@ const Notes = ({
           ))}
       </LoadingSpinner>
       {isEditing && isCreatingNotes && (
-        <Create onSubmit={onSubmit} setIsCreating={setIsCreatingNotes} />
+        <Create
+          onSubmit={onSubmit}
+          setIsCreating={setIsCreatingNotes}
+          transcript={finalTranscription}
+          partialTranscript={partialTranscription}
+          handleOnTranscribe={handleOnTranscribe}
+          isTranscribing={isTranscribing}
+          hasFinalisedTranscription={hasFinalisedTranscription}
+        />
       )}
       {isEditing && isUpdatingNotes && (
         <Update

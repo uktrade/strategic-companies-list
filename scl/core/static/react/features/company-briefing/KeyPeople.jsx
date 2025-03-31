@@ -12,7 +12,6 @@ const KeyPeople = ({
   isEditing,
   keyPeople,
   showUpdateNotification,
-  showDeleteNotification,
 }) => {
   const [people, setPeople] = useState(keyPeople);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +33,7 @@ const KeyPeople = ({
       setIsCreating(false);
     }
     setIsLoading(false);
-    showDeleteNotification('Key person deleted');
+    showUpdateNotification("Key person deleted");
   };
 
   const onSubmit = async (payload, method) => {

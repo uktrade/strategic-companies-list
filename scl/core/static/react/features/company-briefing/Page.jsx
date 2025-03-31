@@ -18,44 +18,33 @@ const Page = ({ data, id, csrf_token }) => {
   const [notificationMessage, setNotificationMessage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [engagements, setEngagements] = useState(data.engagements);
   const [isAddingEngagement, setIsAddingEngagement] = useState(false);
 
-  const showUpdateNotification = (notificationMessage)=> {
+  const showUpdateNotification = (notificationMessage) => {
     setNotificationMessage(notificationMessage);
     setIsUpdated(!isUpdated);
-    setTimeout(()=>{
-      setIsUpdated(false);
-    }, 2000)
-  }
-
-  const showDeleteNotification = (notificationMessage) => {
-    setNotificationMessage(notificationMessage);
-    setIsDeleted(!isDeleted);
     setTimeout(() => {
-      setIsDeleted(false);
+      setIsUpdated(false);
     }, 2000);
   };
 
   const ENDPOINT = `/api/v1/engagement/${data.duns_number}`;
-  
-  const onSubmitAddEngagement = async (payload) => {
 
+  const onSubmitAddEngagement = async (payload) => {
     setIsLoading(true);
     const { data, status } = await ApiProxy.post(ENDPOINT, payload, csrf_token);
 
     setEngagements(data.data);
     setIsLoading(false);
     setIsAddingEngagement(false);
-    showUpdateNotification('Engagement added');
+    showUpdateNotification("Engagement added");
   };
 
   return (
     <>
       {isUpdated && <NotificationBanner message={notificationMessage} />}
-      {isDeleted && <NotificationBanner message={notificationMessage} />}
       <Breadcrumb
         links={[
           {
@@ -100,7 +89,6 @@ const Page = ({ data, id, csrf_token }) => {
                 <KeyPeople
                   id={id}
                   showUpdateNotification={showUpdateNotification}
-                  showDeleteNotification={showDeleteNotification}
                   csrf_token={csrf_token}
                   isEditing={isEditing}
                   keyPeople={data.key_people}
@@ -116,7 +104,6 @@ const Page = ({ data, id, csrf_token }) => {
                       isEditing={isEditing}
                       companyPriorities={data.company_priorities}
                       showUpdateNotification={showUpdateNotification}
-                      showDeleteNotification={showDeleteNotification}
                     />
                     <Priorities
                       id={id}
@@ -127,7 +114,6 @@ const Page = ({ data, id, csrf_token }) => {
                       isEditing={isEditing}
                       companyPriorities={data.hmg_priorities}
                       showUpdateNotification={showUpdateNotification}
-                      showDeleteNotification={showDeleteNotification}
                     />
                   </>
                 )}
