@@ -9,12 +9,13 @@ import KeyPeople from "./KeyPeople";
 import KeyFacts from "./KeyFacts";
 import Priorities from "./Priorities";
 import CompanyDetails from "./CompanyDetails";
-import RecentTopLevelEngagements from "./RecentTopLevelEngagements";
+import Engagements from "./Engagements";
 import AccountManagers from "./AccountManagers";
 import AddEngagement from "./AddEngagement";
 import NotificationBanner from "../../components/NotificationBanner";
+import Summary from "./Summary";
 
-const Page = ({ data, id, csrf_token }) => {
+const Page = ({ data, id, csrf_token, nonce }) => {
   const [notificationMessage, setNotificationMessage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
@@ -58,6 +59,7 @@ const Page = ({ data, id, csrf_token }) => {
             <div className="scl-page-header__two-thirds">
               <CompanyDetails
                 data={data}
+                nonce={nonce}
                 isEditing={isEditing}
                 csrf_token={csrf_token}
                 showUpdateNotification={showUpdateNotification}
@@ -85,6 +87,7 @@ const Page = ({ data, id, csrf_token }) => {
               />
             ) : (
               <>
+              {/* Add summary */}
                 <KeyFacts data={data} />
                 <KeyPeople
                   id={id}
@@ -93,7 +96,7 @@ const Page = ({ data, id, csrf_token }) => {
                   isEditing={isEditing}
                   keyPeople={data.key_people}
                 />
-                {data.can_view && (
+                {data.has_access && (
                   <>
                     <Priorities
                       id={id}
@@ -121,8 +124,8 @@ const Page = ({ data, id, csrf_token }) => {
             )}
           </div>
           <div className="govuk-grid-column-one-third">
-            {data.can_view && (
-              <RecentTopLevelEngagements
+            {data.has_access && (
+              <Engagements
                 engagements={engagements}
                 duns_number={data.duns_number}
               />

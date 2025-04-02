@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from scl.core.constants import SECTORS
 from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
 from reversion.models import Version
 import json
@@ -10,6 +11,8 @@ import boto3
 from django.conf import settings
 from django.http import JsonResponse
 import reversion
+
+from scl.core.views.utils import get_all_sectors, get_company_sectors
 
 today = date.today()
 
@@ -65,12 +68,14 @@ def company_api(request, duns_number):
 
     account_managers = list(company.account_manager.all())
     is_account_manager = request.user in account_managers
+
     if not is_account_manager:
         return JsonResponse(403, safe=False)
 
     if request.method == 'PATCH':
         with reversion.create_revision():
             company.name = data.get('title').strip()
+            company.sectors = [key["value"] for key in data.get('sectors')]
             company.save()
 
             updated_company = Company.objects.get(duns_number=duns_number)
@@ -85,7 +90,8 @@ def company_api(request, duns_number):
                 {
                     "title": updated_company.name,
                     "duns_number": updated_company.duns_number,
-                    "sectors": updated_company.get_sectors_display,
+                    "company_sectors": get_company_sectors(updated_company),
+                    "all_sectors": get_all_sectors(),
                     "last_updated": updated_company.last_updated.strftime("%B %d, %Y, %H:%M"),
                 },
                 status=200,
@@ -336,6 +342,7 @@ def add_engagement_api(request, duns_number):
                     {
                         'title': engagement.title,
                         'date': engagement.date.strftime("%B %d, %Y"),
+                        'id': engagement.id,
                     } for engagement in engagements
                 ]},
                 status=200,
@@ -435,8 +442,10 @@ def key_people_api(request, duns_number):
 
     account_managers = list(company.account_manager.all())
     key_people = list(company.key_people.all())
-    is_privileged = request.user in account_managers
-    if not is_privileged:
+
+    is_account_manger = request.user in account_managers
+
+    if not is_account_manger:
         return JsonResponse(403, safe=False)
 
     if request.method == 'POST':
