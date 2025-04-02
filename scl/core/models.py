@@ -30,6 +30,8 @@ class Company(models.Model):
     duns_number = models.CharField(
         blank=False, null=False, max_length=9, verbose_name='DUNS number')
 
+    summary = models.TextField(null=True, blank=True, max_length=500)
+
     global_hq_name = models.CharField(
         max_length=128, blank=True, null=False, default='', verbose_name="Global HQ name")
     global_hq_country = models.CharField(
@@ -40,7 +42,7 @@ class Company(models.Model):
         null=True, blank=True, verbose_name="Global number of employees")
 
     sectors = ArrayField(
-        models.CharField(max_length=3, choices=SECTORS),
+        models.CharField(max_length=6, choices=SECTORS),
         blank=True,
         null=True,
         default=list,
@@ -60,12 +62,6 @@ class Company(models.Model):
     @property
     def global_turnover_billions_usd(self):
         return self.global_turnover_millions_usd / 1000
-
-    @property
-    def get_sectors_display(self):
-        if not self.sectors:
-            return ""
-        return ", ".join(dict(SECTORS).get(sector, sector) for sector in self.sectors)
 
     @property
     def get_global_hq_country(self):
@@ -113,7 +109,7 @@ class Insight(models.Model):
         User, on_delete=models.CASCADE, related_name='created_insights')
     insight_type = models.CharField(max_length=20, choices=INSIGHT_TYPES)
     title = models.CharField(max_length=255)
-    details = models.TextField(blank=True)
+    details = models.TextField(blank=True, max_length=500)
 
     order = models.IntegerField(default=0)
 
@@ -130,16 +126,18 @@ class Engagement(models.Model):
 
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, related_name="engagements")
-    details = models.TextField(null=True, blank=True)
+    details = models.TextField(null=True, blank=True, max_length=500)
 
 
 @reversion.register()
 class EngagementNote(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='created_by', null=True, blank=True)
     engagement = models.ForeignKey(
         Engagement, on_delete=models.CASCADE, related_name="notes")
-    contents = models.TextField(null=False, blank=True, default='')
+    contents = models.TextField(
+        null=False, blank=True, default='', max_length=500)
 
 
 @reversion.register()

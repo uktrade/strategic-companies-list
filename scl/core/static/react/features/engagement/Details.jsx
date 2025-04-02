@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import ApiProxy from "../../proxy";
 
 import Update from "../../forms/engagements/Update";
-import Header from "../../components/Header";
 import LoadingSpinner from "../../components/Spinner";
 
 const Details = ({
@@ -36,22 +35,20 @@ const Details = ({
   return (
     <LoadingSpinner isLoading={isLoading}>
       {!isUpdatingDetails && (
-        <>
-          <Header
-            title={engagement.title}
-            last_updated={engagement.last_updated}
-          >
-            <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
-              <strong>Created:</strong> {data.created.date} by{" "}
-              {data.created.name}
-            </p>
-            <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
-              <strong>Last updated:</strong> {data.last_updated.date} by{" "}
-              {data.last_updated.name}
-            </p>
-          </Header>
-          <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0"></hr>
-        </>
+        <div className="govuk-!-margin-bottom-4">
+          <h1 className="govuk-heading-l govuk-!-margin-bottom-4">
+            {data.title}
+          </h1>
+          <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
+            <strong>Created:</strong> {data.created.date} by {data.created.name}
+          </p>
+          <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
+            <strong>Last updated:</strong> {data.last_updated.date} by{" "}
+            {data.last_updated.name}
+          </p>
+
+          <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible"></hr>
+        </div>
       )}
       {!isUpdatingDetails && <p className="govuk-body">{engagement.details}</p>}
       {isEditing && isUpdatingDetails && (
