@@ -16,6 +16,7 @@ from pathlib import Path
 from django_log_formatter_asim import ASIMFormatter
 from django.core.management.utils import get_random_secret_key
 from django.urls import reverse_lazy
+import sentry_sdk
 
 # General settings
 
@@ -26,6 +27,14 @@ HEALTH_CHECK_PATHS = [
     '/lb-healthcheck',
     '/pingdom/ping.xml',
 ]
+
+if os.environ.get('SENTRY_DSN', ''):
+    sentry_sdk.init(
+        dsn=os.environ.get('SENTRY_DSN', ''),
+        # Add data like request headers and IP for users;
+        # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+        send_default_pii=True,
+    )
 
 DISABLE_TRANSCRIBE = os.environ.get('DISABLE_TRANSCRIBE', 'False') == 'True'
 
