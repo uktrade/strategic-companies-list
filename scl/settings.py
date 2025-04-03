@@ -22,6 +22,10 @@ from django.urls import reverse_lazy
 DEBUG = os.environ.get('DEBUG', '') == 'True'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+HEALTH_CHECK_PATHS = [
+    'lb-healthcheck',
+    '/pingdom/ping.xml',
+]
 
 # Security settings
 
@@ -62,7 +66,7 @@ AUTHBROKER_INTERNAL_URL = os.environ.get(
 AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
 AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
 AUTHBROKER_STAFF_SSO_SCOPE = 'read write'
-AUTHBROKER_ANONYMOUS_PATHS = ['/lb-healthcheck']
+AUTHBROKER_ANONYMOUS_PATHS = HEALTH_CHECK_PATHS
 AUTHBROKER_ANONYMOUS_URL_NAMES = []
 
 # Avoids (un-rectifiable) personal data in the user ID, as well as a reference to trade.gov.uk,
@@ -83,14 +87,12 @@ LOGIN_REDIRECT_URL = reverse_lazy('home-page')
 IP_FILTER_ALLOWED_NETWORKS = json.loads(
     os.environ.get('IP_FILTER_ALLOWED_NETWORKS', '{}')
 )
-IP_FILTER_EXCLUDE_PATHS = ['/lb-healthcheck', '/pingdom/ping.xml']
+IP_FILTER_EXCLUDE_PATHS = HEALTH_CHECK_PATHS
 
 # Basic access group: configures BasicAccessMiddleware that requires all users to have this access
 # This allows the app itself to be quite open in terms of SSO, but access is managed within
 BASIC_ACCESS_GROUP = 'Basic access'
-BASIC_ACCESS_EXCLUDE_PATHS = [
-    '/lb-healthcheck',
-    '/pingdom/ping.xml',
+BASIC_ACCESS_EXCLUDE_PATHS = HEALTH_CHECK_PATHS + [
     reverse_lazy('authbroker_client:login'),
     reverse_lazy('authbroker_client:callback'),
 ]
