@@ -23,7 +23,7 @@ DEBUG = os.environ.get('DEBUG', '') == 'True'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 HEALTH_CHECK_PATHS = [
-    'lb-healthcheck',
+    '/lb-healthcheck',
     '/pingdom/ping.xml',
 ]
 
