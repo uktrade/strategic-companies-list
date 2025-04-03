@@ -9,3 +9,4 @@ sentry-sdk
 uvicorn
 psycopg[binary,pool]
 django-log-formatter-asim
+python-dotenv
