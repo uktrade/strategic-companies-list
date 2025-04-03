@@ -1,12 +1,11 @@
 {
   "scripts": {
     "dev": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
-    "build": "./node_modules/.bin/webpack build --config webpack.prod.js",
-    "sass:watch": "sass scl/core/sass/scl.scss scl/core/static/css/scl.css -w",
-    "sass:build": "sass scl/core/sass/scl.scss scl/core/static/css/scl.css --style=compressed"
+    "build": "./node_modules/.bin/webpack build --config webpack.prod.js"
   },
   "dependencies": {
     "@aws-sdk/client-transcribe-streaming": "^3.758.0",
+    "file-loader": "^6.2.0",
     "govuk-frontend": "^5.9.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -18,7 +17,10 @@
     "@babel/core": "^7.26.7",
     "@babel/preset-react": "^7.26.3",
     "babel-loader": "^8.2.2",
+    "css-loader": "^7.1.2",
+    "mini-css-extract-plugin": "^2.9.2",
     "sass": "^1.85.1",
+    "sass-loader": "^16.0.5",
     "terser-webpack-plugin": "^5.3.14",
     "webpack": "^5.97.1",
     "webpack-bundle-tracker": "^3.1.1",

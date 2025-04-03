@@ -4,6 +4,7 @@ const webpack = require("webpack");
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 const BundleTracker = require("webpack-bundle-tracker");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = merge(common, {
   mode: "development",
@@ -19,5 +20,9 @@ module.exports = merge(common, {
       },
     }),
     new BundleTracker({ path: __dirname, filename: "webpack-stats.json" }),
+    new MiniCssExtractPlugin({
+      filename: "[name]-[hash].css",
+      chunkFilename: "[id]-[hash].css",
+    }),
   ],
 });

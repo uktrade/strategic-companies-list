@@ -132,6 +132,7 @@ celerybeat.pid
 .venv
 env/
 venv/
+venv*/
 ENV/
 env.bak/
 venv.bak/
@@ -183,3 +184,4 @@ webpack-stats.json
 # Static
 scl/core/static/css
 scl/core/static/js
+assets/

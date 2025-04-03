@@ -1,6 +1,7 @@
 /* eslint-disable */
 const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const REACT_APPS = [
   "company-briefing",
@@ -17,7 +18,10 @@ module.exports = {
   mode: "development",
   context: __dirname,
   entry: {
-    scl: "./scl/core/static/scl.js",
+    scl: [
+      "./scl/core/static/scl.js",
+      "./scl/core/sass/scl.scss",
+    ],
     browser: "./scl/core/static/browser.js",
     ...REACT_APPS,
   },
@@ -26,8 +30,26 @@ module.exports = {
     filename: "[name].js",
     clean: true,
   },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name]-[hash].css",
+      chunkFilename: "[id]-[hash].css",
+    }),
+  ],
   module: {
     rules: [
+      // Use file-loader to handle image assets
+      {
+        test: /\.(png|jpe?g|gif|woff2?|svg|ico)$/i,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[name].[ext]",
+            },
+          },
+        ],
+      },
       {
         test: /\.js|\.jsx$/,
         exclude: /node_modules/,
@@ -35,6 +57,16 @@ module.exports = {
         resolve: {
           extensions: [".jsx", ".js"],
         },
+      },
+
+      // Extract compiled SCSS separately from JS
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "sass-loader",
+        ],
       },
     ],
   },
@@ -45,6 +77,7 @@ module.exports = {
     })],
   },
   resolve: {
-    extensions: [".js", ".jsx"],
+    modules: ["node_modules"],
+    extensions: [".js", ".jsx", ".scss"],
   },
 };
