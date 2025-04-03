@@ -17,6 +17,11 @@ logger = logging.getLogger().warning
 
 
 def aws_credentials_api(request):
+    if settings.DISABLE_TRANSCRIBE:
+        return JsonResponse(
+            {},
+            status=503,
+        )
 
     if settings.AWS_TRANSCRIBE_ACCESS_KEY_ID and settings.AWS_TRANSCRIBE_SECRET_ACCESS_KEY:
 

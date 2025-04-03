@@ -27,6 +27,8 @@ HEALTH_CHECK_PATHS = [
     '/pingdom/ping.xml',
 ]
 
+DISABLE_TRANSCRIBE = os.environ.get('DISABLE_TRANSCRIBE', 'False') == 'True'
+
 # Security settings
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', get_random_secret_key())
