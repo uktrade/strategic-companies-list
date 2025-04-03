@@ -90,6 +90,7 @@ IP_FILTER_EXCLUDE_PATHS = ['/lb-healthcheck', '/pingdom/ping.xml']
 BASIC_ACCESS_GROUP = 'Basic access'
 BASIC_ACCESS_EXCLUDE_PATHS = [
     '/lb-healthcheck',
+    '/pingdom/ping.xml',
     reverse_lazy('authbroker_client:login'),
     reverse_lazy('authbroker_client:callback'),
 ]
