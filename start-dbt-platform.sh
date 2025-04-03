@@ -4,4 +4,4 @@ python manage.py migrate
 python manage.py createinitialrevisions
 python manage.py creategroups
 
-python -m uvicorn --host 0.0.0.0 --port "$PORT" scl.asgi:application
+gunicorn scl.wsgi:application --bind "0.0.0.0:$PORT"

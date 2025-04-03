@@ -57,6 +57,8 @@ envier==0.6.1
     # via ddtrace
 filelock==3.18.0
     # via virtualenv
+gunicorn==23.0.0
+    # via -r requirements.in
 h11==0.14.0
     # via uvicorn
 identify==2.6.9
@@ -77,6 +79,8 @@ oauthlib==3.2.2
     # via requests-oauthlib
 opentelemetry-api==1.31.1
     # via ddtrace
+packaging==24.2
+    # via gunicorn
 platformdirs==4.3.7
     # via virtualenv
 pre-commit==3.8.0
