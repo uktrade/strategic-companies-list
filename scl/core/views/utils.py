@@ -1,4 +1,12 @@
+from waffle import get_waffle_flag_model
+
 from scl.core.constants import SECTORS
+
+
+def get_all_feature_flags(request):
+    flags = get_waffle_flag_model().get_all()
+    flag_values = [(f.name, f.is_active(request)) for f in flags]
+    return [{key: value} for key, value in flag_values]
 
 
 def get_all_sectors():
