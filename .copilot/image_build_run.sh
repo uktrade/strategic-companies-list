@@ -8,6 +8,11 @@ export COPILOT_ENVIRONMENT_NAME=build
 
 npm run sass:build
 
+mkdir -p /workspace/scl/static/static
+
+cp /workspace/node_modules/govuk-frontend/dist/govuk/assets /workspace/scl/static/static
+cp /workspace/node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.* /workspace/scl/static/static
+
 python manage.py collectstatic
 
 find /workspace/assets/ -type f -exec gzip -k -9 {} \;
