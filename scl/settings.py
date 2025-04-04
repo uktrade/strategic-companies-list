@@ -23,6 +23,8 @@ import sentry_sdk
 DEBUG = os.environ.get('DEBUG', '') == 'True'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+RUNNING_ON_DBT_PLATFORM = bool(os.environ.get('COPILOT_ENVIRONMENT_NAME', ''))
+
 HEALTH_CHECK_PATHS = [
     '/lb-healthcheck',
     '/pingdom/ping.xml',
