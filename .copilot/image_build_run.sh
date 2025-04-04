@@ -15,5 +15,3 @@ cp -r node_modules/govuk-frontend/dist/govuk/assets/* scl/static/static
 cp -r node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.* scl/static/static
 
 python manage.py collectstatic
-
-find assets/ -type f -exec gzip -k -9 {} \;
