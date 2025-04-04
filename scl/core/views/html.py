@@ -1,5 +1,6 @@
 import json
 import logging
+
 from datetime import date, datetime, timedelta
 
 from django.shortcuts import render
@@ -8,7 +9,7 @@ from django.http import HttpResponseForbidden
 from scl.core.constants import SECTORS
 
 from scl.core.models import Company, Engagement, CompanyAccountManager, Insight
-from scl.core.views.utils import get_all_sectors, get_company_sectors
+from scl.core.views.utils import get_all_feature_flags, get_all_sectors, get_company_sectors
 
 logger = logging.getLogger().warning
 
@@ -50,6 +51,7 @@ def engagement(request, engagement_id):
             "id": str(engagement.id),
             "title": engagement.title,
             "details": engagement.details,
+            "flags": get_all_feature_flags(request),
             "created": {
                 "name": f"{first_created.user.first_name} {first_created.user.last_name}",
                 "date": first_created.date_created.strftime(

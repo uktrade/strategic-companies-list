@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { useForm } from "react-hook-form";
 import TranscriptButton from "../../components/TranscriptButton";
+import { FlagContext } from "../../providers";
+import { AWS_TRANSCRIBE } from "../../constants";
 
 const Create = ({
   onSubmit,
@@ -19,6 +21,10 @@ const Create = ({
     watch,
     formState: { errors },
   } = useForm();
+
+  const flags = useContext(FlagContext);
+
+  const hasAwsTranscribe = flags[0][AWS_TRANSCRIBE];
 
   setValue("contents", transcript + " " + partialTranscript);
 
@@ -56,12 +62,14 @@ const Create = ({
           >
             Save
           </button>
-          <TranscriptButton
-            className="govuk-!-margin-right-4"
-            onClick={handleOnTranscribe}
-            isTranscribing={isTranscribing}
-            disabled={isTranscribing && !hasFinalisedTranscription}
-          />
+          {hasAwsTranscribe && (
+            <TranscriptButton
+              className="govuk-!-margin-right-4"
+              onClick={handleOnTranscribe}
+              isTranscribing={isTranscribing}
+              disabled={isTranscribing && !hasFinalisedTranscription}
+            />
+          )}
           <button
             className="govuk-button govuk-button--secondary"
             onClick={() => setIsCreating(false)}

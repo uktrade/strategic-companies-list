@@ -1,11 +1,11 @@
 from datetime import date, datetime
 from scl.core.constants import SECTORS
 from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
-from reversion.models import Version
 import json
 import time
 import uuid
 import logging
+import waffle
 
 import boto3
 from django.conf import settings
@@ -20,6 +20,9 @@ logger = logging.getLogger().warning
 
 
 def aws_credentials_api(request):
+
+    if not waffle.flag_is_active(request, 'AWS_TRANSCRIBE'):
+        return JsonResponse(403, safe=False)
 
     if settings.AWS_TRANSCRIBE_ACCESS_KEY_ID and settings.AWS_TRANSCRIBE_SECRET_ACCESS_KEY:
 
@@ -43,7 +46,7 @@ def aws_credentials_api(request):
             credentials = client.assume_role(
                 RoleArn=role_arn,
                 RoleSessionName="scl_" + str(uuid.uuid4()),
-                DurationSeconds=60 * 60,
+                DurationSeconds=60 * 15,  # 15 minutes
             )["Credentials"]
         except Exception:
             if i == max_attempts - 1:
