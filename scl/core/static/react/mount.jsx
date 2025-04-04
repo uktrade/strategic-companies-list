@@ -1,6 +1,6 @@
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { FeatureContextProvider } from "./providers";
+import { FeatureFlagContextProvider } from "./providers";
 
 
 const mount = (Component, id) => {
@@ -11,9 +11,9 @@ const mount = (Component, id) => {
 
   root.render(
     <StrictMode>
-      <FeatureContextProvider flags={props.data.flags}>
+      <FeatureFlagContextProvider flags={props.data.flags}>
         <Component {...props} />
-      </FeatureContextProvider>
+      </FeatureFlagContextProvider>
     </StrictMode>
   );
 };
