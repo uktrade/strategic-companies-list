@@ -47,7 +47,7 @@ def BasicAccessMiddleware(get_response):
     exclude_paths = getattr(settings, 'BASIC_ACCESS_EXCLUDE_PATHS', [])
 
     def middleware(request):
-        allowed = request.path in exclude_paths or request.user.groups.filter(name=group_name).exists()
+        allowed = request.path.startswith('/assets/') or request.path in exclude_paths or request.user.groups.filter(name=group_name).exists()
 
         if allowed:
             return get_response(request)
