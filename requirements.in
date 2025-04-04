@@ -7,5 +7,8 @@ django-reversion
 django-staff-sso-client
 sentry-sdk
 uvicorn
+gunicorn
 psycopg[binary,pool]
 django-log-formatter-asim
+sentry-sdk[django]
+whitenoise
