@@ -1,14 +1,18 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const Update = ({ data, onSubmit, setIsUpdating }) => {
+import { MultiSelect } from "../../components/MultiSelect";
+
+const Update = ({ data, onSubmit, setIsUpdating, nonce }) => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({
     defaultValues: {
       title: data?.title,
+      sectors: data.company_sectors,
     },
   });
 
@@ -36,6 +40,11 @@ const Update = ({ data, onSubmit, setIsUpdating }) => {
             required: "Title is required",
           })}
         />
+
+        <label className="govuk-label" htmlFor="sectors">
+          Sectors
+        </label>
+        <MultiSelect data={data} nonce={nonce} control={control} />
         <div className="govuk-!-margin-top-2">
           <button type="submit" className="govuk-button govuk-!-margin-right-2">
             Save

@@ -1,4 +1,5 @@
 {% load static %}
+{% load waffle_tags %}
 <!DOCTYPE html>
 <html lang="en" class="govuk-template scl-template">
 
@@ -97,7 +98,9 @@
     } from '{% static 'govuk-frontend.min.js' %}'
     initAll()
   </script>
-  <script type="module" src="{% static 'js/browser.js' %}"></script>
+  {% flag "AWS_TRANSCRIBE" %}
+    <script type="module" src="{% static 'js/browser.js' %}"></script>
+  {% endflag %}
   <script type="module" src="{% static 'js/scl.js' %}"></script>
   {% block scripts %}
   {% endblock %}

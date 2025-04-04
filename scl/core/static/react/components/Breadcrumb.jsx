@@ -29,11 +29,8 @@ const Breadcrumb = ({links}) => {
         </ol>
       </nav>
       <div>
-        <button className="govuk-button govuk-!-margin-bottom-1 govuk-!-margin-right-1" onClick={()=> window.print()}>
+        <button className="govuk-button govuk-!-margin-bottom-1" onClick={()=> window.print()}>
           Print
-        </button>
-        <button className="govuk-button govuk-!-margin-bottom-1">
-          Download
         </button>
       </div>
     </div>

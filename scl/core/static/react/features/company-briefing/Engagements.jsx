@@ -1,8 +1,8 @@
 import React from "react";
 import Section from "../../components/Section";
 
-const RecentTopLevelEngagements = ({ engagements, duns_number }) => (
-  <Section isPrivaliged title="Recent top-level engagements across HMG">
+const Engagements = ({ engagements, duns_number }) => (
+  <Section isPrivaliged title="Engagements">
     {engagements.length ? (
       <>
         <ul className="scl-multiline-list govuk-!-margin-top-5">
@@ -29,7 +29,7 @@ const RecentTopLevelEngagements = ({ engagements, duns_number }) => (
             href={`/company-briefing/${duns_number}/engagements`}
             className="govuk-link govuk-link--no-visited-state scl-link--no-underline"
           >
-            View working-level engagements
+            View all engagements
           </a>
         </p>
       </>
@@ -39,4 +39,4 @@ const RecentTopLevelEngagements = ({ engagements, duns_number }) => (
   </Section>
 );
 
-export default RecentTopLevelEngagements;
+export default Engagements;

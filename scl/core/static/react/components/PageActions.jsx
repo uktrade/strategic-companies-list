@@ -16,7 +16,7 @@ const PageActions = ({
           setIsAddingEngagement(false);
         }}
       >
-        {isEditing ? "Cancel" : "Edit"}
+        {isEditing ? "Stop editing" : "Edit"}
       </button>
       {showAddEngagementBtn && (
         <button
