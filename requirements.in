@@ -12,3 +12,4 @@ psycopg[binary,pool]
 django-log-formatter-asim
 sentry-sdk[django]
 whitenoise
+django-waffle

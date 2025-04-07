@@ -5,7 +5,7 @@ import NotificationBanner from "../../components/NotificationBanner";
 import Notes from "./Notes";
 import Details from "./Details";
 
-const Page = ({ data, id, csrf_token }) => {
+const Page = ({ data, csrf_token }) => {
   const [engagement, setEngagement] = useState({
     title: data.title,
     details: data.details,
@@ -54,18 +54,18 @@ const Page = ({ data, id, csrf_token }) => {
                 setIsUpdatingDetails={setIsUpdatingDetails}
                 showUpdateNotification={showUpdateNotification}
               />
-
-              <Notes
-                csrf_token={csrf_token}
-                id={data.id}
-                data={data.notes}
-                isEditing={isEditing}
-                isUpdatingNotes={isUpdatingNotes}
-                isCreatingNotes={isCreatingNotes}
-                setIsUpdatingNotes={setIsUpdatingNotes}
-                setIsCreatingNotes={setIsCreatingNotes}
-                showUpdateNotification={showUpdateNotification}
-              />
+              {data.is_account_manager && (
+                <Notes
+                  csrf_token={csrf_token}
+                  data={data}
+                  isEditing={isEditing}
+                  isUpdatingNotes={isUpdatingNotes}
+                  isCreatingNotes={isCreatingNotes}
+                  setIsUpdatingNotes={setIsUpdatingNotes}
+                  setIsCreatingNotes={setIsCreatingNotes}
+                  showUpdateNotification={showUpdateNotification}
+                />
+              )}
             </div>
             <div className="scl-page-header__one-third">
               {data.is_account_manager && (
@@ -81,7 +81,7 @@ const Page = ({ data, id, csrf_token }) => {
                       setIsCreatingNotes(false);
                     }}
                   >
-                    {isEditing ? "Cancel" : "Edit"}
+                    {isEditing ? "Stop editing" : "Edit"}
                   </button>
                 </div>
               )}
