@@ -157,7 +157,7 @@ def company_briefing(request, duns_number):
                 {
                     'name': people.name,
                     'role': people.role,
-                    'userId': people.id
+                    'userId': str(people.id)
                 } for people in key_people
             ],
             "company_priorities": [
