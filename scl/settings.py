@@ -42,6 +42,8 @@ CSRF_COOKIE_NAME = 'scl-csrf-token'
 
 CSP_DEFAULT_SRC = ("'self'")
 
+CSP_BASE_URI = ("'self'")
+
 if DEBUG:
     CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'")
 

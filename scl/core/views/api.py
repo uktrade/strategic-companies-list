@@ -19,7 +19,14 @@ today = date.today()
 logger = logging.getLogger().warning
 
 
-def aws_credentials_api(request):
+def aws_credentials_api(request, duns_number):
+    company = Company.objects.get(duns_number=duns_number)
+
+    account_managers = list(company.account_manager.all())
+    is_account_manager = request.user in account_managers
+
+    if not is_account_manager:
+        return JsonResponse(403, safe=False)
 
     if not waffle.flag_is_active(request, 'AWS_TRANSCRIBE'):
         return JsonResponse(403, safe=False)
