@@ -15,7 +15,6 @@ import Create from "../../forms/notes/Create";
 import Update from "../../forms/notes/Update";
 
 const Notes = ({
-  id,
   csrf_token,
   data,
   isEditing,
@@ -25,7 +24,7 @@ const Notes = ({
   setIsCreatingNotes,
   isCreatingNotes,
 }) => {
-  const [notes, setNotes] = useState(data);
+  const [notes, setNotes] = useState(data.notes);
   const [isLoading, setIsLoading] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [hasFinalisedTranscription, setHasFinalisedTranscription] =
@@ -36,7 +35,7 @@ const Notes = ({
   const client = useRef(null);
   const isRecording = useRef(null);
 
-  const ENDPOINT = `/api/v1/engagement/${id}/note`;
+  const ENDPOINT = `/api/v1/engagement/${data.id}/note`;
 
   useEffect(() => {
     client.current = new TranscribeStreamingClient({

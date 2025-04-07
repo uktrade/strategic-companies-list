@@ -42,6 +42,7 @@ django==5.1.7
     #   django-reversion
     #   django-staff-sso-client
     #   sentry-sdk
+    #   django-waffle
 django-bleach==3.1.0
     # via -r requirements.in
 django-csp==3.8
@@ -53,6 +54,8 @@ django-log-formatter-asim==1.0.0
 django-reversion==5.1.0
     # via -r requirements.in
 django-staff-sso-client==4.4.0
+    # via -r requirements.in
+django-waffle==4.2.0
     # via -r requirements.in
 envier==0.6.1
     # via ddtrace

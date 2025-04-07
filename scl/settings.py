@@ -60,6 +60,8 @@ CSRF_COOKIE_NAME = 'scl-csrf-token'
 
 CSP_DEFAULT_SRC = ("'self'")
 
+CSP_BASE_URI = ("'self'")
+
 if DEBUG:
     CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'")
 
@@ -129,6 +131,7 @@ INSTALLED_APPS = [
     'reversion',
     'scl.core',
     'scl.static',
+    'waffle'
 ]
 
 MIDDLEWARE = [
@@ -144,6 +147,7 @@ MIDDLEWARE = [
     'scl.core.middleware.IPFilterMiddleware',
     'authbroker_client.middleware.ProtectAllViewsMiddleware',
     'scl.core.middleware.BasicAccessMiddleware',
+    'waffle.middleware.WaffleMiddleware',
 ]
 
 ROOT_URLCONF = 'scl.urls'
