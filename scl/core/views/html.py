@@ -1,12 +1,15 @@
 import json
 import logging
+
 from datetime import date, datetime, timedelta
 
 from django.shortcuts import render
 from reversion.models import Version
-from django.http import JsonResponse
+from django.http import HttpResponseForbidden
+from scl.core.constants import SECTORS
 
 from scl.core.models import Company, Engagement, CompanyAccountManager, Insight
+from scl.core.views.utils import get_all_feature_flags, get_all_sectors, get_company_sectors
 
 logger = logging.getLogger().warning
 
@@ -31,23 +34,24 @@ def engagement(request, engagement_id):
 
     is_viewer = request.user.in_group('Viewer')
     is_account_manager = request.user in engagement.company.account_manager.all()
-    can_view = is_viewer or is_account_manager
+    has_access = is_viewer or is_account_manager
 
-    if not can_view:
-        return JsonResponse(403, safe=False)
+    if not has_access:
+        return HttpResponseForbidden(render(request, "403_viewer_access.html"))
 
     versions = Version.objects.get_for_object(engagement)
 
     last_updated = versions.first().revision
     first_created = versions.last().revision
 
-    notes = engagement.notes.all()
+    notes = engagement.notes.filter(created_by=request.user)
 
     return render(request, "engagement.html", context={
         "props": json.dumps({
             "id": str(engagement.id),
             "title": engagement.title,
             "details": engagement.details,
+            "flags": get_all_feature_flags(request),
             "created": {
                 "name": f"{first_created.user.first_name} {first_created.user.last_name}",
                 "date": first_created.date_created.strftime(
@@ -59,7 +63,7 @@ def engagement(request, engagement_id):
                     "%B %d, %Y, %H:%M")
             },
             "is_account_manager": is_account_manager,
-            "can_view": can_view,
+            "has_access": has_access,
             "company": {
                 "name": engagement.company.name,
                 "duns_number": engagement.company.duns_number
@@ -69,7 +73,7 @@ def engagement(request, engagement_id):
                     'noteId': str(note.id),
                     'contents': note.contents,
                 } for note in notes
-            ],
+            ] if is_account_manager else [],
         })
     })
 
@@ -84,16 +88,18 @@ def company_engagements(request, duns_number):
     engagements = list(company.engagements.filter(
         date__gte=today).order_by('-date'))
 
-    is_privileged = request.user in company.account_manager.all()
-    if not is_privileged:
-        return JsonResponse(403, safe=False)
+    is_viewer = request.user.in_group('Viewer')
+    is_account_manager = request.user in company.account_manager.all()
+    has_access = is_viewer or is_account_manager
+
+    if not has_access:
+        return HttpResponseForbidden(render(request, "403_viewer_access.html"))
 
     return render(request, "company_engagements.html", {
         "company": company,
         "add_engagement_link": f'/company-briefing/{company.duns_number}/add-engagement',
         "engagements": engagements,
         "past_engagements": past_engagements,
-        "is_privileged": is_privileged,
     })
 
 
@@ -104,7 +110,7 @@ def company_briefing(request, duns_number):
 
     is_viewer = request.user.in_group('Viewer')
     is_account_manager = request.user in company.account_manager.all()
-    can_view = is_viewer or is_account_manager
+    has_access = is_viewer or is_account_manager
 
     account_managers = list(company.account_manager.all())
 
@@ -115,6 +121,7 @@ def company_briefing(request, duns_number):
             company=company, account_manager=am, is_lead=True).exists()
         account_managers_with_lead.append({
             "name": f"{am.first_name} {am.last_name}",
+            "email": am.email,
             "is_lead": "true" if is_lead else "false"
         })
 
@@ -132,12 +139,16 @@ def company_briefing(request, duns_number):
     employees = '{:,}'.format(
         company.global_number_of_employees) if company.global_number_of_employees else ''
 
+    company_sectors = get_company_sectors(company)
+
     context = {
         "company": company,
         "props": json.dumps({
             "title": company.name,
+            "summary": company.summary,
             "duns_number": company.duns_number,
-            "sectors": company.get_sectors_display,
+            "company_sectors": company_sectors if company_sectors else [],
+            "all_sectors": get_all_sectors(),
             "last_updated": current_version.revision.date_created.strftime("%B %d, %Y, %H:%M"),
             "global_hq_country": company.get_global_hq_country,
             "turn_over": company.global_turnover_millions_usd,
@@ -146,7 +157,7 @@ def company_briefing(request, duns_number):
                 {
                     'name': people.name,
                     'role': people.role,
-                    'userId': people.id
+                    'userId': str(people.id)
                 } for people in key_people
             ],
             "company_priorities": [
@@ -155,7 +166,7 @@ def company_briefing(request, duns_number):
                     'details': priority.details,
                     'insightId': str(priority.id)
                 } for priority in company_priorities
-            ] if can_view else [],
+            ] if has_access else [],
             "hmg_priorities": [
                 {
                     'title': priority.title,
@@ -163,7 +174,7 @@ def company_briefing(request, duns_number):
                     'insightId': str(priority.id)
                 } for priority in hmg_priorities
             ],
-            "can_view": can_view,
+            "has_access": has_access,
             "is_account_manager": is_account_manager,
             "engagements": [
                 {
@@ -171,8 +182,13 @@ def company_briefing(request, duns_number):
                     'title': engagement.title,
                     'date': engagement.date.strftime("%B %d, %Y"),
                 } for engagement in engagements
-            ] if can_view else [],
+            ] if has_access else [],
             "account_managers": account_managers_with_lead
         })
     }
+
     return render(request, "company.html", context)
+
+
+def custom_403_view(request, exception=None):
+    return render(request, "403.html", status=403)
