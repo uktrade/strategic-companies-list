@@ -228,10 +228,7 @@ STORAGES = {
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # If we are on DBT Platform
-if os.environ.get('COPILOT_ENVIRONMENT_NAME', ''):
-    STATIC_ROOT = '/workspace/assets/'
-else:
-    STATIC_ROOT = '/app/assets/'
+STATIC_ROOT = 'assets/'
 
 # GOV.UK Design System expects assets in assets/
 STATIC_URL = 'assets/'

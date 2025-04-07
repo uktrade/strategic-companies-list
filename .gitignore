@@ -183,3 +183,6 @@ webpack-stats.json
 # Static
 scl/core/static/css
 scl/core/static/js
+
+# Assets
+assets/
