@@ -1,3 +1,10 @@
+resource "aws_codebuild_source_credential" "github" {
+  count       = var.github_codeconnection_arn != "" ? 1 : 0
+  auth_type   = "CODECONNECTIONS"
+  server_type = "GITHUB"
+  token       = var.github_codeconnection_arn
+}
+
 resource "aws_codebuild_project" "main" {
   name         = "${var.prefix}-${var.suffix}"
   description  = "${var.prefix}-${var.suffix}"
@@ -84,7 +91,7 @@ resource "aws_iam_role_policy" "codebuild" {
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [
+    Statement = concat([
       {
         Effect = "Allow",
         Resource = [
@@ -162,8 +169,16 @@ resource "aws_iam_role_policy" "codebuild" {
             "ec2:Subnet" = aws_subnet.private[*].arn
           }
         }
-      }
-    ]
+      }],
+      var.github_codeconnection_arn != "" ? [
+        {
+          Effect = "Allow",
+          Action = [
+            "codeconnections:GetConnectionToken",
+          ],
+          Resource = var.github_codeconnection_arn,
+        }
+    ] : [])
   })
 }
 

@@ -70,6 +70,11 @@ variable "github_source_url" {
   default = "https://github.com/uktrade/strategic-companies-list.git"
 }
 
+variable "github_codeconnection_arn" {
+  type    = string
+  default = ""
+}
+
 variable "aws_lb_account_id" {
   # The account ID of the AWS-controlled account that puts ALB connection and access logs into our bucket
   # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/enable-connection-logging.html#attach-bucket-policy-connection
