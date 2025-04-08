@@ -143,6 +143,7 @@ class EngagementNote(models.Model):
 @reversion.register()
 class KeyPeople(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+
     name = models.CharField(blank=False, null=False, max_length=128)
     role = models.CharField(blank=False, null=False, max_length=128)
     company = models.ForeignKey(
