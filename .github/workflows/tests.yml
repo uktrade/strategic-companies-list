@@ -36,9 +36,7 @@ jobs:
         with:
           node-version: 23
       - run: pip install -r requirements.txt
-      - run: pip install factory_boy
-      - run: pip install pytest
-      - run: pip install pytest-django
+      - run: pip install factory_boy pytest pytest-django
       - run: make init
       - run: python manage.py migrate
       - run: make test/ci
