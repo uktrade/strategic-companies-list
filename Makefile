@@ -14,10 +14,6 @@ test/db/stop:
 test:
 	@COPILOT_ENVIRONMENT_NAME=test PGDATABASE=postgres PGUSER=postgres PGPASSWORD=mysecretpassword PGHOST=localhost PGPORT=5432 pytest
 
-.PHONY: test/ci
-test/ci:
-	@COPILOT_ENVIRONMENT_NAME=test pytest
-
 .PHONY: init
 init:
 	export COPILOT_ENVIRONMENT_NAME=build

@@ -12,6 +12,8 @@ jobs:
     services:
       postgres:
         image: postgres:16
+        ports:
+          - 5432:5432
         env:
           POSTGRES_PASSWORD: mysecretpassword
         options: >-
@@ -19,13 +21,16 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     env:
-      PGDATABASE: postgres 
-      PGUSER: postgres 
-      PGPASSWORD: mysecretpassword 
-      PGHOST: postgres 
+      PGDATABASE: postgres
+      PGUSER: postgres
+      PGPASSWORD: mysecretpassword
+      PGHOST: localhost
       PGPORT: 5432
       DJANGO_SETTINGS_MODULE: scl.settings
+      COPILOT_ENVIRONMENT_NAME: test
+      DEBUG: True
 
     steps:
       - uses: actions/checkout@v4
@@ -36,9 +41,7 @@ jobs:
         with:
           node-version: 23
       - run: pip install -r requirements.txt
-      - run: pip install factory_boy
-      - run: pip install pytest
-      - run: pip install pytest-django
+      - run: pip install factory_boy pytest pytest-django
       - run: make init
       - run: python manage.py migrate
-      - run: make test/ci
+      - run: pytest
