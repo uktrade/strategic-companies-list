@@ -23,7 +23,7 @@ jobs:
       PGDATABASE: postgres 
       PGUSER: postgres 
       PGPASSWORD: mysecretpassword 
-      PGHOST: localhost 
+      PGHOST: postgres 
       PGPORT: 5432
       DJANGO_SETTINGS_MODULE: scl.settings
 
