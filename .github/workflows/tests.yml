@@ -12,6 +12,8 @@ jobs:
     services:
       postgres:
         image: postgres:16
+        ports:
+          - 5432:5432
         env:
           POSTGRES_PASSWORD: mysecretpassword
         options: >-
@@ -19,13 +21,15 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     env:
-      PGDATABASE: postgres 
-      PGUSER: postgres 
-      PGPASSWORD: mysecretpassword 
-      PGHOST: postgres 
+      PGDATABASE: postgres
+      PGUSER: postgres
+      PGPASSWORD: mysecretpassword
+      PGHOST: postgres
       PGPORT: 5432
       DJANGO_SETTINGS_MODULE: scl.settings
+      DEBUG: True
 
     steps:
       - uses: actions/checkout@v4
