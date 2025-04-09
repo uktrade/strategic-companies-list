@@ -26,9 +26,10 @@ jobs:
       PGDATABASE: postgres
       PGUSER: postgres
       PGPASSWORD: mysecretpassword
-      PGHOST: postgres
+      PGHOST: localhost
       PGPORT: 5432
       DJANGO_SETTINGS_MODULE: scl.settings
+      COPILOT_ENVIRONMENT_NAME: test
       DEBUG: True
 
     steps:
@@ -43,4 +44,4 @@ jobs:
       - run: pip install factory_boy pytest pytest-django
       - run: make init
       - run: python manage.py migrate
-      - run: make test/ci
+      - run: pytest
