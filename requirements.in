@@ -1,6 +1,7 @@
 boto3
 django
 django-bleach
+beautifulsoup4
 django-csp
 django_extensions
 django-reversion
