@@ -30,10 +30,10 @@ const Summary = ({ data, isEditing, csrf_token, showUpdateNotification }) => {
   return (
     <LoadingSpinner isLoading={isLoading}>
       <Section title="Summary">
-        {summary ? (
-          <p className="govuk-body">{summary}</p>
-        ) : (
+        {!summary ? (
           <p className="govuk-body">Currently this company has no summary.</p>
+        ) : (
+          !isCreating && !isUpdating && <p className="govuk-body">{summary}</p>
         )}
 
         {isEditing && isCreating && (

@@ -14,13 +14,12 @@ const Create = ({ data, onSubmit, setIsCreating }) => {
 
   return (
     <>
-      <h2 className="govuk-heading-m">Add summary</h2>
       <form
         onSubmit={handleSubmit((data) => onSubmit(data, "update"))}
         className="scl-inine-form"
       >
         <label className="govuk-label" htmlFor="summary">
-          Summary
+          <strong>Update summary</strong>
         </label>
         {errors && (
           <p className="govuk-error-message">
