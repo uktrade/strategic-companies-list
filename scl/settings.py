@@ -16,12 +16,30 @@ from pathlib import Path
 from django_log_formatter_asim import ASIMFormatter
 from django.core.management.utils import get_random_secret_key
 from django.urls import reverse_lazy
+import sentry_sdk
 
 # General settings
 
 DEBUG = os.environ.get('DEBUG', '') == 'True'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+RUNNING_ON_DBT_PLATFORM = bool(os.environ.get('COPILOT_ENVIRONMENT_NAME', ''))
+
+HEALTH_CHECK_PATHS = [
+    '/lb-healthcheck',
+    '/pingdom/ping.xml',
+]
+
+if os.environ.get('SENTRY_DSN', ''):
+    sentry_sdk.init(
+        dsn=os.environ.get('SENTRY_DSN', ''),
+        # Add data like request headers and IP for users;
+        # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+        send_default_pii=True,
+        release=os.environ.get('GIT_COMMIT', ''),
+    )
+
+DISABLE_TRANSCRIBE = os.environ.get('DISABLE_TRANSCRIBE', 'False') == 'True'
 
 # Security settings
 
@@ -64,7 +82,7 @@ AUTHBROKER_INTERNAL_URL = os.environ.get(
 AUTHBROKER_CLIENT_ID = os.environ.get('AUTHBROKER_CLIENT_ID', '')
 AUTHBROKER_CLIENT_SECRET = os.environ.get('AUTHBROKER_CLIENT_SECRET', '')
 AUTHBROKER_STAFF_SSO_SCOPE = 'read write'
-AUTHBROKER_ANONYMOUS_PATHS = ['/lb-healthcheck']
+AUTHBROKER_ANONYMOUS_PATHS = HEALTH_CHECK_PATHS
 AUTHBROKER_ANONYMOUS_URL_NAMES = []
 
 # Avoids (un-rectifiable) personal data in the user ID, as well as a reference to trade.gov.uk,
@@ -85,13 +103,12 @@ LOGIN_REDIRECT_URL = reverse_lazy('home-page')
 IP_FILTER_ALLOWED_NETWORKS = json.loads(
     os.environ.get('IP_FILTER_ALLOWED_NETWORKS', '{}')
 )
-IP_FILTER_EXCLUDE_PATHS = ['/lb-healthcheck']
+IP_FILTER_EXCLUDE_PATHS = HEALTH_CHECK_PATHS
 
 # Basic access group: configures BasicAccessMiddleware that requires all users to have this access
 # This allows the app itself to be quite open in terms of SSO, but access is managed within
 BASIC_ACCESS_GROUP = 'Basic access'
-BASIC_ACCESS_EXCLUDE_PATHS = [
-    '/lb-healthcheck',
+BASIC_ACCESS_EXCLUDE_PATHS = HEALTH_CHECK_PATHS + [
     reverse_lazy('authbroker_client:login'),
     reverse_lazy('authbroker_client:callback'),
 ]
@@ -119,6 +136,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -205,7 +223,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
@@ -213,8 +231,10 @@ STORAGES = {
 # Static resources
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+# If we are on DBT Platform
+STATIC_ROOT = 'assets/'
+
 # GOV.UK Design System expects assets in assets/
-STATIC_ROOT = '/app/assets/'
 STATIC_URL = 'assets/'
 
 # Default primary key field type

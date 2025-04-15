@@ -20,6 +20,12 @@ logger = logging.getLogger().warning
 
 
 def aws_credentials_api(request, duns_number):
+    if settings.DISABLE_TRANSCRIBE:
+      return JsonResponse(
+          {},
+          status=503,
+      )
+
     company = Company.objects.get(duns_number=duns_number)
 
     account_managers = list(company.account_manager.all())

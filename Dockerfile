@@ -34,9 +34,7 @@ COPY scl ./scl
 COPY --from=static-resources /app/scl/core/static ./scl/static/static
 COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/assets ./scl/static/static
 COPY --from=static-resources /app/node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.* ./scl/static/static
-RUN \
-    python manage.py collectstatic && \
-    find /app/assets/ -type f -exec gzip -k -9 {} \;
+RUN python manage.py collectstatic
 
 RUN useradd -m scl
 

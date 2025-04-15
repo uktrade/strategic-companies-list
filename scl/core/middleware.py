@@ -25,6 +25,7 @@ def IPFilterMiddleware(get_response):
         # address is in one of the allowed networks. Note this is only safe if we have mechanisms
         # to prevent something that isn't CloudFront from connecting to the application
         allowed = \
+            True if settings.RUNNING_ON_DBT_PLATFORM else \
             True if request.path in exclude_paths else \
             global_network in allowed_ip_networks if request_ip_address is None else \
             any(request_ip_address in allowed_ip_network for allowed_ip_network in allowed_ip_networks)
@@ -46,7 +47,7 @@ def BasicAccessMiddleware(get_response):
     exclude_paths = getattr(settings, 'BASIC_ACCESS_EXCLUDE_PATHS', [])
 
     def middleware(request):
-        allowed = request.path in exclude_paths or request.user.groups.filter(name=group_name).exists()
+        allowed = request.path.startswith('/assets/') or request.path in exclude_paths or request.user.groups.filter(name=group_name).exists()
 
         if allowed:
             return get_response(request)
