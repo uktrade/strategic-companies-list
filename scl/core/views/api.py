@@ -21,10 +21,10 @@ logger = logging.getLogger().warning
 
 def aws_credentials_api(request, duns_number):
     if settings.DISABLE_TRANSCRIBE:
-      return JsonResponse(
-          {},
-          status=503,
-      )
+        return JsonResponse(
+            {},
+            status=503,
+        )
 
     company = Company.objects.get(duns_number=duns_number)
 
@@ -34,17 +34,20 @@ def aws_credentials_api(request, duns_number):
     if not is_account_manager:
         return JsonResponse(403, safe=False)
 
-    if not waffle.flag_is_active(request, 'AWS_TRANSCRIBE'):
+    if not waffle.flag_is_active(request, "AWS_TRANSCRIBE"):
         return JsonResponse(403, safe=False)
 
-    if settings.AWS_TRANSCRIBE_ACCESS_KEY_ID and settings.AWS_TRANSCRIBE_SECRET_ACCESS_KEY:
+    if (
+        settings.AWS_TRANSCRIBE_ACCESS_KEY_ID
+        and settings.AWS_TRANSCRIBE_SECRET_ACCESS_KEY
+    ):
 
         return JsonResponse(
             {
                 "AccessKeyId": settings.AWS_TRANSCRIBE_ACCESS_KEY_ID,
                 "SecretAccessKey": settings.AWS_TRANSCRIBE_SECRET_ACCESS_KEY,
                 "SessionToken": settings.AWS_SESSION_TOKEN,
-                "Expiration": settings.AWS_EXPIRATION_TIMESTAMP
+                "Expiration": settings.AWS_EXPIRATION_TIMESTAMP,
             },
             status=200,
         )
@@ -88,10 +91,14 @@ def company_api(request, duns_number):
     if not is_account_manager:
         return JsonResponse(403, safe=False)
 
-    if request.method == 'PATCH':
+    if request.method == "PATCH":
         with reversion.create_revision():
-            company.name = data.get('title').strip()
-            company.sectors = [key["value"] for key in data.get('sectors')]
+            if data.get("title"):
+                company.name = data.get("title").strip()
+            if data.get("sectors"):
+                company.sectors = [key["value"] for key in data.get("sectors")]
+            if data.get("summary"):
+                company.summary = data.get("summary").strip()
             company.save()
 
             updated_company = Company.objects.get(duns_number=duns_number)
@@ -104,11 +111,16 @@ def company_api(request, duns_number):
 
             return JsonResponse(
                 {
-                    "title": updated_company.name,
-                    "duns_number": updated_company.duns_number,
-                    "company_sectors": get_company_sectors(updated_company),
-                    "all_sectors": get_all_sectors(),
-                    "last_updated": updated_company.last_updated.strftime("%B %d, %Y, %H:%M"),
+                    "data": {
+                        "title": updated_company.name,
+                        "duns_number": updated_company.duns_number,
+                        "company_sectors": get_company_sectors(updated_company),
+                        "all_sectors": get_all_sectors(),
+                        "summary": updated_company.summary,
+                        "last_updated": updated_company.last_updated.strftime(
+                            "%B %d, %Y, %H:%M"
+                        ),
+                    }
                 },
                 status=200,
             )
@@ -117,6 +129,7 @@ def company_api(request, duns_number):
         {
             "title": company.name,
             "duns_number": company.duns_number,
+            "summary": company.summary,
         },
         status=200,
     )
@@ -131,13 +144,13 @@ def company_insight_api(request, duns_number, insight_type):
     if not is_account_manager:
         return JsonResponse(403, safe=False)
 
-    if request.method == 'DELETE':
+    if request.method == "DELETE":
         with reversion.create_revision():
             insight = Insight.objects.get(id=data["insightId"])
             insight.delete()
 
-            updated_insights = list(company.insights.filter(
-                insight_type=insight_type))
+            updated_insights = list(
+                company.insights.filter(insight_type=insight_type))
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -145,18 +158,21 @@ def company_insight_api(request, duns_number, insight_type):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-        return JsonResponse({
-            'data': [
-                {
-                    'insightId': str(insight.id),
-                    'title': insight.title,
-                    'details': insight.details
-                } for insight in updated_insights
+        return JsonResponse(
+            {
+                "data": [
+                    {
+                        "insightId": str(insight.id),
+                        "title": insight.title,
+                        "details": insight.details,
+                    }
+                    for insight in updated_insights
+                ]
+            },
+            status=200,
+        )
 
-            ]
-        }, status=200)
-
-    if request.method == 'PATCH':
+    if request.method == "PATCH":
         with reversion.create_revision():
             for d in data:
                 insight = Insight.objects.get(id=d["insightId"])
@@ -164,8 +180,8 @@ def company_insight_api(request, duns_number, insight_type):
                 insight.details = d["details"]
                 insight.save()
 
-            updated_insights = list(company.insights.filter(
-                insight_type=insight_type))
+            updated_insights = list(
+                company.insights.filter(insight_type=insight_type))
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -173,29 +189,32 @@ def company_insight_api(request, duns_number, insight_type):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-        return JsonResponse({
-            'data': [
-                {
-                    'insightId': str(insight.id),
-                    'title': insight.title,
-                    'details': insight.details
-                } for insight in updated_insights
+        return JsonResponse(
+            {
+                "data": [
+                    {
+                        "insightId": str(insight.id),
+                        "title": insight.title,
+                        "details": insight.details,
+                    }
+                    for insight in updated_insights
+                ]
+            },
+            status=200,
+        )
 
-            ]
-        }, status=200)
-
-    if request.method == 'POST':
+    if request.method == "POST":
         with reversion.create_revision():
             insight = Insight.objects.create(
                 company=company,
                 created_by=request.user,
                 insight_type=insight_type,
-                title=data.get('title', '').strip(),
-                details=data.get('details', '').strip()
+                title=data.get("title", "").strip(),
+                details=data.get("details", "").strip(),
             )
 
-            updated_insights = list(company.insights.filter(
-                insight_type=insight_type))
+            updated_insights = list(
+                company.insights.filter(insight_type=insight_type))
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -203,65 +222,75 @@ def company_insight_api(request, duns_number, insight_type):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-        return JsonResponse({
-            'data': [
-                {
-                    'insightId': str(insight.id),
-                    'title': insight.title,
-                    'details': insight.details
-                } for insight in updated_insights
+        return JsonResponse(
+            {
+                "data": [
+                    {
+                        "insightId": str(insight.id),
+                        "title": insight.title,
+                        "details": insight.details,
+                    }
+                    for insight in updated_insights
+                ]
+            },
+            status=200,
+        )
 
-            ]
-        }, status=200)
-
-    if request.method == 'GET':
-        insights = list(company.insights.filter(
-            insight_type=insight_type).order_by('order'))
-        return JsonResponse({
-            'insights': [
-                {
-                    'insightId': str(insight.id),
-                    'title': insight.title,
-                    'details': insight.details,
-                    'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
-                    'created_at': insight.created_at.isoformat(),
-                    'order': insight.order
-                } for insight in insights
-            ]
-        })
+    if request.method == "GET":
+        insights = list(
+            company.insights.filter(
+                insight_type=insight_type).order_by("order")
+        )
+        return JsonResponse(
+            {
+                "insights": [
+                    {
+                        "insightId": str(insight.id),
+                        "title": insight.title,
+                        "details": insight.details,
+                        "created_by": f"{insight.created_by.first_name} {insight.created_by.last_name}",
+                        "created_at": insight.created_at.isoformat(),
+                        "order": insight.order,
+                    }
+                    for insight in insights
+                ]
+            }
+        )
 
 
 def insight_api(request, insight_id):
     try:
         insight = Insight.objects.get(id=insight_id)
     except Insight.DoesNotExist:
-        return JsonResponse({'error': 'Insight not found'}, status=404)
+        return JsonResponse({"error": "Insight not found"}, status=404)
 
     account_managers = list(insight.company.account_manager.all())
     is_account_manager = request.user in account_managers
     if not is_account_manager:
         return JsonResponse(403, safe=False)
 
-    if request.method == 'GET':
-        return JsonResponse({
-            'id': str(insight.id),
-            'title': insight.title,
-            'details': insight.details,
-            'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
-            'created_at': insight.created_at.isoformat(),
-            'order': insight.order
-        })
+    if request.method == "GET":
+        return JsonResponse(
+            {
+                "id": str(insight.id),
+                "title": insight.title,
+                "details": insight.details,
+                "created_by": f"{insight.created_by.first_name} {insight.created_by.last_name}",
+                "created_at": insight.created_at.isoformat(),
+                "order": insight.order,
+            }
+        )
 
-    elif request.method == 'PATCH':
+    elif request.method == "PATCH":
         data = json.loads(request.body)
 
         with reversion.create_revision():
-            if 'title' in data:
-                insight.title = data['title'].strip()
-            if 'details' in data:
-                insight.details = data['details'].strip()
-            if 'order' in data:
-                insight.order = data['order']
+            if "title" in data:
+                insight.title = data["title"].strip()
+            if "details" in data:
+                insight.details = data["details"].strip()
+            if "order" in data:
+                insight.order = data["order"]
 
             insight.save()
 
@@ -271,16 +300,18 @@ def insight_api(request, insight_id):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-        return JsonResponse({
-            'id': str(insight.id),
-            'title': insight.title,
-            'details': insight.details,
-            'created_by': f"{insight.created_by.first_name} {insight.created_by.last_name}",
-            'created_at': insight.created_at.isoformat(),
-            'order': insight.order
-        })
+        return JsonResponse(
+            {
+                "id": str(insight.id),
+                "title": insight.title,
+                "details": insight.details,
+                "created_by": f"{insight.created_by.first_name} {insight.created_by.last_name}",
+                "created_at": insight.created_at.isoformat(),
+                "order": insight.order,
+            }
+        )
 
-    elif request.method == 'DELETE':
+    elif request.method == "DELETE":
         with reversion.create_revision():
             insight_type = insight.insight_type
             insight.delete()
@@ -291,7 +322,7 @@ def insight_api(request, insight_id):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-        return JsonResponse({'status': 'success'})
+        return JsonResponse({"status": "success"})
 
 
 def engagement_api(request, engagement_id):
@@ -304,10 +335,10 @@ def engagement_api(request, engagement_id):
     if not is_account_manager:
         return JsonResponse(403, safe=False)
 
-    if request.method == 'PATCH':
+    if request.method == "PATCH":
         with reversion.create_revision():
-            engagement.title = data.get('title').strip()
-            engagement.details = data.get('details').strip()
+            engagement.title = data.get("title").strip()
+            engagement.details = data.get("details").strip()
             engagement.save()
 
             reversion.set_user(request.user)
@@ -316,12 +347,13 @@ def engagement_api(request, engagement_id):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-    return JsonResponse({
-        "data": {
-            "title": engagement.title,
-            "details": engagement.details,
-        }
-    },
+    return JsonResponse(
+        {
+            "data": {
+                "title": engagement.title,
+                "details": engagement.details,
+            }
+        },
         status=200,
     )
 
@@ -334,18 +366,21 @@ def add_engagement_api(request, duns_number):
     if not is_account_manager:
         return JsonResponse(403, safe=False)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         with reversion.create_revision():
             title = data.get("title")
             date = datetime.strptime(data.get("date"), "%Y-%m-%d").date()
             details = data.get("details")
             logger(company.id)
             Engagement.objects.create(
-                company_id=company.id,
-                title=title, date=date, details=details)
+                company_id=company.id, title=title, date=date, details=details
+            )
 
-            engagements = list(Engagement.objects.filter(
-                company=company, date__gte=today).order_by('date'))[0:4]
+            engagements = list(
+                Engagement.objects.filter(company=company, date__gte=today).order_by(
+                    "date"
+                )
+            )[0:4]
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -353,14 +388,17 @@ def add_engagement_api(request, duns_number):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-            return JsonResponse({
-                "data": [
-                    {
-                        'title': engagement.title,
-                        'date': engagement.date.strftime("%B %d, %Y"),
-                        'id': engagement.id,
-                    } for engagement in engagements
-                ]},
+            return JsonResponse(
+                {
+                    "data": [
+                        {
+                            "title": engagement.title,
+                            "date": engagement.date.strftime("%B %d, %Y"),
+                            "id": engagement.id,
+                        }
+                        for engagement in engagements
+                    ]
+                },
                 status=200,
             )
 
@@ -374,10 +412,10 @@ def engagement_note_api(request, engagement_id):
     if not is_account_manager:
         return JsonResponse(403, safe=False)
 
-    if request.method == 'PATCH':
+    if request.method == "PATCH":
         with reversion.create_revision():
-            for d in data['notes']:
-                note = EngagementNote.objects.get(id=d.get('noteId'))
+            for d in data["notes"]:
+                note = EngagementNote.objects.get(id=d.get("noteId"))
                 note.contents = d["contents"]
                 note.save()
 
@@ -394,18 +432,20 @@ def engagement_note_api(request, engagement_id):
                 {
                     "data": [
                         {
-                            'noteId': str(note.id),
-                            'contents': note.contents,
-                        } for note in updated_notes
+                            "noteId": str(note.id),
+                            "contents": note.contents,
+                        }
+                        for note in updated_notes
                     ],
                 },
                 status=200,
             )
 
-    if request.method == 'POST':
+    if request.method == "POST":
         with reversion.create_revision():
-            note = EngagementNote.objects.create(contents=data.get(
-                'contents').strip(), engagement=engagement)
+            note = EngagementNote.objects.create(
+                contents=data.get("contents").strip(), engagement=engagement
+            )
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -419,17 +459,18 @@ def engagement_note_api(request, engagement_id):
                 {
                     "data": [
                         {
-                            'noteId': str(note.id),
-                            'contents': note.contents,
-                        } for note in notes
+                            "noteId": str(note.id),
+                            "contents": note.contents,
+                        }
+                        for note in notes
                     ],
                 },
                 status=200,
             )
 
-    if request.method == 'DELETE':
+    if request.method == "DELETE":
         with reversion.create_revision():
-            note = EngagementNote.objects.get(id=data.get('id'))
+            note = EngagementNote.objects.get(id=data.get("id"))
             note.delete()
 
             reversion.set_user(request.user)
@@ -444,9 +485,10 @@ def engagement_note_api(request, engagement_id):
                 {
                     "data": [
                         {
-                            'noteId': str(note.id),
-                            'contents': note.contents,
-                        } for note in notes
+                            "noteId": str(note.id),
+                            "contents": note.contents,
+                        }
+                        for note in notes
                     ],
                 },
                 status=200,
@@ -464,14 +506,12 @@ def key_people_api(request, duns_number):
     if not is_account_manger:
         return JsonResponse(403, safe=False)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         with reversion.create_revision():
             data = json.loads(request.body)
 
             person = KeyPeople.objects.create(
-                name=data.get("name"),
-                role=data.get("role"),
-                company=company
+                name=data.get("name"), role=data.get("role"), company=company
             )
 
             updated_people = list(company.key_people.all())
@@ -484,17 +524,14 @@ def key_people_api(request, duns_number):
             return JsonResponse(
                 {
                     "data": [
-                        {
-                            'name': people.name,
-                            'role': people.role,
-                            'userId': people.id
-                        } for people in updated_people
+                        {"name": people.name, "role": people.role, "userId": people.id}
+                        for people in updated_people
                     ]
                 },
                 status=200,
             )
 
-    if request.method == 'DELETE':
+    if request.method == "DELETE":
         with reversion.create_revision():
             data = json.loads(request.body)
 
@@ -511,17 +548,14 @@ def key_people_api(request, duns_number):
             return JsonResponse(
                 {
                     "data": [
-                        {
-                            'name': people.name,
-                            'role': people.role,
-                            'userId': people.id
-                        } for people in updated_people
+                        {"name": people.name, "role": people.role, "userId": people.id}
+                        for people in updated_people
                     ]
                 },
                 status=200,
             )
 
-    if request.method == 'PATCH':
+    if request.method == "PATCH":
         with reversion.create_revision():
             data = json.loads(request.body)
             for d in data:
@@ -540,25 +574,19 @@ def key_people_api(request, duns_number):
             return JsonResponse(
                 {
                     "data": [
-                        {
-                            'name': people.name,
-                            'role': people.role,
-                            'userId': people.id
-                        } for people in updated_people
+                        {"name": people.name, "role": people.role, "userId": people.id}
+                        for people in updated_people
                     ]
                 },
                 status=200,
             )
 
-    if request.method == 'GET':
+    if request.method == "GET":
         return JsonResponse(
             {
                 "keyPeople": [
-                    {
-                        'name': people.name,
-                        'role': people.role,
-                        'userId': people.id
-                    } for people in key_people
+                    {"name": people.name, "role": people.role, "userId": people.id}
+                    for people in key_people
                 ]
             },
             status=200,
