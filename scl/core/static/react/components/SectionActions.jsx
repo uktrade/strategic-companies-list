@@ -11,7 +11,7 @@ const SectionActions = ({
     <>
       <div className="govuk-!-margin-top-6">
         <button
-          className="govuk-button govuk-!-margin-right-2"
+          className="govuk-button govuk-!-margin-right-2 govuk-!-margin-bottom-2"
           onClick={() => setIsCreating()}
         >
           {addLabel}
