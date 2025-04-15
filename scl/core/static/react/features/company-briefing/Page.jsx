@@ -87,7 +87,12 @@ const Page = ({ data, id, csrf_token, nonce }) => {
               />
             ) : (
               <>
-              {/* Add summary */}
+                <Summary
+                  data={data}
+                  isEditing={isEditing}
+                  csrf_token={csrf_token}
+                  showUpdateNotification={showUpdateNotification}
+                />
                 <KeyFacts data={data} />
                 <KeyPeople
                   id={id}

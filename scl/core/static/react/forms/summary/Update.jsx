@@ -1,22 +1,25 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const Create = ({ onSubmit, setIsCreating }) => {
+const Create = ({ data, onSubmit, setIsCreating }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      summary: data,
+    },
+  });
 
   return (
     <>
-      <h2 className="govuk-heading-m">Add new key person</h2>
       <form
-        onSubmit={handleSubmit((data) => onSubmit(data, "create"))}
+        onSubmit={handleSubmit((data) => onSubmit(data, "update"))}
         className="scl-inine-form"
       >
         <label className="govuk-label" htmlFor="summary">
-          Summary
+          <strong>Update summary</strong>
         </label>
         {errors && (
           <p className="govuk-error-message">
