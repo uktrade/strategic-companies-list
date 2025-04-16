@@ -106,7 +106,12 @@ A similar flow be configured locally, but instead of involving an HTTP endpoint,
      "Statement": [{
      "Effect": "Allow",
        "Action": "transcribe:StartStreamTranscriptionWebSocket",
-       "Resource": "*"
+       "Resource": "*",
+       "Condition": {
+          "StringEquals": {
+            "aws:RequestedRegion": "eu-west-2"
+          }
+       }
      }]
    }
    ```
