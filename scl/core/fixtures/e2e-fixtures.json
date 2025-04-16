@@ -1,0 +1,62 @@
+[
+{
+    "model": "core.user",
+    "pk": 1,
+    "fields": {
+        "password": "",
+        "last_login": "2025-04-16T08:48:57Z",
+        "is_superuser": true,
+        "username": "20a0353f-a7d1-4851-9af8-1bcaff152b60",
+        "first_name": "Vyvyan",
+        "last_name": "Holland",
+        "email": "local.user@businessandtrade.gov.uk",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-04-15T14:30:28Z",
+        "groups": [
+            1,
+            2
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "core.company",
+    "pk": "17ff5d4a-c80d-4eec-a2f3-4a173b4b8cb6",
+    "fields": {
+        "last_updated": "2025-04-16T08:51:58.779Z",
+        "name": "ABC Industries",
+        "duns_number": "234567",
+        "summary": "",
+        "global_hq_name": "HQ ABC Industries",
+        "global_hq_country": "AE-AZ",
+        "global_turnover_millions_usd": 8000000,
+        "global_number_of_employees": 300,
+        "sectors": "[\"SL0305\", \"SL0312\", \"SL0337\"]"
+    }
+},
+{
+    "model": "core.company",
+    "pk": "4b45f02c-654c-4e9b-911a-f578c2775927",
+    "fields": {
+        "last_updated": "2025-04-16T08:51:02.218Z",
+        "name": "Testing Corp",
+        "duns_number": "123456",
+        "summary": "",
+        "global_hq_name": "HQ Testing Corp",
+        "global_hq_country": "CA",
+        "global_turnover_millions_usd": 1000000000,
+        "global_number_of_employees": 6000,
+        "sectors": "[\"SL0001\", \"SL0011\", \"SL0022\"]"
+    }
+},
+{
+    "model": "core.companyaccountmanager",
+    "pk": "0417e5b0-75cc-4c85-a73d-565cf0119c0e",
+    "fields": {
+        "company": "4b45f02c-654c-4e9b-911a-f578c2775927",
+        "account_manager": 1,
+        "is_lead": false
+    }
+}
+]
