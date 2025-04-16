@@ -9,6 +9,7 @@
 ### Contents
 
 - [Running locally](#running-locally)
+- [Setting up AWS Transcribe locally](#setting-up-aws-transcribe-locally)
 - [Creating migrations](#creating-migrations)
 - [Architecture (network) diagram](#architecture-network-diagram)
 - [Infrastructure naming](#infrastructure-naming)
@@ -36,13 +37,103 @@ docker compose down && docker compose --profile prod up --build
 
 ### Setting up AWS Transcribe locally
 
-The application uses AWS Transcribe for speech-to-text functionality.
+The application uses streaming AWS Transcribe in the browser for speech-to-text functionality, with the browser fetching temporary AWS credentials that are [generated on the server](scl/core/views/api.py) via one or more [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) requests to communicate directly with AWS Transcribe in eu-west-2 using WebSockets.
 
-For local development, add the following to the `.env` file in the root of the project:
-```
-TRANSCRIBE_AWS_ACCESS_KEY_ID=your_access_key_here
-TRANSCRIBE_AWS_SECRET_ACCESS_KEY=your_secret_key_here
-```
+The server itself uses its _own_ set of temporary credentials to allow [boto3's assume_role](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/sts/client/assume_role.html) to generate the temporary credentials that are provided to the browser. When deployed to ECS, the server gets its temporary credentials by boto3 fetching them from the _link_local_ HTTP endpoint http://169.254.170.2 under the hood.
+
+A similar flow be configured locally, but instead of involving an HTTP endpoint, it uses temporary credentials associated with your SSO AWS role to provide code in a locally running SCIT server another set of temporary credentials, which are in turn used to generate a _third_ set of temporary credentials that are exposed to the browser. It takes a few steps to setup:
+
+1. Make sure you have SSO access to a **non-production** AWS account, and your AWS CLI if configured to use it via a profile in your `~/.aws/config`. It is beyond the scope of these instructions to explain how to set this up, but this should result with a section that starts like the following in your `~/.aws/config` file:
+
+   ```
+   [profile data-infrastructure]
+   region = eu-west-2
+   # ...
+   ```
+   The name of the profile, in the above example `data-infrastructure`, can be anything you like, but it is typically helpful for it to match name of the AWS account. If you use a different name, replace `data-infrastructure` with the name you choose in the following steps.
+
+2. Login with this profile:
+
+   ```bash
+   AWS_PROFILE=data-infrastructure aws sso login
+   ```
+
+3. Find and take note of the ARN of your SSO role by running:
+
+   ```bash
+   AWS_PROFILE=data-infrastructure aws sts get-caller-identity
+   ```
+
+4. In the account, create (or ensure exists) a role called `scit-local`. In its trust policy make sure there is a statement that grants your role from Step 3 the permission to assume it:
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [{
+       "Effect": "Allow",
+       "Principal": {
+         "AWS": "The ARN of your SSO role in Step 3"
+       },
+       "Action": "sts:AssumeRole"
+     }]
+   }
+   ```
+
+   This role emulates the role that the SCIT service assumes when deployed to ECS. At the time of writing, no permission policies are needed by it.
+
+5. Take note of the ARN of this role.
+
+6. In the account, create (or ensure exists) a role called `scit-local-transcribe`. Make sure it has the following trust policy that allows `scit-local` to assume it.
+
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [{
+       "Sid": "Statement1",
+       "Effect": "Allow",
+       "Principal": {
+         "AWS": "The ARN of the scit-local role noted in Step 5"
+       },
+       "Action": "sts:AssumeRole"
+     }]
+   }
+   ```
+   and make sure it has an attached (possibly inline) policy that allows it to start transcription.
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [{
+     "Effect": "Allow",
+       "Action": "transcribe:StartStreamTranscriptionWebSocket",
+       "Resource": "*"
+     }]
+   }
+   ```
+
+7. Take note of the ARN of this role.
+
+8. In your `~/.aws/config` file create (or ensure exists) another profile `data-infrastructure-scit-local`
+
+   ```
+   [profile data-infrastructure-scit-local]
+   region = eu-west-2
+   sts_regional_endpoints = regional
+   source_profile=data-infrastructure
+   role_arn=The ARN of the scit-local role noted in Step 5
+   ```
+
+   The name `data-infrastructure-scit-local` can be anything you like, but if it's different in the following step replace `data-infrastructure-scit-local` with the name you choose.
+
+9. In the `.env` file have `AWS_PROFILE` and `AWS_TRANSCRIBE_ROLE_ARN` defined as follows:
+
+   ```bash
+   AWS_PROFILE=data-infrastructure-scit-local
+   AWS_TRANSCRIBE_ROLE_ARN=The ARN of the scit-local-transcribe role noted in Step 7
+   ```
+
+If curious, boto3 inside the Docker container has access to your `~/.aws/` folder via a volume defined in [compose.yaml](./compose.yaml).
+
 
 ## Creating migrations
 
