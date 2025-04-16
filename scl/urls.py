@@ -20,40 +20,55 @@ from django.conf import settings, urls
 from django.contrib import admin
 from django.urls import include, path
 
-from scl.core.views.html import index, company_briefing, engagement, company_engagements, custom_403_view
-from scl.core.views.api import aws_credentials_api, company_api, engagement_api, engagement_note_api, company_insight_api, insight_api, key_people_api, add_engagement_api
-from scl.core.views.healthcheck import lb_healthcheck, healthcheck
+from scl.core.views import html
+from scl.core.views import api
+from scl.core.views import healthcheck
 
-urls.handler403 = custom_403_view
+urls.handler403 = html.custom_403_view
 
 urlpatterns = [
     # Auth (SSO)
-    path('auth/', include('authbroker_client.urls')),
-
+    path("auth/", include("authbroker_client.urls")),
     # Admin
-    path('admin/', admin.site.urls),
-
+    path("admin/", admin.site.urls),
     # HTML
-    path("", index, name="home-page"),
-    path("company-briefing/<str:duns_number>",
-         company_briefing, name='company-briefing'),
-    path("engagement/<uuid:engagement_id>", engagement, name='engagement'),
-    path("company-briefing/<str:duns_number>/engagements",
-         company_engagements, name='company-engagements'),
-
+    path("", html.IndexView.as_view(), name="home-page"),
+    path(
+        "company-briefing/<str:duns_number>",
+        html.CompanyDetailView.as_view(),
+        name="company-briefing",
+    ),
+    path(
+        "engagement/<uuid:pk>",
+        html.EngagementDetailView.as_view(),
+        name="engagement",
+    ),
+    path(
+        "company-briefing/<str:duns_number>/engagements",
+        html.CompanyEngagementListView.as_view(),
+        name="company-engagements",
+    ),
     # API
-    path("api/v1/company/<str:duns_number>", company_api),
-    path("api/v1/company/<str:duns_number>/insights/<str:insight_type>",
-         company_insight_api),
-    path("api/v1/insights/<uuid:insight_id>", insight_api),
-    path("api/v1/engagement/<uuid:engagement_id>", engagement_api),
-    path("api/v1/engagement/<str:duns_number>",
-         add_engagement_api, name='add-engagement'),
-    path("api/v1/engagement/<uuid:engagement_id>/note", engagement_note_api),
-    path("api/v1/aws-credentials", aws_credentials_api),
-    path("api/v1/key-people/<str:duns_number>", key_people_api),
-
+    path(
+        "api/v1/company/<str:duns_number>",
+        api.CompanyAPIView.as_view(),
+        name="api-company",
+    ),
+    path(
+        "api/v1/company/<str:duns_number>/insights/<str:insight_type>",
+        api.company_insight_api,
+    ),
+    path("api/v1/insights/<uuid:insight_id>", api.insight_api),
+    path("api/v1/engagement/<uuid:engagement_id>", api.engagement_api),
+    path(
+        "api/v1/engagement/<str:duns_number>",
+        api.add_engagement_api,
+        name="add-engagement",
+    ),
+    path("api/v1/engagement/<uuid:engagement_id>/note", api.engagement_note_api),
+    path("api/v1/aws-credentials", api.aws_credentials_api),
+    path("api/v1/key-people/<str:duns_number>", api.key_people_api),
     # Healthcheck
-    path('lb-healthcheck', lb_healthcheck),
-    path('pingdom/ping.xml', healthcheck),
+    path("lb-healthcheck", healthcheck.lb_healthcheck),
+    path("pingdom/ping.xml", healthcheck.healthcheck),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,48 +1,86 @@
 import pytest
-import factory.fuzzy
-import uuid
-from django.conf import settings
+
 from django.test import TestCase, Client
-from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.contrib.auth.models import Group
+import reversion
+
+from scl.core.views import html
+from scl.core.tests import factories
 
 
-class UserFactory(factory.django.DjangoModelFactory):
-    username = factory.LazyAttribute(lambda _: str(uuid.uuid4()))
-    email = factory.LazyAttribute(
-        lambda o: f"test.user+{o.username}@example.com")
-    password = "12345"
-
-    @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        if extracted:
-            for group in extracted:
-                self.groups.add(group)
-
-    class Meta:
-        model = get_user_model()
+@pytest.mark.django_db
+def test_home_page_gives_200_status(basic_access_user_client):
+    response = basic_access_user_client.get("/")
+    assert response.status_code == 200
 
 
-class CompanyFactory(factory.django.DjangoModelFactory):
-    id = factory.LazyAttribute(lambda _: uuid.uuid4())
-    name = factory.fuzzy.FuzzyText()
-    duns_number = '12345'
+@pytest.mark.django_db
+def test_handler403(client):
+    request = client.get("/")
+    response = html.custom_403_view(request)
 
-    class Meta:
-        model = "core.Company"
+    assert response.status_code == 403
+    assert response.template_name == "core/403_generic.html"
 
 
-class HomePageTest(TestCase):
-    def setUp(self):
-        self.group = Group.objects.create(name="Basic access")
-        self.user = UserFactory.create(is_superuser=False, groups=[self.group])
-        self.client = Client()
-        self.client.force_login(self.user)
+@pytest.mark.django_db
+def test_engagement_detail_200(viewer_user, viewer_user_client):
+    with reversion.create_revision():
+        engagement = factories.EngagementFactory()
+        reversion.set_user(viewer_user)
+    response = viewer_user_client.get(
+        reverse("engagement", kwargs={"pk": engagement.id})
+    )
 
-    @pytest.mark.django_db
-    def test_home_page_gives_200_status(self):
-        response = self.client.get("/")
-        assert response.status_code == 200
+    assert response.status_code == 200
+    assert response.template_name == ["engagement.html"]
+
+
+@pytest.mark.django_db
+def test_company_detail_200(viewer_user, viewer_user_client):
+    with reversion.create_revision():
+        company = factories.CompanyFactory()
+        reversion.set_user(viewer_user)
+        factories.CompanyAccountManagerFactory.create(
+            company=company, account_manager=viewer_user
+        )
+    response = viewer_user_client.get(
+        reverse("company-briefing", kwargs={"duns_number": company.duns_number})
+    )
+
+    assert response.status_code == 200
+    assert response.template_name == ["company.html"]
+
+
+@pytest.mark.django_db
+def test_company_detail_200(viewer_user, viewer_user_client):
+    with reversion.create_revision():
+        company = factories.CompanyFactory()
+        reversion.set_user(viewer_user)
+        factories.CompanyAccountManagerFactory.create(
+            company=company, account_manager=viewer_user
+        )
+    response = viewer_user_client.get(
+        reverse("company-briefing", kwargs={"duns_number": company.duns_number})
+    )
+
+    assert response.status_code == 200
+    assert response.template_name == ["company.html"]
+
+
+@pytest.mark.django_db
+def test_company_engagement_list_200(viewer_user, viewer_user_client):
+    with reversion.create_revision():
+        company = factories.CompanyFactory()
+        reversion.set_user(viewer_user)
+        factories.EngagementFactory.create(company=company)
+        factories.EngagementFactory.create(company=company)
+        factories.EngagementFactory.create(company=company)
+
+    response = viewer_user_client.get(
+        reverse("company-engagements", kwargs={"duns_number": company.duns_number})
+    )
+
+    assert response.status_code == 200
+    assert response.template_name == ["company_engagements.html"]

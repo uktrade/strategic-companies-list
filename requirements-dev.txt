@@ -1,0 +1,8 @@
+-r requirements.txt
+
+beautifulsoup4
+coverage
+factory-boy
+pytest-cov
+pytest-django
+pytest
