@@ -59,6 +59,7 @@ services:
        - ./scl/core/views/html.py:/app/scl/core/views/html.py
        - ./scl/core/models.py:/app/scl/core/models.py
        - ./scl/core/forms.py:/app/scl/core/forms.py
+       - ~/.aws:/home/scl/.aws
     profiles: ['']
   web-prod:
     networks:
@@ -86,6 +87,8 @@ services:
       IP_FILTER_ALLOWED_NETWORKS: '{"all":["0.0.0.0/0"]}'
     env_file:
       - .env
+    volumes:
+      - ~/.aws:/home/scl/.aws
     profiles: ['prod']
 
 networks:
