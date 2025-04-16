@@ -26,7 +26,8 @@ class HomePageTest(TestCase):
         response = self.client.get("/")
         assert response.status_code == 200
         response.template_name == "core/index.html"
-        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
+        soup = BeautifulSoup(response.content.decode(response.charset),
+                             features="lxml")
         h1_text = soup.find("h1").contents
         assert h1_text == "All 0 companies on the Strategic Companies List"
         companies = soup.find_all("li")
@@ -36,7 +37,8 @@ class HomePageTest(TestCase):
     def test_companies(self):
         response = self.client.get("/")
         assert response.status_code == 200
-        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
+        soup = BeautifulSoup(response.content.decode(response.charset),
+                             features="lxml")
         # create three companies
         for _ in range(3):
             factories.CompanyFactory.create()
