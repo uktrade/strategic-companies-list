@@ -278,7 +278,12 @@ resource "aws_iam_role_policy" "transcribe" {
         Action = [
           "transcribe:StartStreamTranscriptionWebSocket",
         ],
-        Resource = "*"
+        Resource = "*",
+        Condition = {
+          StringEquals = {
+            "aws:RequestedRegion" = "eu-west-2"
+          }
+        }
       },
     ]
   })
