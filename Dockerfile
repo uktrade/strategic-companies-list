@@ -51,6 +51,15 @@ USER scl
 
 CMD ["./start-dev.sh"]
 
+FROM common AS e2e
+
+COPY start-e2e.sh .
+
+ARG GIT_COMMIT
+ENV GIT_COMMIT=${GIT_COMMIT}
+USER scl
+
+CMD ["./start-e2e.sh"]
 
 FROM common AS prod
 
