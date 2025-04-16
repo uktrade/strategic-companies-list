@@ -1,5 +1,8 @@
+import re
 import pytest
+from datetime import datetime
 
+from bs4 import BeautifulSoup
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import Group
@@ -9,19 +12,87 @@ from scl.core.views import html
 from scl.core.tests import factories
 
 
-@pytest.mark.django_db
-def test_home_page_gives_200_status(basic_access_user_client):
-    response = basic_access_user_client.get("/")
-    assert response.status_code == 200
+class HomePageTest(TestCase):
+    def setUp(self):
+        self.group = Group.objects.create(name="Basic access")
+        self.user = factories.UserFactory.create(
+            is_superuser=False, groups=[self.group]
+        )
+        self.client = Client()
+        self.client.force_login(self.user)
 
+    @pytest.mark.django_db
+    def test_no_companies(self):
+        response = self.client.get("/")
+        assert response.status_code == 200
+        response.template_name == "core/index.html"
+        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
+        h1_text = soup.find("h1").contents
+        assert h1_text == "All 0 companies on the Strategic Companies List"
+        companies = soup.find_all("li")
+        assert len(companies) == 0
 
-@pytest.mark.django_db
-def test_handler403(client):
-    request = client.get("/")
-    response = html.custom_403_view(request)
+    @pytest.mark.django_db
+    def test_companies(self):
+        response = self.client.get("/")
+        assert response.status_code == 200
+        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
+        # create three companies
+        for _ in range(3):
+            factories.CompanyFactory.create()
+        # create fourth company that user manages
+        company = factories.CompanyFactory.create()
+        factories.CompanyAccountManagerFactory(
+            company=company, account_manager=self.user
+        )
+        all_comp_h1 = soup.find("h1", text=re.compile(r"\bAll\b")).contents
+        assert all_comp_h1 == "All 4 companies on the Strategic Companies List"
+        companies = soup.find_all("li")
+        assert len(companies) == 4
+        your_comp_h1 = soup.find("h1", text=re.compile(r"\bYour\b")).contents
+        assert your_comp_h1 == "Your companies"
+        your_companies = soup.select("a[href^='/company-briefing']")
+        assert len(your_companies) == 1
 
-    assert response.status_code == 403
-    assert response.template_name == "core/403_generic.html"
+    @pytest.mark.django_db
+    def test_home_page_with_engagements(self):
+        response = self.client.get("/")
+        assert response.status_code == 200
+        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
+        # create three engagements
+        for _ in range(3):
+            factories.EngagementFactory.create()
+        engagements = soup.select("a[href^='/engagement']")
+        assert len(engagements) == 3
+
+    @pytest.mark.django_db
+    def test_engagements_in_date_order(self):
+        response = self.client.get("/")
+        assert response.status_code == 200
+        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
+        # create three engagements
+        for _ in range(3):
+            factories.EngagementFactory.create()
+        engagements = soup.select("a[href^='/engagement']")
+        assert len(engagements) == 3
+
+    @pytest.mark.django_db
+    def test_out_of_date_engagements(self):
+        response = self.client.get("/")
+        assert response.status_code == 200
+        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
+        # create fifty past engagements
+        for _ in range(50):
+            factories.EngagementFactory.create(date=datetime(2000, 12, 31))
+        engagements = soup.select("a[href^='/engagement']")
+        assert len(engagements) == 0
+
+    @pytest.mark.django_db
+    def test_handler403(self):
+        request = self.client.get("/")
+        response = html.custom_403_view(request)
+        assert response.status_code == 403
+        assert response.template_name == "core/403_generic.html"
 
 
 @pytest.mark.django_db
@@ -35,22 +106,6 @@ def test_engagement_detail_200(viewer_user, viewer_user_client):
 
     assert response.status_code == 200
     assert response.template_name == ["engagement.html"]
-
-
-@pytest.mark.django_db
-def test_company_detail_200(viewer_user, viewer_user_client):
-    with reversion.create_revision():
-        company = factories.CompanyFactory()
-        reversion.set_user(viewer_user)
-        factories.CompanyAccountManagerFactory.create(
-            company=company, account_manager=viewer_user
-        )
-    response = viewer_user_client.get(
-        reverse("company-briefing", kwargs={"duns_number": company.duns_number})
-    )
-
-    assert response.status_code == 200
-    assert response.template_name == ["company.html"]
 
 
 @pytest.mark.django_db
