@@ -1,3 +1,5 @@
+DATE_FORMAT_LONG = "%B %d, %Y, %H:%M"
+DATE_FORMAT_SHORT = "%B %d, %Y"
 # DBT's official list of countries and territories
 COUNTRIES_AND_TERRITORIES = (
     ("AE-AZ", "Abu Dhabi"),
@@ -298,5 +300,5 @@ SECTORS = (
     ("SL0289", "Space"),
     ("SL0305", "Sports economy"),
     ("SL0312", "Technology and smart cities"),
-    ("SL0337", "Water")
+    ("SL0337", "Water"),
 )

@@ -1,7 +1,6 @@
 boto3
 django
 django-bleach
-beautifulsoup4
 django-csp
 django_extensions
 django-reversion
@@ -14,3 +13,4 @@ django-log-formatter-asim
 sentry-sdk[django]
 whitenoise
 django-waffle
+python-dotenv

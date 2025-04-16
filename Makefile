@@ -12,7 +12,7 @@ test/db/stop:
 
 .PHONY: test
 test:
-	@COPILOT_ENVIRONMENT_NAME=test PGDATABASE=postgres PGUSER=postgres PGPASSWORD=mysecretpassword PGHOST=localhost PGPORT=5432 pytest
+	@COPILOT_ENVIRONMENT_NAME=test PGDATABASE=postgres PGUSER=postgres PGPASSWORD=mysecretpassword PGHOST=localhost PGPORT=5432 pytest --cov --cov-report html:htmlcov
 
 .PHONY: init
 init:

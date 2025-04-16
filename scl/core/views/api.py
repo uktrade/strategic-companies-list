@@ -9,7 +9,10 @@ import waffle
 
 import boto3
 from django.conf import settings
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import JsonResponse
+from django.views import View
+
 import reversion
 
 from scl.core.views.utils import get_all_sectors, get_company_sectors
@@ -17,6 +20,12 @@ from scl.core.views.utils import get_all_sectors, get_company_sectors
 today = date.today()
 
 logger = logging.getLogger().warning
+
+
+class CompanyAccountManagerUserMixin(UserPassesTestMixin):
+    def test_func(self):
+        is_account_manager = self.request.user in self.company.account_manager.all()
+        return is_account_manager
 
 
 def aws_credentials_api(request, duns_number):
@@ -81,32 +90,35 @@ def aws_credentials_api(request, duns_number):
     )
 
 
-def company_api(request, duns_number):
-    data = json.loads(request.body)
-    company = Company.objects.get(duns_number=duns_number)
+class CompanyAPIView(View, CompanyAccountManagerUserMixin):
 
-    account_managers = list(company.account_manager.all())
-    is_account_manager = request.user in account_managers
+    @property
+    def data(self):
+        return json.loads(self.request.body)
 
-    if not is_account_manager:
-        return JsonResponse(403, safe=False)
+    @property
+    def company(self):
+        return Company.objects.get(duns_number=self.kwargs["duns_number"])
 
-    if request.method == "PATCH":
+    def patch(self, *args, **kwargs):
         with reversion.create_revision():
-            if data.get("title"):
-                company.name = data.get("title").strip()
-            if data.get("sectors"):
-                company.sectors = [key["value"] for key in data.get("sectors")]
-            if data.get("summary"):
-                company.summary = data.get("summary").strip()
+            company = self.company
+            if self.data.get("title"):
+                company.name = self.data.get("title").strip()
+            if self.data.get("sectors"):
+                company.sectors = [key["value"] for key in self.data.get("sectors")]
+            if self.data.get("summary"):
+                company.summary = self.data.get("summary").strip()
             company.save()
 
-            updated_company = Company.objects.get(duns_number=duns_number)
+            updated_company = Company.objects.get(
+                duns_number=self.kwargs["duns_number"]
+            )
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Updated company via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
             return JsonResponse(
@@ -125,14 +137,17 @@ def company_api(request, duns_number):
                 status=200,
             )
 
-    return JsonResponse(
-        {
-            "title": company.name,
-            "duns_number": company.duns_number,
-            "summary": company.summary,
-        },
-        status=200,
-    )
+    def get(self, *args, **kwargs):
+        return JsonResponse(
+            {
+                "data": {
+                    "title": self.company.name,
+                    "duns_number": self.company.duns_number,
+                    "summary": self.company.summary,
+                }
+            },
+            status=200,
+        )
 
 
 def company_insight_api(request, duns_number, insight_type):
@@ -149,8 +164,7 @@ def company_insight_api(request, duns_number, insight_type):
             insight = Insight.objects.get(id=data["insightId"])
             insight.delete()
 
-            updated_insights = list(
-                company.insights.filter(insight_type=insight_type))
+            updated_insights = list(company.insights.filter(insight_type=insight_type))
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -180,8 +194,7 @@ def company_insight_api(request, duns_number, insight_type):
                 insight.details = d["details"]
                 insight.save()
 
-            updated_insights = list(
-                company.insights.filter(insight_type=insight_type))
+            updated_insights = list(company.insights.filter(insight_type=insight_type))
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -213,8 +226,7 @@ def company_insight_api(request, duns_number, insight_type):
                 details=data.get("details", "").strip(),
             )
 
-            updated_insights = list(
-                company.insights.filter(insight_type=insight_type))
+            updated_insights = list(company.insights.filter(insight_type=insight_type))
 
             reversion.set_user(request.user)
             reversion.set_comment(
@@ -238,8 +250,7 @@ def company_insight_api(request, duns_number, insight_type):
 
     if request.method == "GET":
         insights = list(
-            company.insights.filter(
-                insight_type=insight_type).order_by("order")
+            company.insights.filter(insight_type=insight_type).order_by("order")
         )
         return JsonResponse(
             {

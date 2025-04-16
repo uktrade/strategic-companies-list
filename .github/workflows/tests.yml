@@ -28,7 +28,7 @@ jobs:
       PGPASSWORD: mysecretpassword
       PGHOST: localhost
       PGPORT: 5432
-      DJANGO_SETTINGS_MODULE: scl.settings
+      DJANGO_SETTINGS_MODULE: scl.settings_test
       COPILOT_ENVIRONMENT_NAME: test
       DEBUG: True
 
@@ -40,8 +40,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 23
-      - run: pip install -r requirements.txt
-      - run: pip install factory_boy pytest pytest-django
+      - run: pip install -r requirements-dev.txt
       - run: make init
       - run: python manage.py migrate
       - run: pytest
