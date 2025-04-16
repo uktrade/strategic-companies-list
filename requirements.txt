@@ -34,7 +34,7 @@ deprecated==1.2.18
     # via opentelemetry-api
 distlib==0.3.9
     # via virtualenv
-django==5.1.7
+django==5.1.8
     # via
     #   -r requirements.in
     #   django-bleach
