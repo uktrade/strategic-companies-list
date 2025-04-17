@@ -59,3 +59,50 @@ def test_company_api_get(viewer_user, viewer_user_client):
     assert response_data["data"]["title"] == company.name
     assert response_data["data"]["duns_number"] == company.duns_number
     assert response_data["data"]["summary"] == company.summary
+
+
+@pytest.mark.django_db
+def test_company_insight_api_get(viewer_user_client, company):
+    response_hmg = viewer_user_client.get(
+        reverse(
+            "api-company-insight",
+            kwargs={
+                "duns_number": company.duns_number,
+                "insight_type": "hmg_priority",
+            },
+        ),
+    )
+
+    assert response_hmg.status_code == 200
+    response_data = json.loads(response_hmg.content)
+
+    assert len(response_data["insights"]) == 6
+    assert {
+        str(i)
+        for i in company.insights.filter(insight_type="hmg_priority").values_list(
+            "id",
+            flat=True,
+        )
+    } == {i["insightId"] for i in response_data["insights"]}
+
+    response_company = viewer_user_client.get(
+        reverse(
+            "api-company-insight",
+            kwargs={
+                "duns_number": company.duns_number,
+                "insight_type": "company_priority",
+            },
+        ),
+    )
+
+    assert response_company.status_code == 200
+    response_data = json.loads(response_company.content)
+
+    assert len(response_data["insights"]) == 5
+    assert {
+        str(i)
+        for i in company.insights.filter(insight_type="company_priority").values_list(
+            "id",
+            flat=True,
+        )
+    } == {i["insightId"] for i in response_data["insights"]}
