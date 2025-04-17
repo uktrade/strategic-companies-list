@@ -49,7 +49,7 @@ prod/down:
 # E2E
 .PHONY: e2e/up
 e2e/up:
-	${docker-e2e} up --build
+	${docker-e2e} up --build -d
 
 .PHONY: e2e/down
 e2e/down:

@@ -3,7 +3,9 @@
     "dev": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
     "build": "./node_modules/.bin/webpack build --config webpack.prod.js",
     "sass:watch": "sass scl/core/sass/scl.scss scl/core/static/css/scl.css -w",
-    "sass:build": "sass scl/core/sass/scl.scss scl/core/static/css/scl.css --style=compressed"
+    "sass:build": "sass scl/core/sass/scl.scss scl/core/static/css/scl.css --style=compressed",
+    "e2e": "cypress open",
+    "e2e:run": "cypress run"
   },
   "dependencies": {
     "@aws-sdk/client-transcribe-streaming": "^3.758.0",
@@ -18,7 +20,9 @@
   "devDependencies": {
     "@babel/core": "^7.26.7",
     "@babel/preset-react": "^7.26.3",
+    "@testing-library/cypress": "^10.0.3",
     "babel-loader": "^8.2.2",
+    "cypress": "^14.3.0",
     "sass": "^1.85.1",
     "terser-webpack-plugin": "^5.3.14",
     "webpack": "^5.97.1",
