@@ -1,4 +1,5 @@
 import pytest
+import reversion
 
 from django.contrib.auth.models import Group
 
@@ -45,3 +46,29 @@ def viewer_user(basic_access_group, viewer_group):
 def viewer_user_client(client, viewer_user):
     client.force_login(viewer_user)
     return client
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def company(viewer_user):
+    with reversion.create_revision():
+        company = factories.CompanyFactory()
+
+        reversion.set_user(viewer_user)
+
+        factories.CompanyAccountManagerFactory.create(
+            company=company, account_manager=viewer_user, is_lead=True
+        )
+        factories.CompanyAccountManagerFactory.create(company=company)
+
+        factories.KeyPeopleFactory.create_batch(3, company=company)
+
+        factories.InsightFactory.create_batch(
+            5, company=company, insight_type="company_priority"
+        )
+        factories.InsightFactory.create_batch(
+            6, company=company, insight_type="hmg_priority"
+        )
+
+        factories.EngagementFactory.create_batch(4, company=company)
+    return company

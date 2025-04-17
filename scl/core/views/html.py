@@ -240,14 +240,18 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                             if self.test_func()
                             else []
                         ),
-                        "hmg_priorities": [
-                            {
-                                "title": priority.title,
-                                "details": priority.details,
-                                "insightId": str(priority.id),
-                            }
-                            for priority in hmg_priorities
-                        ],
+                        "hmg_priorities": (
+                            [
+                                {
+                                    "title": priority.title,
+                                    "details": priority.details,
+                                    "insightId": str(priority.id),
+                                }
+                                for priority in hmg_priorities
+                            ]
+                            if self.test_func()
+                            else []
+                        ),
                         "has_access": self.test_func(),
                         "is_account_manager": is_account_manager,
                         "engagements": (
