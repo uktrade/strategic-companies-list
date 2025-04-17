@@ -56,7 +56,8 @@ urlpatterns = [
     ),
     path(
         "api/v1/company/<str:duns_number>/insights/<str:insight_type>",
-        api.company_insight_api,
+        api.CompanyInsightAPIView.as_view(),
+        name="api-company-insight",
     ),
     path("api/v1/insights/<uuid:insight_id>", api.insight_api),
     path("api/v1/engagement/<uuid:engagement_id>", api.engagement_api, name="engagement_api"),
