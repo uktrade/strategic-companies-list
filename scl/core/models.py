@@ -33,9 +33,11 @@ class Company(models.Model):
     summary = models.TextField(null=True, blank=True, max_length=500)
 
     global_hq_name = models.CharField(
-        max_length=128, blank=True, null=False, default='', verbose_name="Global HQ name")
+        max_length=128, blank=True, null=False, default='',
+        verbose_name="Global HQ name")
     global_hq_country = models.CharField(
-        max_length=5, null=True, blank=True, choices=COUNTRIES_AND_TERRITORIES, verbose_name="Global HQ country")
+        max_length=5, null=True, blank=True, choices=COUNTRIES_AND_TERRITORIES,
+        verbose_name="Global HQ country")
     global_turnover_millions_usd = models.BigIntegerField(
         null=True, blank=True, verbose_name="Global turnover (millions USD)")
     global_number_of_employees = models.BigIntegerField(
@@ -65,7 +67,8 @@ class Company(models.Model):
 
     @property
     def get_global_hq_country(self):
-        return dict(COUNTRIES_AND_TERRITORIES).get(self.global_hq_country, self.global_hq_country)
+        return dict(COUNTRIES_AND_TERRITORIES).get(self.global_hq_country,
+                                                   self.global_hq_country)
 
     class Meta:
         verbose_name_plural = "companies"

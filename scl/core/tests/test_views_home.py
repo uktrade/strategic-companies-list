@@ -5,9 +5,11 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 import reversion
 
+from scl.core.models import Company
 from scl.core.views import html
 from scl.core.tests import factories
 
@@ -18,27 +20,32 @@ class HomePageTest(TestCase):
         self.user = factories.UserFactory.create(
             is_superuser=False, groups=[self.group]
         )
+        pemission_can_view_companies = Permission.objects.get(
+            codename="view_company",
+            content_type=ContentType.objects.get_for_model(Company),
+        )
+        self.user.user_permissions.add(pemission_can_view_companies)
         self.client = Client()
         self.client.force_login(self.user)
 
+    def soup(self):
+        response = self.client.get("/")
+        assert response.status_code == 200
+        return BeautifulSoup(response.content.decode(response.charset), features="lxml")
+
     @pytest.mark.django_db
-    def test_no_companies(self):
+    def test_no_companies_appear(self):
         response = self.client.get("/")
         assert response.status_code == 200
         response.template_name == "core/index.html"
-        soup = BeautifulSoup(response.content.decode(response.charset),
-                             features="lxml")
-        h1_text = soup.find("h1").contents
+        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
+        h1_text = soup.find("h1").contents[0]
         assert h1_text == "All 0 companies on the Strategic Companies List"
         companies = soup.find_all("li")
         assert len(companies) == 0
 
     @pytest.mark.django_db
-    def test_companies(self):
-        response = self.client.get("/")
-        assert response.status_code == 200
-        soup = BeautifulSoup(response.content.decode(response.charset),
-                             features="lxml")
+    def test_companies_appear(self):
         # create three companies
         for _ in range(3):
             factories.CompanyFactory.create()
@@ -47,45 +54,42 @@ class HomePageTest(TestCase):
         factories.CompanyAccountManagerFactory(
             company=company, account_manager=self.user
         )
-        all_comp_h1 = soup.find("h1", text=re.compile(r"\bAll\b")).contents
+        soup = self.soup()
+        all_comp_h1 = soup.find("h1", string=re.compile(r"\bAll\b")).contents[0]
         assert all_comp_h1 == "All 4 companies on the Strategic Companies List"
-        companies = soup.find_all("li")
+        companies = soup.select("ul#scl-company-list > li")
         assert len(companies) == 4
-        your_comp_h1 = soup.find("h1", text=re.compile(r"\bYour\b")).contents
+        your_comp_h1 = soup.find(
+            "h1", string=re.compile(r"\bYour companies\b")
+        ).contents[0]
         assert your_comp_h1 == "Your companies"
-        your_companies = soup.select("a[href^='/company-briefing']")
+        your_companies = soup.select("ul#your-scl-company-list > li")
         assert len(your_companies) == 1
 
     @pytest.mark.django_db
-    def test_home_page_with_engagements(self):
-        response = self.client.get("/")
-        assert response.status_code == 200
-        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
-        # create three engagements
-        for _ in range(3):
-            factories.EngagementFactory.create()
+    def test_engagements_appear_in_date_order(self):
+        for i in range(3):
+            company = factories.CompanyFactory.create()
+            factories.CompanyAccountManagerFactory(
+                company=company, account_manager=self.user
+            )
+            factories.EngagementFactory.create(
+                company=company, date=datetime(2100, 1, 1 + i), title=i
+            )
+        soup = self.soup()
         engagements = soup.select("a[href^='/engagement']")
         assert len(engagements) == 3
+        assert "0" in engagements[0].text
+        assert "2" in engagements[2].text
 
     @pytest.mark.django_db
-    def test_engagements_in_date_order(self):
-        response = self.client.get("/")
-        assert response.status_code == 200
-        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
-        # create three engagements
-        for _ in range(3):
-            factories.EngagementFactory.create()
-        engagements = soup.select("a[href^='/engagement']")
-        assert len(engagements) == 3
-
-    @pytest.mark.django_db
-    def test_out_of_date_engagements(self):
-        response = self.client.get("/")
-        assert response.status_code == 200
-        soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
-        # create fifty past engagements
-        for _ in range(50):
-            factories.EngagementFactory.create(date=datetime(2000, 12, 31))
+    def test_out_of_date_engagements_not_visible(self):
+        company = factories.CompanyFactory.create()
+        factories.CompanyAccountManagerFactory(
+            company=company, account_manager=self.user
+        )
+        factories.EngagementFactory.create(company=company, date=datetime(2000, 12, 31))
+        soup = self.soup()
         engagements = soup.select("a[href^='/engagement']")
         assert len(engagements) == 0
 
