@@ -71,17 +71,6 @@ class CompanyFactory(factory.django.DjangoModelFactory):
         model = "core.Company"
 
 
-class EngagementFactory(factory.django.DjangoModelFactory):
-    id = factory.LazyAttribute(lambda _: uuid.uuid4())
-    title = factory.fuzzy.FuzzyText(length=128)
-    date = factory.fuzzy.FuzzyDate(datetime.today(), datetime(2100, 12, 31))
-    company = factory.SubFactory(CompanyFactory)
-    details = factory.fuzzy.FuzzyText(length=500)
-
-    class Meta:
-        model = "core.Engagement"
-
-
 class CompanyAccountManagerFactory(factory.django.DjangoModelFactory):
     id = factory.LazyAttribute(lambda _: uuid.uuid4())
     company = factory.SubFactory(CompanyFactory)
@@ -127,3 +116,13 @@ class EngagementFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "core.Engagement"
+
+
+class EngagementNoteFactory(factory.django.DjangoModelFactory):
+    id = factory.LazyAttribute(lambda _: uuid.uuid4())
+    created_by = factory.SubFactory(UserFactory)
+    engagement = factory.SubFactory(EngagementFactory)
+    contents = factory.Faker("text", max_nb_chars=500)
+
+    class Meta:
+        model = "core.EngagementNote"
