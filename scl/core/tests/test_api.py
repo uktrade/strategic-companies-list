@@ -180,3 +180,34 @@ def test_company_insight_api_patch(viewer_user_client, company):
     assert response_data["data"][1]["title"] == "Update 2"
     assert response_data["data"][1]["details"] == "Dolor sit amet"
     assert len(response_data["data"]) == 6
+
+
+@pytest.mark.django_db
+def test_company_insight_api_delete(viewer_user_client, company):
+    # sanity check
+    existing_insights = company.insights.filter(insight_type=Insight.TYPE_HMG_PRIORITY)
+    assert existing_insights.count() == 6
+
+    insight_to_delete = existing_insights[0]
+    insight_id = str(insight_to_delete.id)
+
+    data = {
+        "insightId": insight_id,
+    }
+    response = viewer_user_client.delete(
+        reverse(
+            "api-company-insight",
+            kwargs={
+                "duns_number": company.duns_number,
+                "insight_type": Insight.TYPE_HMG_PRIORITY,
+            },
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    response_data = json.loads(response.content)
+
+    assert insight_id not in [i["insightId"] for i in response_data["data"]]
+    assert len(response_data["data"]) == 5
