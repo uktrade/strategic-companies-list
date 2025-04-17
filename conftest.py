@@ -59,7 +59,7 @@ def company(viewer_user):
         factories.CompanyAccountManagerFactory.create(
             company=company, account_manager=viewer_user, is_lead=True
         )
-        factories.CompanyAccountManagerFactory.create(company=company)
+        acc_manager = factories.CompanyAccountManagerFactory.create(company=company)
 
         factories.KeyPeopleFactory.create_batch(3, company=company)
 
@@ -70,5 +70,12 @@ def company(viewer_user):
             6, company=company, insight_type="hmg_priority"
         )
 
-        factories.EngagementFactory.create_batch(4, company=company)
+        engagements = factories.EngagementFactory.create_batch(4, company=company)
+        factories.EngagementNoteFactory.create_batch(
+            3, engagement=engagements[0], created_by=acc_manager.account_manager
+        )
+        factories.EngagementNoteFactory.create_batch(
+            2, engagement=engagements[1], created_by=viewer_user
+        )
+
     return company
