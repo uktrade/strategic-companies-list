@@ -107,16 +107,6 @@ class InsightFactory(factory.django.DjangoModelFactory):
         model = "core.Insight"
 
 
-class EngagementNoteFactory(factory.django.DjangoModelFactory):
-    id = factory.LazyAttribute(lambda _: uuid.uuid4())
-    created_by = factory.SubFactory(UserFactory)
-    engagement = factory.SubFactory(EngagementFactory)
-    contents = factory.fuzzy.FuzzyText(length=500)
-
-    class Meta:
-        model = "core.EngagementNote"
-
-
 class EngagementFactory(factory.django.DjangoModelFactory):
     id = factory.LazyAttribute(lambda _: uuid.uuid4())
     title = factory.Faker("text", max_nb_chars=128)
