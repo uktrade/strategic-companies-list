@@ -44,3 +44,38 @@ jobs:
       - run: make init
       - run: python manage.py migrate
       - run: pytest
+  
+  e2e-tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Setup xvfb
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install \
+          libgtk2.0-0 \
+          libgtk-3-0 \
+          libgbm-dev \
+          libnotify-dev \
+          libgconf-2-4 \
+          libnss3 \
+          libxss1 \
+          libasound2 \
+          libxtst6 \
+          xauth \
+          xvfb
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23
+
+      - name: Start up services
+        run: cp ./sample.env .env && make e2e/up
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run e2e:run
