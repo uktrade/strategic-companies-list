@@ -21,9 +21,12 @@ logger = logging.getLogger().warning
 
 
 class ViewerOrCompanyAccountManagerUserMixin(UserPassesTestMixin):
+    #raise_exception = True
+
     def test_func(self):
         is_viewer = self.request.user.in_group("Viewer")
         is_account_manager = self.request.user in self.company.account_manager.all()
+        print(is_viewer or is_account_manager)
         return is_viewer or is_account_manager
 
 
@@ -47,7 +50,7 @@ class IndexView(TemplateView):
         return context
 
 
-class EngagementDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
+class EngagementDetailView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
     template_name = "engagement.html"
     model = Engagement
 
@@ -278,5 +281,5 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
 
 def custom_403_view(request, *args, **kwargs):
     return TemplateResponse(
-        request=request, template="core/403_generic.html", status=403
+        request=request, template="403_generic.html", status=403
     )

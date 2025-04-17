@@ -98,7 +98,7 @@ class HomePageTest(TestCase):
         request = self.client.get("/")
         response = html.custom_403_view(request)
         assert response.status_code == 403
-        assert response.template_name == "core/403_generic.html"
+        assert response.template_name == "403_generic.html"
 
 
 @pytest.mark.django_db
