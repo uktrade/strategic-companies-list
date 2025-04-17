@@ -79,8 +79,8 @@ class HomePageTest(TestCase):
         soup = self.soup()
         engagements = soup.select("a[href^='/engagement']")
         assert len(engagements) == 3
-        assert "0" in engagements[0].text
-        assert "2" in engagements[2].text
+        assert "3 Jan" in engagements[0].text
+        assert "1 Jan" in engagements[2].text
 
     @pytest.mark.django_db
     def test_out_of_date_engagements_not_visible(self):
