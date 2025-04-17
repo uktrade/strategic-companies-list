@@ -38,6 +38,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.LazyAttribute(lambda _: str(uuid.uuid4()))
     email = factory.LazyAttribute(lambda o: f"test.user+{o.username}@example.com")
     password = "12345"
+    first_name = factory.Faker("first_name")
+    last_name = factory.Faker("last_name")
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
@@ -93,7 +95,7 @@ class CompanyAccountManagerFactory(factory.django.DjangoModelFactory):
 class KeyPeopleFactory(factory.django.DjangoModelFactory):
     id = factory.LazyAttribute(lambda _: uuid.uuid4())
     name = factory.Faker("name")
-    role = factory.fuzzy.FuzzyText(length=128)
+    role = factory.Faker("job")
     company = factory.SubFactory(CompanyFactory)
 
     class Meta:
