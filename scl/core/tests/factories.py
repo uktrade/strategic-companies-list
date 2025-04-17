@@ -1,8 +1,37 @@
 from datetime import datetime
 import factory.fuzzy
+import random
 import uuid
 
 from django.contrib.auth import get_user_model
+
+from scl.core.constants import COUNTRIES_AND_TERRITORIES, SECTORS
+from scl.core.models import Insight
+
+
+class FuzzyChoiceList(factory.fuzzy.BaseFuzzyAttribute):
+    """Handles fuzzy choices for ArrayField.
+
+    Args:
+        choices (iterable): An iterable yielding options; will only be unrolled on the first call.
+        num_choices (int): Defaults to 1. Number of random choices to return from the given options.
+        getter (callable or None): a function to parse returned values
+    """
+
+    def __init__(self, choices, num_choices=1, getter=None):
+        self.choices = None
+        self.choices_generator = choices
+        self.getter = getter
+        self.num_choices = num_choices
+        super().__init__()
+
+    def fuzz(self):
+        if self.choices is None:
+            self.choices = list(self.choices_generator)
+        choices = random.choices(self.choices, k=self.num_choices)
+        if self.getter is None:
+            return choices
+        return [self.getter(value) for value in choices]
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -25,8 +54,16 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class CompanyFactory(factory.django.DjangoModelFactory):
     id = factory.LazyAttribute(lambda _: uuid.uuid4())
-    name = factory.fuzzy.FuzzyText()
-    duns_number = "12345"
+    name = factory.Faker("company")
+    duns_number = factory.fuzzy.FuzzyText(length=9)
+    summary = factory.Faker("text", max_nb_chars=500)
+    global_hq_name = factory.fuzzy.FuzzyText(length=128)
+    global_hq_country = factory.fuzzy.FuzzyChoice(
+        COUNTRIES_AND_TERRITORIES, getter=lambda c: c[0]
+    )
+    global_turnover_millions_usd = factory.fuzzy.FuzzyInteger(0, 10000)
+    global_number_of_employees = factory.fuzzy.FuzzyInteger(0, 10000)
+    sectors = FuzzyChoiceList(SECTORS, getter=lambda c: c[0], num_choices=3)
 
     class Meta:
         model = "core.Company"
@@ -51,3 +88,40 @@ class CompanyAccountManagerFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "core.CompanyAccountManager"
+
+
+class KeyPeopleFactory(factory.django.DjangoModelFactory):
+    id = factory.LazyAttribute(lambda _: uuid.uuid4())
+    name = factory.Faker("name")
+    role = factory.fuzzy.FuzzyText(length=128)
+    company = factory.SubFactory(CompanyFactory)
+
+    class Meta:
+        model = "core.KeyPeople"
+
+
+class InsightFactory(factory.django.DjangoModelFactory):
+    id = factory.LazyAttribute(lambda _: uuid.uuid4())
+    created_at = factory.fuzzy.FuzzyDate(datetime(2000, 12, 31), datetime.today())
+    updated_at = factory.fuzzy.FuzzyDate(datetime.today(), datetime(2100, 12, 31))
+    company = factory.SubFactory(CompanyFactory)
+    created_by = factory.SubFactory(UserFactory)
+    insight_type = factory.fuzzy.FuzzyChoice(Insight.INSIGHT_TYPES)
+    title = factory.Faker("text", max_nb_chars=255)
+    details = factory.Faker("text", max_nb_chars=500)
+
+    order = factory.fuzzy.FuzzyInteger(0, 10000)
+
+    class Meta:
+        model = "core.Insight"
+
+
+class EngagementFactory(factory.django.DjangoModelFactory):
+    id = factory.LazyAttribute(lambda _: uuid.uuid4())
+    title = factory.Faker("text", max_nb_chars=128)
+    date = factory.fuzzy.FuzzyDate(datetime.today(), datetime(2100, 12, 31))
+    company = factory.SubFactory(CompanyFactory)
+    details = factory.Faker("text", max_nb_chars=500)
+
+    class Meta:
+        model = "core.Engagement"
