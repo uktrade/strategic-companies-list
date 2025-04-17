@@ -5,6 +5,7 @@ import reversion
 from django.urls import reverse
 
 from scl.core.constants import COUNTRIES_AND_TERRITORIES, SECTORS
+from scl.core.models import Insight
 from scl.core.tests import factories
 
 
@@ -68,7 +69,7 @@ def test_company_insight_api_get(viewer_user_client, company):
             "api-company-insight",
             kwargs={
                 "duns_number": company.duns_number,
-                "insight_type": "hmg_priority",
+                "insight_type": Insight.TYPE_HMG_PRIORITY,
             },
         ),
     )
@@ -79,7 +80,9 @@ def test_company_insight_api_get(viewer_user_client, company):
     assert len(response_data["insights"]) == 6
     assert {
         str(i)
-        for i in company.insights.filter(insight_type="hmg_priority").values_list(
+        for i in company.insights.filter(
+            insight_type=Insight.TYPE_HMG_PRIORITY
+        ).values_list(
             "id",
             flat=True,
         )
@@ -90,7 +93,7 @@ def test_company_insight_api_get(viewer_user_client, company):
             "api-company-insight",
             kwargs={
                 "duns_number": company.duns_number,
-                "insight_type": "company_priority",
+                "insight_type": Insight.TYPE_COMPANY_PRIORITY,
             },
         ),
     )
@@ -101,8 +104,39 @@ def test_company_insight_api_get(viewer_user_client, company):
     assert len(response_data["insights"]) == 5
     assert {
         str(i)
-        for i in company.insights.filter(insight_type="company_priority").values_list(
+        for i in company.insights.filter(
+            insight_type=Insight.TYPE_COMPANY_PRIORITY
+        ).values_list(
             "id",
             flat=True,
         )
     } == {i["insightId"] for i in response_data["insights"]}
+
+
+@pytest.mark.django_db
+def test_company_insight_api_post(viewer_user_client, company):
+    # sanity check
+    assert company.insights.filter(insight_type=Insight.TYPE_HMG_PRIORITY).count() == 6
+
+    data = {
+        "title": "Foo",
+        "details": "Lorem ipsum dolor sit amet",
+    }
+    response = viewer_user_client.post(
+        reverse(
+            "api-company-insight",
+            kwargs={
+                "duns_number": company.duns_number,
+                "insight_type": Insight.TYPE_HMG_PRIORITY,
+            },
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    response_data = json.loads(response.content)
+
+    assert response_data["data"][0]["title"] == "Foo"
+    assert response_data["data"][0]["details"] == "Lorem ipsum dolor sit amet"
+    assert len(response_data["data"]) == 7

@@ -157,7 +157,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             reversion.set_user(self.request.user)
             reversion.set_comment(
                 f"Deleted {self.kwargs["insight_type"]} insight via API "
-                f"({self.request.build_absolute_uri()} from {self.request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
         return JsonResponse(
@@ -189,7 +189,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             reversion.set_user(self.request.user)
             reversion.set_comment(
                 f"Updated {self.kwargs["insight_type"]} insight via API "
-                f"({self.request.build_absolute_uri()} from {self.request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
         return JsonResponse(
@@ -208,7 +208,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
 
     def post(self, *args, **kwargs):
         with reversion.create_revision():
-            insight = Insight.objects.create(
+            Insight.objects.create(
                 company=self.company,
                 created_by=self.request.user,
                 insight_type=self.kwargs["insight_type"],
@@ -223,7 +223,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             reversion.set_user(self.request.user)
             reversion.set_comment(
                 f"Created {self.kwargs["insight_type"]} insight via API "
-                f"({self.request.build_absolute_uri()} from {self.request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
         return JsonResponse(
