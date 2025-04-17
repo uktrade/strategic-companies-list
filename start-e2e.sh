@@ -13,7 +13,7 @@ python manage.py migrate
 python manage.py createinitialrevisions
 python manage.py creategroups
 
-# Get/Create the same user that mock-sso creates, set as staff, superuser, and with Basic and Viewer access
+# Get/Create the same user that mock-sso creates, set as staff, superuser, and with Basic and Viewer access.
 python manage.py shell << EOF
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
