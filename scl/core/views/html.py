@@ -21,7 +21,7 @@ logger = logging.getLogger().warning
 
 
 class ViewerOrCompanyAccountManagerUserMixin(UserPassesTestMixin):
-    #raise_exception = True
+    raise_exception = True
 
     def test_func(self):
         is_viewer = self.request.user.in_group("Viewer")
@@ -219,7 +219,8 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                         "company_sectors": company_sectors if company_sectors else [],
                         "all_sectors": get_all_sectors(),
                         "last_updated": current_version.revision.date_created.strftime(
-                            constants.DATE_FORMAT_LONG) if current_version else None,
+                            constants.DATE_FORMAT_LONG
+                        ),
                         "global_hq_country": self.object.get_global_hq_country,
                         "turn_over": self.object.global_turnover_millions_usd,
                         "employees": employees,
@@ -243,18 +244,14 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                             if self.test_func()
                             else []
                         ),
-                        "hmg_priorities": (
-                            [
-                                {
-                                    "title": priority.title,
-                                    "details": priority.details,
-                                    "insightId": str(priority.id),
-                                }
-                                for priority in hmg_priorities
-                            ]
-                            if self.test_func()
-                            else []
-                        ),
+                        "hmg_priorities": [
+                            {
+                                "title": priority.title,
+                                "details": priority.details,
+                                "insightId": str(priority.id),
+                            }
+                            for priority in hmg_priorities
+                        ],
                         "has_access": self.test_func(),
                         "is_account_manager": is_account_manager,
                         "engagements": (
