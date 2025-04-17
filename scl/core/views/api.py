@@ -329,7 +329,7 @@ def engagement_api(request, engagement_id):
     is_account_manager = request.user in account_managers
 
     if not is_account_manager:
-        return JsonResponse(403, safe=False)
+        return JsonResponse("Forbidden", status=403, safe=False)
 
     if request.method == "PATCH":
         with reversion.create_revision():
@@ -340,7 +340,7 @@ def engagement_api(request, engagement_id):
             reversion.set_user(request.user)
             reversion.set_comment(
                 "Updated title, and details via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({request.build_absolute_uri()} from {request.headers.get('referer')})"
             )
 
     return JsonResponse(

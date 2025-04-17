@@ -26,7 +26,6 @@ class ViewerOrCompanyAccountManagerUserMixin(UserPassesTestMixin):
     def test_func(self):
         is_viewer = self.request.user.in_group("Viewer")
         is_account_manager = self.request.user in self.company.account_manager.all()
-        print(is_viewer or is_account_manager)
         return is_viewer or is_account_manager
 
 
@@ -244,14 +243,18 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                             if self.test_func()
                             else []
                         ),
-                        "hmg_priorities": [
-                            {
-                                "title": priority.title,
-                                "details": priority.details,
-                                "insightId": str(priority.id),
-                            }
-                            for priority in hmg_priorities
-                        ],
+                        "hmg_priorities": (
+                            [
+                                {
+                                    "title": priority.title,
+                                    "details": priority.details,
+                                    "insightId": str(priority.id),
+                                }
+                                for priority in hmg_priorities
+                            ]
+                            if self.test_func()
+                            else []
+                        ),
                         "has_access": self.test_func(),
                         "is_account_manager": is_account_manager,
                         "engagements": (
