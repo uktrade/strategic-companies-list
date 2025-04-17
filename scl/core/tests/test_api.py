@@ -140,3 +140,43 @@ def test_company_insight_api_post(viewer_user_client, company):
     assert response_data["data"][0]["title"] == "Foo"
     assert response_data["data"][0]["details"] == "Lorem ipsum dolor sit amet"
     assert len(response_data["data"]) == 7
+
+
+@pytest.mark.django_db
+def test_company_insight_api_patch(viewer_user_client, company):
+    # sanity check
+    existing_insights = company.insights.filter(insight_type=Insight.TYPE_HMG_PRIORITY)
+    assert existing_insights.count() == 6
+
+    data = [
+        {
+            "insightId": str(existing_insights[0].id),
+            "title": "Update 1",
+            "details": "Lorem ipsum",
+        },
+        {
+            "insightId": str(existing_insights[1].id),
+            "title": "Update 2",
+            "details": "Dolor sit amet",
+        },
+    ]
+    response = viewer_user_client.patch(
+        reverse(
+            "api-company-insight",
+            kwargs={
+                "duns_number": company.duns_number,
+                "insight_type": Insight.TYPE_HMG_PRIORITY,
+            },
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    response_data = json.loads(response.content)
+
+    assert response_data["data"][0]["title"] == "Update 1"
+    assert response_data["data"][0]["details"] == "Lorem ipsum"
+    assert response_data["data"][1]["title"] == "Update 2"
+    assert response_data["data"][1]["details"] == "Dolor sit amet"
+    assert len(response_data["data"]) == 6
