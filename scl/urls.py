@@ -59,10 +59,11 @@ urlpatterns = [
         api.company_insight_api,
     ),
     path("api/v1/insights/<uuid:insight_id>", api.insight_api),
-    path("api/v1/engagement/<uuid:engagement_id>", api.engagement_api, name="engagement_api"),
+    path("api/v1/engagement/<uuid:engagement_id>", api.EngagementAPI.as_view(),
+         name="change-engagement-api"),
     path(
         "api/v1/engagement/<str:duns_number>",
-        api.add_engagement_api,
+        api.EngagementAPI.as_view(),
         name="add-engagement",
     ),
     path("api/v1/engagement/<uuid:engagement_id>/note", api.engagement_note_api),
