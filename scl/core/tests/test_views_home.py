@@ -1,17 +1,17 @@
 import re
-import pytest
 from datetime import datetime
 
+import pytest
+import reversion
 from bs4 import BeautifulSoup
-from django.test import TestCase, Client
-from django.urls import reverse
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-import reversion
+from django.test import Client, TestCase
+from django.urls import reverse
 
 from scl.core.models import Company
-from scl.core.views import html
 from scl.core.tests import factories
+from scl.core.views import html
 
 
 class HomePageTest(TestCase):
