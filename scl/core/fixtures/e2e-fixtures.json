@@ -1,10 +1,32 @@
 [
 {
+    "model": "reversion.revision",
+    "pk": 1,
+    "fields": {
+        "date_created": "2025-04-16T14:24:19.755Z",
+        "user": null,
+        "comment": "Initial version."
+    }
+},
+{
+    "model": "reversion.version",
+    "pk": 1,
+    "fields": {
+        "revision": 1,
+        "object_id": "1",
+        "content_type": 9,
+        "db": "default",
+        "format": "json",
+        "serialized_data": "[{\"model\": \"core.user\", \"pk\": 1, \"fields\": {\"password\": \"\", \"last_login\": null, \"is_superuser\": true, \"username\": \"20a0353f-a7d1-4851-9af8-1bcaff152b60\", \"first_name\": \"Vyvyan\", \"last_name\": \"Holland\", \"email\": \"local.user@businessandtrade.gov.uk\", \"is_staff\": true, \"is_active\": true, \"date_joined\": \"2025-04-16T14:24:18.018Z\", \"groups\": [1], \"user_permissions\": []}}]",
+        "object_repr": "Vyvyan Holland (local.user@businessandtrade.gov.uk)"
+    }
+},
+{
     "model": "core.user",
     "pk": 1,
     "fields": {
         "password": "",
-        "last_login": "2025-04-16T08:48:57Z",
+        "last_login": "2025-04-16T14:51:34.903Z",
         "is_superuser": true,
         "username": "20a0353f-a7d1-4851-9af8-1bcaff152b60",
         "first_name": "Vyvyan",

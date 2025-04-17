@@ -216,8 +216,7 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                         "company_sectors": company_sectors if company_sectors else [],
                         "all_sectors": get_all_sectors(),
                         "last_updated": current_version.revision.date_created.strftime(
-                            constants.DATE_FORMAT_LONG
-                        ),
+                            constants.DATE_FORMAT_LONG) if current_version else None,
                         "global_hq_country": self.object.get_global_hq_country,
                         "turn_over": self.object.global_turnover_millions_usd,
                         "employees": employees,
