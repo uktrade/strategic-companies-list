@@ -217,8 +217,12 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                         "duns_number": self.object.duns_number,
                         "company_sectors": company_sectors if company_sectors else [],
                         "all_sectors": get_all_sectors(),
-                        "last_updated": current_version.revision.date_created.strftime(
-                            constants.DATE_FORMAT_LONG
+                        "last_updated": (
+                            current_version.revision.date_created.strftime(
+                                constants.DATE_FORMAT_LONG
+                            )
+                            if current_version
+                            else None
                         ),
                         "global_hq_country": self.object.get_global_hq_country,
                         "turn_over": self.object.global_turnover_millions_usd,
@@ -280,6 +284,4 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
 
 
 def custom_403_view(request, *args, **kwargs):
-    return TemplateResponse(
-        request=request, template="403_generic.html", status=403
-    )
+    return TemplateResponse(request=request, template="403_generic.html", status=403)
