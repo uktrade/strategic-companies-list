@@ -1,26 +1,11 @@
 name: scl-e2e
-
 services:
   postgres:
     volumes:
       - scl-e2e:/var/lib/postgresql/data
-    networks:
-      - scl-e2e
   web-dev:
     build:
       context: .
       target: e2e
-    env_file: .env
-    profiles: ["e2e"]
-    networks:
-      - scl-e2e
-  sso:
-    networks:
-      - scl-e2e
-
 volumes:
-    scl-e2e:
-
-networks:
   scl-e2e:
-    name: scl-e2e
