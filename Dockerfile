@@ -53,6 +53,8 @@ CMD ["./start-dev.sh"]
 
 FROM common AS e2e
 
+# Disable nginx serving of static assets, so Django serves them without collect static
+RUN sed -i 's/assets/__dummy/' /etc/nginx/nginx.conf
 COPY start-e2e.sh .
 
 ARG GIT_COMMIT
