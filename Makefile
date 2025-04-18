@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-docker-e2e = docker compose -f compose.yaml -f compose.e2e.yaml --profile e2e
+docker-e2e = docker compose -f compose.yaml -f compose.e2e.yaml
 
 .PHONY: test/db/start
 test/db/start:
