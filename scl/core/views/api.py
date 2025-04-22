@@ -23,9 +23,33 @@ logger = logging.getLogger().warning
 
 
 class CompanyAccountManagerUserMixin(UserPassesTestMixin):
+    protected_methods = ["patch", "put", "post", "delete"]
+
     def test_func(self):
         is_account_manager = self.request.user in self.company.account_manager.all()
         return is_account_manager
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Combination of django's UserPassesTestMixin and View dispatch method, modified to only protect methods listed in protected_methods.
+        """
+
+        if request.method.lower() in self.http_method_names:
+            user_test_result = self.get_test_func()()
+            if (
+                request.method.lower() in self.protected_methods
+                and not user_test_result
+            ):
+                return self.handle_no_permission()
+
+            handler = getattr(
+                self, request.method.lower(), self.http_method_not_allowed
+            )
+
+        else:
+            handler = self.http_method_not_allowed
+
+        return handler(request, *args, **kwargs)
 
 
 def aws_credentials_api(request, duns_number):
@@ -75,7 +99,7 @@ def aws_credentials_api(request, duns_number):
     )
 
 
-class CompanyAPIView(View, CompanyAccountManagerUserMixin):
+class CompanyAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def data(self):
@@ -135,26 +159,29 @@ class CompanyAPIView(View, CompanyAccountManagerUserMixin):
         )
 
 
-def company_insight_api(request, duns_number, insight_type):
-    data = json.loads(request.body)
-    company = Company.objects.get(duns_number=duns_number)
+class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
 
-    account_managers = list(company.account_manager.all())
-    is_account_manager = request.user in account_managers
-    if not is_account_manager:
-        return JsonResponse(403, safe=False)
+    @property
+    def data(self):
+        return json.loads(self.request.body)
 
-    if request.method == "DELETE":
+    @property
+    def company(self):
+        return Company.objects.get(duns_number=self.kwargs["duns_number"])
+
+    def delete(self, *args, **kwargs):
         with reversion.create_revision():
-            insight = Insight.objects.get(id=data["insightId"])
+            insight = Insight.objects.get(id=self.data["insightId"])
             insight.delete()
 
-            updated_insights = list(company.insights.filter(insight_type=insight_type))
+            updated_insights = list(
+                self.company.insights.filter(insight_type=self.kwargs["insight_type"])
+            )
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
-                f"Deleted {insight_type} insight via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"Deleted {self.kwargs["insight_type"]} insight via API "
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
         return JsonResponse(
@@ -171,20 +198,22 @@ def company_insight_api(request, duns_number, insight_type):
             status=200,
         )
 
-    if request.method == "PATCH":
+    def patch(self, *args, **kwargs):
         with reversion.create_revision():
-            for d in data:
+            for d in self.data:
                 insight = Insight.objects.get(id=d["insightId"])
                 insight.title = d["title"]
                 insight.details = d["details"]
                 insight.save()
 
-            updated_insights = list(company.insights.filter(insight_type=insight_type))
+            updated_insights = list(
+                self.company.insights.filter(insight_type=self.kwargs["insight_type"])
+            )
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
-                f"Updated {insight_type} insight via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"Updated {self.kwargs["insight_type"]} insight via API "
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
         return JsonResponse(
@@ -201,22 +230,24 @@ def company_insight_api(request, duns_number, insight_type):
             status=200,
         )
 
-    if request.method == "POST":
+    def post(self, *args, **kwargs):
         with reversion.create_revision():
-            insight = Insight.objects.create(
-                company=company,
-                created_by=request.user,
-                insight_type=insight_type,
-                title=data.get("title", "").strip(),
-                details=data.get("details", "").strip(),
+            Insight.objects.create(
+                company=self.company,
+                created_by=self.request.user,
+                insight_type=self.kwargs["insight_type"],
+                title=self.data.get("title", "").strip(),
+                details=self.data.get("details", "").strip(),
             )
 
-            updated_insights = list(company.insights.filter(insight_type=insight_type))
+            updated_insights = list(
+                self.company.insights.filter(insight_type=self.kwargs["insight_type"])
+            )
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
-                f"Created {insight_type} insight via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"Created {self.kwargs["insight_type"]} insight via API "
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
         return JsonResponse(
@@ -233,9 +264,11 @@ def company_insight_api(request, duns_number, insight_type):
             status=200,
         )
 
-    if request.method == "GET":
+    def get(self, *args, **kwargs):
         insights = list(
-            company.insights.filter(insight_type=insight_type).order_by("order")
+            self.company.insights.filter(
+                insight_type=self.kwargs["insight_type"]
+            ).order_by("order")
         )
         return JsonResponse(
             {
