@@ -5,7 +5,7 @@ describe("Company Briefing page", () => {
     cy.visit(`/company-briefing/${company.testingCorp.duns_number}`);
   });
 
-  it("renders the company section", () => {
+  it("asserts the company section", () => {
     cy.findByRole("heading", {
       level: 1,
       name: "Testing Corp",
@@ -25,14 +25,14 @@ describe("Company Briefing page", () => {
     );
   });
 
-  it("renders the summary section", () => {
+  it("asserts the summary section", () => {
     cy.assertCompanyBriefingSection("Summary", {
         content: "Currently this company has no summary.",
         buttonName: "Add summary",
       });
   });
 
-  it("renders the Key Facts section", () => {
+  it("asserts the Key Facts section", () => {
     cy.assertCompanyBriefingSection("Key Facts", {
       content: [
         "Headquartered in Canada",
@@ -42,14 +42,14 @@ describe("Company Briefing page", () => {
     });
   });
 
-  it("renders the Key People section", () => {
+  it("asserts the Key People section", () => {
     cy.assertCompanyBriefingSection("Key People", {
       content: "Currently no key people are assigned.",
       buttonName: "Add people",
     });
   });
 
-  it("renders the Company Priorities", () => {
+  it("asserts the Company Priorities", () => {
     cy.assertCompanyBriefingSection("Company Priorities", {
       content: "Currently no company priorites are assigned.",
       hasPrivilegedTag: true,
@@ -57,7 +57,7 @@ describe("Company Briefing page", () => {
     });
   });
 
-  it("renders the HMG Priorities section", () => {
+  it("asserts the HMG Priorities section", () => {
     cy.assertCompanyBriefingSection("HMG Priorities", {
       content: "Currently no HMG priorites are assigned.",
       hasPrivilegedTag: true,
@@ -65,14 +65,14 @@ describe("Company Briefing page", () => {
     });
   });
 
-  it("renders the Engagements section", () => {
+  it("asserts the Engagements section", () => {
     cy.assertCompanyBriefingSection("Engagements", {
       content: "No current engagements.",
       hasPrivilegedTag: true,
     });
   });
 
-  it("renders the SCIT administrators section", () => {
+  it("asserts the SCIT administrators section", () => {
     cy.assertCompanyBriefingSection("SCIT administrators", {
       content: "Vyvyan Holland",
       links: [
@@ -84,7 +84,7 @@ describe("Company Briefing page", () => {
     });
   });
 
-  it("renders the main sections in the correct order", () => {
+  it("asserts the main sections in the correct order", () => {
     cy.assertCompanyBriefingSectionOrder([
       "Summary",
       "Key Facts",
@@ -94,7 +94,7 @@ describe("Company Briefing page", () => {
     ]);
   });
 
-  it("renders the side sections in the correct order", () => {
+  it("asserts the side sections in the correct order", () => {
     cy.assertCompanyBriefingSectionOrder([
       "Engagements",
       "SCIT administrators",
