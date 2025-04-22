@@ -5,7 +5,7 @@ import Update from "../../forms/summary/Update";
 import ApiProxy from "../../proxy";
 import LoadingSpinner from "../../components/Spinner";
 
-const Summary = ({ data, isEditing, csrf_token, showUpdateNotification }) => {
+const Summary = ({ data, csrf_token, showUpdateNotification }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [summary, setSummary] = useState(data.summary);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -36,11 +36,11 @@ const Summary = ({ data, isEditing, csrf_token, showUpdateNotification }) => {
           !isCreating && !isUpdating && <p className="govuk-body">{summary}</p>
         )}
 
-        {isEditing && isCreating && (
+        {isCreating && (
           <Update onSubmit={onSubmit} setIsCreating={setIsCreating} />
         )}
 
-        {isEditing && isUpdating && (
+        {isUpdating && (
           <Update
             onSubmit={onSubmit}
             data={summary}
@@ -48,18 +48,18 @@ const Summary = ({ data, isEditing, csrf_token, showUpdateNotification }) => {
           />
         )}
 
-        {isEditing && !isCreating && !isUpdating && (
+        {!isCreating && !isUpdating && (
           <div className="govuk-!-margin-top-6">
             {Boolean(summary.length) ? (
               <button
-                className="govuk-button"
+                className="govuk-button govuk-button--secondary"
                 onClick={() => setIsUpdating(!isUpdating)}
               >
                 Edit summary
               </button>
             ) : (
               <button
-                className="govuk-button govuk-!-margin-right-2 govuk-!-margin-bottom-2"
+                className="govuk-button govuk-button--secondary govuk-!-margin-right-2 govuk-!-margin-bottom-2"
                 onClick={() => setIsCreating(!isCreating)}
               >
                 Add summary

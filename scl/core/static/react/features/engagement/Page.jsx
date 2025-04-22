@@ -12,7 +12,6 @@ const Page = ({ data, csrf_token }) => {
   });
 
   const [notificationMessage, setNotificationMessage] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [isUpdatingDetails, setIsUpdatingDetails] = useState(false);
   const [isUpdatingNotes, setIsUpdatingNotes] = useState(false);
@@ -49,7 +48,6 @@ const Page = ({ data, csrf_token }) => {
                 csrf_token={csrf_token}
                 engagement={engagement}
                 setEngagement={setEngagement}
-                isEditing={isEditing}
                 isUpdatingDetails={isUpdatingDetails}
                 setIsUpdatingDetails={setIsUpdatingDetails}
                 showUpdateNotification={showUpdateNotification}
@@ -58,32 +56,12 @@ const Page = ({ data, csrf_token }) => {
                 <Notes
                   csrf_token={csrf_token}
                   data={data}
-                  isEditing={isEditing}
                   isUpdatingNotes={isUpdatingNotes}
                   isCreatingNotes={isCreatingNotes}
                   setIsUpdatingNotes={setIsUpdatingNotes}
                   setIsCreatingNotes={setIsCreatingNotes}
                   showUpdateNotification={showUpdateNotification}
                 />
-              )}
-            </div>
-            <div className="scl-page-header__one-third">
-              {data.is_account_manager && (
-                <div className="scl-page-header__actions">
-                  <button
-                    className={`govuk-button ${
-                      isEditing ? "govuk-button--secondary" : ""
-                    }`}
-                    onClick={() => {
-                      setIsEditing(!isEditing);
-                      setIsUpdatingDetails(false);
-                      setIsUpdatingNotes(false);
-                      setIsCreatingNotes(false);
-                    }}
-                  >
-                    {isEditing ? "Stop editing" : "Edit"}
-                  </button>
-                </div>
               )}
             </div>
           </div>

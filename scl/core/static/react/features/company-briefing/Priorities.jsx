@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ApiProxy from "../../proxy";
 import LoadingSpinner from "../../components/Spinner";
 import Section from "../../components/Section";
@@ -10,7 +10,6 @@ import SectionActions from "../../components/SectionActions";
 const Priorities = ({
   id,
   csrf_token,
-  isEditing,
   insightType,
   companyPriorities,
   emptyMessage,
@@ -67,15 +66,6 @@ const Priorities = ({
     }
   };
 
-  const resetFormState = () => {
-    setIsUpdating(false);
-    setIsCreating(false);
-  };
-
-  useEffect(() => {
-    resetFormState();
-  }, [isEditing]);
-
   return (
     <LoadingSpinner isLoading={isLoading}>
       <Section isPrivaliged title={title}>
@@ -95,10 +85,10 @@ const Priorities = ({
           ))
         )}
 
-        {isEditing && isCreating && (
+        {isCreating && (
           <Create onSubmit={onSubmit} setIsCreating={setIsCreating} />
         )}
-        {isEditing && isUpdating && (
+        {isUpdating && (
           <Update
             data={priorities}
             onSubmit={onSubmit}
@@ -106,10 +96,12 @@ const Priorities = ({
             setIsUpdating={setIsUpdating}
           />
         )}
-        {isEditing && !isCreating && !isUpdating && (
+        {!isCreating && !isUpdating && (
           <SectionActions
             addLabel="Add priority"
-            editLabel="Edit priority"
+            editLabel={`Edit ${
+              priorities.length > 1 ? "priorites" : "priority"
+            }`}
             showEdit={Boolean(priorities.length)}
             setIsCreating={() => setIsCreating(!isCreating)}
             setIsUpdating={() => setIsUpdating(!isUpdating)}

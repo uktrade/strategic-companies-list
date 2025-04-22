@@ -10,7 +10,6 @@ const Details = ({
   engagement,
   setEngagement,
   csrf_token,
-  isEditing,
   showUpdateNotification,
   isUpdatingDetails,
   setIsUpdatingDetails,
@@ -51,7 +50,7 @@ const Details = ({
         </div>
       )}
       {!isUpdatingDetails && <p className="govuk-body">{engagement.details}</p>}
-      {isEditing && isUpdatingDetails && (
+      {isUpdatingDetails && (
         <Update
           id={data.id}
           data={engagement}
@@ -59,10 +58,10 @@ const Details = ({
           setIsUpdatingDetails={setIsUpdatingDetails}
         />
       )}
-      {isEditing && !isUpdatingDetails && (
+      {!isUpdatingDetails && (
         <div className="govuk-!-margin-top-6">
           <button
-            className="govuk-button"
+            className="govuk-button govuk-button--secondary"
             onClick={() => setIsUpdatingDetails(true)}
           >
             Edit details

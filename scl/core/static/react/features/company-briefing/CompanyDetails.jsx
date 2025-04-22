@@ -6,8 +6,8 @@ import LoadingSpinner from "../../components/Spinner";
 
 const CompanyDetails = ({
   data,
-  isEditing,
   csrf_token,
+  isAddingEngagement,
   nonce,
   showUpdateNotification,
 }) => {
@@ -55,7 +55,7 @@ const CompanyDetails = ({
         )}
       </div>
 
-      {isEditing && isUpdating && (
+      {isUpdating && (
         <Update
           data={companyDetails}
           onSubmit={onSubmit}
@@ -63,9 +63,9 @@ const CompanyDetails = ({
           nonce={nonce}
         />
       )}
-      {isEditing && !isUpdating && (
+      {!isUpdating && !isAddingEngagement && (
         <button
-          className="govuk-button"
+          className="govuk-button govuk-button--secondary"
           onClick={() => setIsUpdating(!isUpdating)}
         >
           Edit company details

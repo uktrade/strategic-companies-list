@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ApiProxy from "../../proxy";
 import LoadingSpinner from "../../components/Spinner";
 import Update from "../../forms/key-people/Update";
@@ -9,7 +9,6 @@ import SectionActions from "../../components/SectionActions";
 const KeyPeople = ({
   id,
   csrf_token,
-  isEditing,
   keyPeople,
   showUpdateNotification,
 }) => {
@@ -63,15 +62,6 @@ const KeyPeople = ({
     }
   };
 
-  const resetFormState = () => {
-    setIsUpdating(false);
-    setIsCreating(false);
-  };
-
-  useEffect(() => {
-    resetFormState();
-  }, [isEditing]);
-
   return (
     <LoadingSpinner isLoading={isLoading}>
       <Section title="Key People">
@@ -93,10 +83,10 @@ const KeyPeople = ({
             </ul>
           )
         )}
-        {isEditing && isCreating && (
+        {isCreating && (
           <Create onSubmit={onSubmit} setIsCreating={setIsCreating} />
         )}
-        {isEditing && isUpdating && (
+        {isUpdating && (
           <Update
             id={id}
             data={people}
@@ -105,7 +95,7 @@ const KeyPeople = ({
             setIsUpdating={setIsUpdating}
           />
         )}
-        {isEditing && !isCreating && !isUpdating && (
+        {!isCreating && !isUpdating && (
           <SectionActions
             addLabel="Add people"
             editLabel="Edit people"
