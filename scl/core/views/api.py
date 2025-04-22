@@ -487,7 +487,7 @@ def engagement_note_api(request, engagement_id):
                 f"({request.build_absolute_uri()} from {request.headers['referer']})"
             )
 
-            notess = engagement.notes.all()
+            notes = engagement.notes.all()
 
             return JsonResponse(
                 {
