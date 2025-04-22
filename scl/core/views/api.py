@@ -115,7 +115,8 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
             if self.data.get("title"):
                 company.name = self.data.get("title").strip()
             if self.data.get("sectors"):
-                company.sectors = [key["value"] for key in self.data.get("sectors")]
+                company.sectors = [key["value"]
+                                   for key in self.data.get("sectors")]
             if self.data.get("summary"):
                 company.summary = self.data.get("summary").strip()
             company.save()
@@ -175,7 +176,8 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             insight.delete()
 
             updated_insights = list(
-                self.company.insights.filter(insight_type=self.kwargs["insight_type"])
+                self.company.insights.filter(
+                    insight_type=self.kwargs["insight_type"])
             )
 
             reversion.set_user(self.request.user)
@@ -207,7 +209,8 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
                 insight.save()
 
             updated_insights = list(
-                self.company.insights.filter(insight_type=self.kwargs["insight_type"])
+                self.company.insights.filter(
+                    insight_type=self.kwargs["insight_type"])
             )
 
             reversion.set_user(self.request.user)
@@ -241,7 +244,8 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             )
 
             updated_insights = list(
-                self.company.insights.filter(insight_type=self.kwargs["insight_type"])
+                self.company.insights.filter(
+                    insight_type=self.kwargs["insight_type"])
             )
 
             reversion.set_user(self.request.user)
@@ -445,6 +449,7 @@ def engagement_note_api(request, engagement_id):
         with reversion.create_revision():
             for d in data["notes"]:
                 note = EngagementNote.objects.get(id=d.get("noteId"))
+                note.created_by = request.user
                 note.contents = d["contents"]
                 note.save()
 
@@ -473,7 +478,7 @@ def engagement_note_api(request, engagement_id):
     if request.method == "POST":
         with reversion.create_revision():
             note = EngagementNote.objects.create(
-                contents=data.get("contents").strip(), engagement=engagement
+                contents=data.get("contents").strip(), engagement=engagement, created_by=request.user
             )
 
             reversion.set_user(request.user)

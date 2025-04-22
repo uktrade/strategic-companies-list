@@ -11,13 +11,16 @@ const SectionActions = ({
     <>
       <div className="govuk-!-margin-top-6">
         <button
-          className="govuk-button govuk-!-margin-right-2"
+          className="govuk-button govuk-button--secondary govuk-!-margin-right-2"
           onClick={() => setIsCreating()}
         >
           {addLabel}
         </button>
         {showEdit && (
-          <button className="govuk-button" onClick={() => setIsUpdating(false)}>
+          <button
+            className="govuk-button govuk-button--secondary"
+            onClick={() => setIsUpdating(false)}
+          >
             {editLabel}
           </button>
         )}

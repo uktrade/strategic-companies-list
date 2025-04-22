@@ -17,7 +17,6 @@ import Summary from "./Summary";
 
 const Page = ({ data, id, csrf_token, nonce }) => {
   const [notificationMessage, setNotificationMessage] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [engagements, setEngagements] = useState(data.engagements);
@@ -60,7 +59,7 @@ const Page = ({ data, id, csrf_token, nonce }) => {
               <CompanyDetails
                 data={data}
                 nonce={nonce}
-                isEditing={isEditing}
+                isAddingEngagement={isAddingEngagement}
                 csrf_token={csrf_token}
                 showUpdateNotification={showUpdateNotification}
               />
@@ -68,9 +67,7 @@ const Page = ({ data, id, csrf_token, nonce }) => {
             <div className="scl-page-header__one-third">
               {data.is_account_manager && (
                 <PageActions
-                  setIsEditing={setIsEditing}
                   setIsAddingEngagement={setIsAddingEngagement}
-                  isEditing={isEditing}
                   isAddingEngagement={isAddingEngagement}
                 />
               )}
@@ -89,7 +86,6 @@ const Page = ({ data, id, csrf_token, nonce }) => {
               <>
                 <Summary
                   data={data}
-                  isEditing={isEditing}
                   csrf_token={csrf_token}
                   showUpdateNotification={showUpdateNotification}
                 />
@@ -98,7 +94,6 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                   id={id}
                   showUpdateNotification={showUpdateNotification}
                   csrf_token={csrf_token}
-                  isEditing={isEditing}
                   keyPeople={data.key_people}
                 />
                 {data.has_access && (
@@ -109,7 +104,6 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                       title="Company Priorities"
                       emptyMessage="Currently no company priorites are assigned."
                       csrf_token={csrf_token}
-                      isEditing={isEditing}
                       companyPriorities={data.company_priorities}
                       showUpdateNotification={showUpdateNotification}
                     />
@@ -119,7 +113,6 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                       insightType="hmg_priority"
                       emptyMessage="Currently no HMG priorites are assigned."
                       csrf_token={csrf_token}
-                      isEditing={isEditing}
                       companyPriorities={data.hmg_priorities}
                       showUpdateNotification={showUpdateNotification}
                     />

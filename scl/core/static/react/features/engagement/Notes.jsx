@@ -17,7 +17,6 @@ import Update from "../../forms/notes/Update";
 const Notes = ({
   csrf_token,
   data,
-  isEditing,
   showUpdateNotification,
   isUpdatingNotes,
   setIsUpdatingNotes,
@@ -69,7 +68,7 @@ const Notes = ({
   }, [isCreatingNotes]);
 
   const handleOnTranscribe = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     setIsTranscribing(!isTranscribing);
   };
 
@@ -219,7 +218,7 @@ const Notes = ({
             <p className="govuk-body">You currently have no notes.</p>
           ))}
       </LoadingSpinner>
-      {isEditing && isCreatingNotes && (
+      {isCreatingNotes && (
         <Create
           onSubmit={onSubmit}
           setIsCreating={setIsCreatingNotes}
@@ -230,7 +229,7 @@ const Notes = ({
           hasFinalisedTranscription={hasFinalisedTranscription}
         />
       )}
-      {isEditing && isUpdatingNotes && (
+      {isUpdatingNotes && (
         <Update
           data={notes}
           onSubmit={onSubmit}
@@ -238,11 +237,11 @@ const Notes = ({
           setIsUpdating={setIsUpdatingNotes}
         />
       )}
-      {isEditing && !isCreatingNotes && !isUpdatingNotes && (
+      {!isCreatingNotes && !isUpdatingNotes && (
         <SectionActions
           addLabel="Add note"
-          editLabel="Edit note"
           showEdit={Boolean(notes.length)}
+          editLabel={`Edit ${notes.length > 1 ? "notes" : "note"}`}
           setIsCreating={() => setIsCreatingNotes(!isCreatingNotes)}
           setIsUpdating={() => setIsUpdatingNotes(!isUpdatingNotes)}
         />
