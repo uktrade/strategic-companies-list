@@ -113,7 +113,7 @@ class EngagementDetailView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
         return context
 
 
-class CompanyEngagementListView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
+class CompanyEngagementListView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
     model = Company
     template_name = "company_engagements.html"
 
