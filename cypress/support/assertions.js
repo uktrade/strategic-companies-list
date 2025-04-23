@@ -103,3 +103,77 @@ Cypress.Commands.add("assertCompanyBriefingSectionOrder", (sections) => {
     });
   });
 });
+
+/**
+ * Custom Cypress command to assert form validation errors for labeled elements
+ * 
+ * Finds form elements by their exact label text and verifies that the associated
+ * error message is visible and has the correct styling.
+ * 
+ * @param {Object} expectedErrors - Object mapping field labels to their expected error messages
+ * @param {string} expectedErrors.fieldName - The exact label text of the form field
+ * @param {string} expectedErrors.errorMessage - The expected error message text (partial match)
+ * 
+ * @example
+ * // Assert multiple form errors
+ * cy.assertFormErrors({
+ *   "Email address": "Enter a valid email address",
+ *   "Password": "Password must be at least 8 characters",
+ *   "Date of birth": "Enter a valid date"
+ * });
+ * 
+ * // Assert a single form error
+ * cy.assertFormErrors({
+ *   "Full name": "Enter your full name"
+ * });
+ * 
+ * // Works with any labeled form element (inputs, textareas, selects, radios, checkboxes, etc.)
+ */
+Cypress.Commands.add("assertFormErrors", (expectedErrors = {}) => {
+  Object.entries(expectedErrors).forEach(([fieldName, errorMessage]) => {
+    if (errorMessage) {
+      cy.findByLabelText(fieldName, { exact: true })
+        .parent()
+        .within(() => {
+          cy.findByText(errorMessage, { exact: false })
+            .should("be.visible")
+            .and("have.class", "govuk-error-message");
+        });
+    }
+  });
+});
+
+/**
+ * Custom Cypress command to assert the existence and content of a GOV.UK notification banner
+ *
+ * @param {Object} options - The options object
+ * @param {string} [options.title] - The expected title text of the notification banner
+ * @param {string} [options.heading] - The expected heading text within the notification banner
+ *
+ * @example
+ * // Assert banner with both title and heading
+ * cy.assertBanner({
+ *   title: "Important",
+ *   heading: "Your application has been submitted"
+ * });
+ *
+ * // Assert banner with only title
+ * cy.assertBanner({ title: "Success" });
+ *
+ * // Assert banner with only heading
+ * cy.assertBanner({ heading: "Your changes have been saved" });
+ */
+Cypress.Commands.add("assertBanner", ({ title, heading }) => {
+  cy.get('[role="alert"]')
+    .should("exist")
+    .within(() => {
+      if (title) {
+        cy.get("#govuk-notification-banner-title")
+          .should("exist")
+          .and("contain.text", title);
+      }
+      if (heading) {
+        cy.get("h3").should("exist").and("contain.text", heading);
+      }
+    });
+});
