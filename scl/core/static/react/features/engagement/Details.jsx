@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import ApiProxy from "../../proxy";
 
 import Update from "../../forms/engagements/Update";
 import LoadingSpinner from "../../components/Spinner";
+
+import { AccountContext } from "../../providers";
 
 const Details = ({
   data,
@@ -15,6 +17,8 @@ const Details = ({
   setIsUpdatingDetails,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+
+  const { isAccountManager } = useContext(AccountContext);
 
   const ENDPOINT = `/api/v1/engagement/${data.id}`;
 
@@ -58,7 +62,7 @@ const Details = ({
           setIsUpdatingDetails={setIsUpdatingDetails}
         />
       )}
-      {!isUpdatingDetails && (
+      {!isUpdatingDetails && isAccountManager && (
         <div className="govuk-!-margin-top-6">
           <button
             className="govuk-button govuk-button--secondary"

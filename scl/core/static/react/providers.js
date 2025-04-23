@@ -1,7 +1,7 @@
 import React, { createContext } from "react";
 
-export const FlagContext = createContext();
+export const AccountContext = createContext();
 
-export const FeatureFlagContextProvider = ({ flags, children }) => (
-  <FlagContext.Provider value={flags}>{children}</FlagContext.Provider>
+export const AccountContextProvider = ({ values, children }) => (
+  <AccountContext.Provider value={values}>{children}</AccountContext.Provider>
 );

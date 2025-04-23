@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import ApiProxy from "../../proxy";
 import Update from "../../forms/company-details/Update";
 import LoadingSpinner from "../../components/Spinner";
+
+import { AccountContext } from "../../providers";
 
 const CompanyDetails = ({
   data,
@@ -14,6 +16,8 @@ const CompanyDetails = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [companyDetails, setCompanyDetails] = useState(data);
+
+  const { isAccountManager } = useContext(AccountContext);
 
   const ENDPOINT = `/api/v1/company/${data.duns_number}`;
 
@@ -63,7 +67,7 @@ const CompanyDetails = ({
           nonce={nonce}
         />
       )}
-      {!isUpdating && !isAddingEngagement && (
+      {!isUpdating && !isAddingEngagement && isAccountManager && (
         <button
           className="govuk-button govuk-button--secondary"
           onClick={() => setIsUpdating(!isUpdating)}
