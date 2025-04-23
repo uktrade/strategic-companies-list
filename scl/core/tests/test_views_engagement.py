@@ -5,17 +5,18 @@ import reversion
 from django.contrib.auth.models import Group
 from django.test import Client, TestCase
 from django.urls import reverse
+from django.conf import settings
 
 from scl.core.tests import factories
 
 
 class EngagementPageTest(TestCase):
     def setUp(self):
-        self.group = Group.objects.create(name="Basic access")
+        self.group = Group.objects.create(name=settings.BASIC_ACCESS_GROUP)
         self.user = factories.UserFactory.create(
             is_superuser=False, groups=[self.group]
         )
-        self.viewer_group = Group.objects.create(name="Viewer")
+        self.viewer_group = Group.objects.create(name=settings.VIEWER_ACCESS_GROUP)
         self.viewer_user = factories.UserFactory.create(
             groups=[self.viewer_group, self.group]
         )

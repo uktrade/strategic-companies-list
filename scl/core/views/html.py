@@ -3,6 +3,7 @@ import logging
 
 from datetime import date, datetime, timedelta
 
+from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.template.response import TemplateResponse
 from django.views.generic import TemplateView, DetailView
@@ -24,7 +25,7 @@ class ViewerOrCompanyAccountManagerUserMixin(UserPassesTestMixin):
     raise_exception = True
 
     def test_func(self):
-        is_viewer = self.request.user.in_group("Viewer")
+        is_viewer = self.request.user.in_group(settings.VIEWER_ACCESS_GROUP)
         is_account_manager = self.request.user in self.company.account_manager.all()
         return is_viewer or is_account_manager
 
