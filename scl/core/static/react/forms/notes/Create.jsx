@@ -2,8 +2,9 @@ import React, { useContext } from "react";
 
 import { useForm } from "react-hook-form";
 import TranscriptButton from "../../components/TranscriptButton";
-import { FlagContext } from "../../providers";
+import { AccountContext } from "../../providers";
 import { AWS_TRANSCRIBE } from "../../constants";
+import { isFeatureFlagActive } from "../../utils";
 
 const Create = ({
   onSubmit,
@@ -22,10 +23,9 @@ const Create = ({
     formState: { errors },
   } = useForm();
 
-  const flags = useContext(FlagContext);
+  const { featureFlags } = useContext(AccountContext);
 
-  
-  const hasAwsTranscribe = flags.filter((flag) => flag["AWS_TRANSCRIBE"])[0].AWS_TRANSCRIBE;
+  const isAWSTranscribeActive = isFeatureFlagActive(featureFlags, AWS_TRANSCRIBE)
 
   setValue("contents", transcript + " " + partialTranscript);
 
@@ -63,7 +63,7 @@ const Create = ({
           >
             Save
           </button>
-          {hasAwsTranscribe && (
+          {isAWSTranscribeActive && (
             <TranscriptButton
               className="govuk-!-margin-right-4"
               onClick={handleOnTranscribe}

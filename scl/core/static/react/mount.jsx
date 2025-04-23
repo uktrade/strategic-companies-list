@@ -1,7 +1,6 @@
-import React, { StrictMode } from "react";
+import React, { StrictMode, createContext } from "react";
 import { createRoot } from "react-dom/client";
-import { FeatureFlagContextProvider } from "./providers";
-
+import { AccountContextProvider } from "./providers";
 
 const mount = (Component, id) => {
   const rootElement = document.getElementById(id);
@@ -11,9 +10,14 @@ const mount = (Component, id) => {
 
   root.render(
     <StrictMode>
-      <FeatureFlagContextProvider flags={props.data.flags}>
+      <AccountContextProvider
+        values={{
+          featureFlags: props.data.flags,
+          isAccountManager: props.data.is_account_manager,
+        }}
+      >
         <Component {...props} />
-      </FeatureFlagContextProvider>
+      </AccountContextProvider>
     </StrictMode>
   );
 };

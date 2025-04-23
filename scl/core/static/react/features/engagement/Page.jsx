@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import Breadcrumb from "../../components/Breadcrumb";
 import NotificationBanner from "../../components/NotificationBanner";
 import Notes from "./Notes";
 import Details from "./Details";
+
+import { AccountContext } from "../../providers";
 
 const Page = ({ data, csrf_token }) => {
   const [engagement, setEngagement] = useState({
@@ -16,6 +18,8 @@ const Page = ({ data, csrf_token }) => {
   const [isUpdatingDetails, setIsUpdatingDetails] = useState(false);
   const [isUpdatingNotes, setIsUpdatingNotes] = useState(false);
   const [isCreatingNotes, setIsCreatingNotes] = useState(false);
+
+  const { isAccountManager } = useContext(AccountContext);
 
   const showUpdateNotification = (notificationMessage) => {
     setNotificationMessage(notificationMessage);
@@ -52,7 +56,7 @@ const Page = ({ data, csrf_token }) => {
                 setIsUpdatingDetails={setIsUpdatingDetails}
                 showUpdateNotification={showUpdateNotification}
               />
-              {data.is_account_manager && (
+              {isAccountManager && (
                 <Notes
                   csrf_token={csrf_token}
                   data={data}
