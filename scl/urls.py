@@ -70,7 +70,11 @@ urlpatterns = [
         api.add_engagement_api,
         name="add-engagement",
     ),
-    path("api/v1/engagement/<uuid:engagement_id>/note", api.engagement_note_api),
+    path(
+        "api/v1/engagement/<uuid:engagement_id>/note",
+        api.EngagementNoteAPIView.as_view(),
+        name="api-engagement-note",
+    ),
     path(
         "api/v1/key-people/<str:duns_number>",
         api.KeyPeopleAPIView.as_view(),

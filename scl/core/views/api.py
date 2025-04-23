@@ -99,6 +99,11 @@ def aws_temporary_credentials_api(request):
 
 class CompanyAPIView(CompanyAccountManagerUserMixin, View):
 
+    http_method_names = [
+        "get",
+        "patch",
+    ]
+
     @property
     def data(self):
         return json.loads(self.request.body)
@@ -158,6 +163,13 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
 
 
 class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
+
+    http_method_names = [
+        "get",
+        "post",
+        "patch",
+        "delete",
+    ]
 
     @property
     def data(self):
@@ -430,30 +442,40 @@ def add_engagement_api(request, duns_number):
             )
 
 
-def engagement_note_api(request, engagement_id):
-    data = json.loads(request.body)
-    engagement = Engagement.objects.get(id=engagement_id)
+class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
 
-    is_account_manager = request.user in engagement.company.account_manager.all()
+    http_method_names = [
+        "post",
+        "patch",
+        "delete",
+    ]
 
-    if not is_account_manager:
-        return JsonResponse(403, safe=False)
+    @property
+    def data(self):
+        return json.loads(self.request.body)
 
-    if request.method == "PATCH":
+    @property
+    def company(self):
+        return self.engagement.company
+
+    @property
+    def engagement(self):
+        return Engagement.objects.get(id=self.kwargs["engagement_id"])
+
+    def patch(self, *args, **kwargs):
         with reversion.create_revision():
-            for d in data["notes"]:
+            for d in self.data["notes"]:
                 note = EngagementNote.objects.get(id=d.get("noteId"))
-                note.created_by = request.user
+                note.created_by = self.request.user
                 note.contents = d["contents"]
                 note.save()
 
-            updated_engagements = Engagement.objects.get(id=engagement_id)
-            updated_notes = updated_engagements.notes.all()
+            updated_notes = self.engagement.notes.all()
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Note updated"
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
             return JsonResponse(
@@ -469,21 +491,21 @@ def engagement_note_api(request, engagement_id):
                 status=200,
             )
 
-    if request.method == "POST":
+    def post(self, *args, **kwargs):
         with reversion.create_revision():
-            note = EngagementNote.objects.create(
-                contents=data.get("contents").strip(),
-                engagement=engagement,
-                created_by=request.user,
+            EngagementNote.objects.create(
+                contents=self.data.get("contents").strip(),
+                engagement=self.engagement,
+                created_by=self.request.user,
             )
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Note added"
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
-            notes = engagement.notes.all()
+            notes = self.engagement.notes.all()
 
             return JsonResponse(
                 {
@@ -498,18 +520,18 @@ def engagement_note_api(request, engagement_id):
                 status=200,
             )
 
-    if request.method == "DELETE":
+    def delete(self, *args, **kwargs):
         with reversion.create_revision():
-            note = EngagementNote.objects.get(id=data.get("id"))
+            note = EngagementNote.objects.get(id=self.data.get("id"))
             note.delete()
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Note deleted"
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
-            notes = engagement.notes.all()
+            notes = self.engagement.notes.all()
 
             return JsonResponse(
                 {
@@ -526,6 +548,13 @@ def engagement_note_api(request, engagement_id):
 
 
 class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
+
+    http_method_names = [
+        "get",
+        "post",
+        "patch",
+        "delete",
+    ]
 
     @property
     def data(self):

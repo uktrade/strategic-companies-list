@@ -4,12 +4,14 @@ import reversion
 
 from django.urls import reverse
 
-from scl.core.models import Insight
+from scl.core.models import Insight, EngagementNote
 from scl.core.tests import factories
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("method,exp_status", [("get", 200), ("patch", 403)])
+@pytest.mark.parametrize(
+    "method,exp_status", [("get", 200), ("post", 405), ("patch", 403), ("delete", 405)]
+)
 def test_company_api_authorisation(method, exp_status, viewer_user, viewer_user_client):
     with reversion.create_revision():
         company = factories.CompanyFactory()
@@ -275,10 +277,9 @@ def test_key_people_api_methods_authorisation(
         data = {}
         response = getattr(viewer_user_client, method)(
             reverse(
-                "api-company-insight",
+                "api-key-people",
                 kwargs={
                     "duns_number": company_not_acc_manager.duns_number,
-                    "insight_type": Insight.TYPE_HMG_PRIORITY,
                 },
             ),
             json.dumps(data),
@@ -288,10 +289,9 @@ def test_key_people_api_methods_authorisation(
     else:
         response = getattr(viewer_user_client, method)(
             reverse(
-                "api-company-insight",
+                "api-key-people",
                 kwargs={
                     "duns_number": company_not_acc_manager.duns_number,
-                    "insight_type": Insight.TYPE_HMG_PRIORITY,
                 },
             ),
         )
@@ -390,3 +390,122 @@ def test_key_people_api_delete(viewer_user_client, company_acc_manager):
 
     assert "John Smith" not in [d["name"] for d in response_data["data"]]
     assert "CEO" not in [d["role"] for d in response_data["data"]]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "method,exp_status", [("get", 405), ("post", 403), ("patch", 403), ("delete", 403)]
+)
+def test_engagement_note_api_methods_authorisation(
+    method, exp_status, viewer_user_client, company_not_acc_manager
+):
+    engagement = company_not_acc_manager.engagements.first()
+    if method in ["post", "patch", "delete"]:
+        data = {}
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-engagement-note",
+                kwargs={"engagement_id": engagement.id},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+    else:
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-engagement-note",
+                kwargs={"engagement_id": engagement.id},
+            ),
+        )
+
+    assert response.status_code == exp_status
+
+
+@pytest.mark.django_db
+def test_engagement_note_api_post(viewer_user, viewer_user_client, company_acc_manager):
+    engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
+    engagement = engagement_note.engagement
+    # sanity check
+    assert engagement.notes.count() == 2
+    data = {
+        "contents": "   Lorem ipsum 1234  \n",
+    }
+    response = viewer_user_client.post(
+        reverse(
+            "api-engagement-note",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert len(response_data["data"]) == 3
+    assert "Lorem ipsum 1234" in [d["contents"] for d in response_data["data"]]
+
+
+@pytest.mark.django_db
+def test_engagement_note_api_patch(
+    viewer_user, viewer_user_client, company_acc_manager
+):
+    engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
+    engagement = engagement_note.engagement
+    # sanity check
+    assert engagement.notes.count() == 2
+    data = {
+        "notes": [
+            {
+                "contents": "Lorem ipsum",
+                "noteId": str(engagement_note.id),
+            }
+        ]
+    }
+    response = viewer_user_client.patch(
+        reverse(
+            "api-engagement-note",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert len(response_data["data"]) == 2
+
+    updated = [
+        d for d in response_data["data"] if d["noteId"] == str(engagement_note.id)
+    ][0]
+    assert updated["contents"] == "Lorem ipsum"
+
+
+@pytest.mark.django_db
+def test_engagement_note_api_delete(
+    viewer_user, viewer_user_client, company_acc_manager
+):
+    engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
+    engagement = engagement_note.engagement
+    # sanity check
+    assert engagement.notes.count() == 2
+    data = {
+        "id": str(engagement_note.id),
+    }
+    response = viewer_user_client.delete(
+        reverse(
+            "api-engagement-note",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert len(response_data["data"]) == 1
+
+    assert str(engagement_note.id) not in [d["noteId"] for d in response_data["data"]]
