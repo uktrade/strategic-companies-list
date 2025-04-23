@@ -1,6 +1,7 @@
 import pytest
 import reversion
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 
 from scl.core.tests import factories
@@ -9,13 +10,13 @@ from scl.core.tests import factories
 @pytest.fixture
 @pytest.mark.django_db
 def basic_access_group():
-    return Group.objects.create(name="Basic access")
+    return Group.objects.create(name=settings.BASIC_ACCESS_GROUP)
 
 
 @pytest.fixture
 @pytest.mark.django_db
 def viewer_group():
-    return Group.objects.create(name="Viewer")
+    return Group.objects.create(name=settings.VIEWER_ACCESS_GROUP)
 
 
 @pytest.fixture

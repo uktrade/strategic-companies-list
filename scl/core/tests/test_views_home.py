@@ -1,6 +1,8 @@
 import re
 from datetime import datetime
 
+from django.conf import settings
+
 import pytest
 import reversion
 from bs4 import BeautifulSoup
@@ -16,7 +18,7 @@ from scl.core.views import html
 
 class HomePageTest(TestCase):
     def setUp(self):
-        self.group = Group.objects.create(name="Basic access")
+        self.group = Group.objects.create(name=settings.BASIC_ACCESS_GROUP)
         self.user = factories.UserFactory.create(
             is_superuser=False, groups=[self.group]
         )
