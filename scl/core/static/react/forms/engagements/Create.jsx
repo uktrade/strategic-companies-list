@@ -75,6 +75,7 @@ const Create = ({ onSubmit, setIsAddingEngagement }) => {
             Save
           </button>
           <button
+            type="button"
             className="govuk-button govuk-button--secondary"
             onClick={() => setIsAddingEngagement(false)}
           >
