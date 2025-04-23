@@ -18,7 +18,7 @@ module.exports = {
   context: __dirname,
   entry: {
     scl: "./scl/core/static/scl.js",
-    browser: "./scl/core/static/browser.js",
+    'aws-transcribe': "./scl/core/static/aws-transcribe.js",
     ...REACT_APPS,
   },
   output: {

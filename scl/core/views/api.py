@@ -52,17 +52,15 @@ class CompanyAccountManagerUserMixin(UserPassesTestMixin):
         return handler(request, *args, **kwargs)
 
 
-def aws_credentials_api(request, duns_number):
+def aws_temporary_credentials_api(request):
     if settings.DISABLE_TRANSCRIBE:
         return JsonResponse(
             {},
             status=503,
         )
 
-    company = Company.objects.get(duns_number=duns_number)
-
-    account_managers = list(company.account_manager.all())
-    is_account_manager = request.user in account_managers
+    is_account_manager = Company.objects.filter(
+        account_manager=request.user).exists()
 
     if not is_account_manager:
         return JsonResponse(403, safe=False)

@@ -24,7 +24,8 @@ const Create = ({
 
   const flags = useContext(FlagContext);
 
-  const hasAwsTranscribe = flags[0][AWS_TRANSCRIBE];
+  
+  const hasAwsTranscribe = flags.filter((flag) => flag["AWS_TRANSCRIBE"])[0].AWS_TRANSCRIBE;
 
   setValue("contents", transcript + " " + partialTranscript);
 

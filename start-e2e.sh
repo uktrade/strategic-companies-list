@@ -12,6 +12,7 @@ echo "--- e2e ---"
 python manage.py migrate
 python manage.py createinitialrevisions
 python manage.py creategroups
+python manage.py waffle_flag AWS_TRANSCRIBE --everyone --create
 
 # Get/Create the same user that mock-sso creates, set as staff, superuser, and with Basic and Viewer access.
 python manage.py shell << EOF
