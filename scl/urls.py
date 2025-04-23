@@ -71,12 +71,14 @@ urlpatterns = [
         name="add-engagement",
     ),
     path("api/v1/engagement/<uuid:engagement_id>/note", api.engagement_note_api),
-    path("api/v1/aws-credentials", api.aws_credentials_api),
     path(
         "api/v1/key-people/<str:duns_number>",
         api.KeyPeopleAPIView.as_view(),
         name="api-key-people",
     ),
+    path("api/v1/aws-temporary-credentials",
+         api.aws_temporary_credentials_api),
+    path("api/v1/key-people/<str:duns_number>", api.key_people_api),
     # Healthcheck
     path("lb-healthcheck", healthcheck.lb_healthcheck),
     path("pingdom/ping.xml", healthcheck.healthcheck),

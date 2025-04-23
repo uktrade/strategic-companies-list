@@ -6,16 +6,16 @@ import { Readable } from 'readable-stream'
   const client = new TranscribeStreamingClient({
     region: "eu-west-2",
     credentials: (async function() {
-      const response = await (await fetch('/api/v1/aws-credentials')).json()
-      const credentials = {
+      const response = await (
+        await fetch("/api/v1/aws-temporary-credentials")
+      ).json();
+      const temporaryCredentials = {
         accessKeyId: response.AccessKeyId,
         secretAccessKey: response.SecretAccessKey,
+        sessionToken :response.SessionToken,
+        expiration: new Date(Date.parse(response.Expiration)),
       }
-      if (!!response.SessionToken && !!response.Expiration) {
-        credentials.sessionToken = response.SessionToken;
-        credentials.expiration = new Date(Date.parse(response.Expiration));
-      }
-      return credentials;
+      return temporaryCredentials;
     })
   });
 
