@@ -115,8 +115,7 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
             if self.data.get("title"):
                 company.name = self.data.get("title").strip()
             if self.data.get("sectors"):
-                company.sectors = [key["value"]
-                                   for key in self.data.get("sectors")]
+                company.sectors = [key["value"] for key in self.data.get("sectors")]
             if self.data.get("summary"):
                 company.summary = self.data.get("summary").strip()
             company.save()
@@ -176,8 +175,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             insight.delete()
 
             updated_insights = list(
-                self.company.insights.filter(
-                    insight_type=self.kwargs["insight_type"])
+                self.company.insights.filter(insight_type=self.kwargs["insight_type"])
             )
 
             reversion.set_user(self.request.user)
@@ -209,8 +207,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
                 insight.save()
 
             updated_insights = list(
-                self.company.insights.filter(
-                    insight_type=self.kwargs["insight_type"])
+                self.company.insights.filter(insight_type=self.kwargs["insight_type"])
             )
 
             reversion.set_user(self.request.user)
@@ -244,8 +241,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             )
 
             updated_insights = list(
-                self.company.insights.filter(
-                    insight_type=self.kwargs["insight_type"])
+                self.company.insights.filter(insight_type=self.kwargs["insight_type"])
             )
 
             reversion.set_user(self.request.user)
@@ -478,7 +474,9 @@ def engagement_note_api(request, engagement_id):
     if request.method == "POST":
         with reversion.create_revision():
             note = EngagementNote.objects.create(
-                contents=data.get("contents").strip(), engagement=engagement, created_by=request.user
+                contents=data.get("contents").strip(),
+                engagement=engagement,
+                created_by=request.user,
             )
 
             reversion.set_user(request.user)
@@ -529,31 +527,29 @@ def engagement_note_api(request, engagement_id):
             )
 
 
-def key_people_api(request, duns_number):
-    company = Company.objects.get(duns_number=duns_number)
+class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
 
-    account_managers = list(company.account_manager.all())
-    key_people = list(company.key_people.all())
+    @property
+    def data(self):
+        return json.loads(self.request.body)
 
-    is_account_manger = request.user in account_managers
+    @property
+    def company(self):
+        return Company.objects.get(duns_number=self.kwargs["duns_number"])
 
-    if not is_account_manger:
-        return JsonResponse(403, safe=False)
-
-    if request.method == "POST":
+    def post(self, *args, **kwargs):
         with reversion.create_revision():
-            data = json.loads(request.body)
-
-            person = KeyPeople.objects.create(
-                name=data.get("name"), role=data.get("role"), company=company
+            KeyPeople.objects.create(
+                name=self.data.get("name"),
+                role=self.data.get("role"),
+                company=self.company,
             )
+            updated_people = list(self.company.key_people.all().order_by("name"))
 
-            updated_people = list(company.key_people.all())
-
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Person created"
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
             return JsonResponse(
                 {
@@ -565,19 +561,17 @@ def key_people_api(request, duns_number):
                 status=200,
             )
 
-    if request.method == "DELETE":
+    def delete(self, *args, **kwargs):
         with reversion.create_revision():
-            data = json.loads(request.body)
-
-            person = KeyPeople.objects.get(id=data["id"])
+            person = KeyPeople.objects.get(id=self.data["id"])
             person.delete()
 
-            updated_people = list(company.key_people.all())
+            updated_people = list(self.company.key_people.all())
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Person deleted"
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
             return JsonResponse(
                 {
@@ -589,21 +583,20 @@ def key_people_api(request, duns_number):
                 status=200,
             )
 
-    if request.method == "PATCH":
+    def patch(self, *args, **kwargs):
         with reversion.create_revision():
-            data = json.loads(request.body)
-            for d in data:
+            for d in self.data:
                 person = KeyPeople.objects.get(id=d["userId"])
                 person.name = d["name"]
                 person.role = d["role"]
                 person.save()
 
-            updated_people = list(company.key_people.all())
+            updated_people = list(self.company.key_people.all())
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Key people updated"
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
             return JsonResponse(
                 {
@@ -615,7 +608,8 @@ def key_people_api(request, duns_number):
                 status=200,
             )
 
-    if request.method == "GET":
+    def get(self, *args, **kwargs):
+        key_people = list(self.company.key_people.all())
         return JsonResponse(
             {
                 "keyPeople": [

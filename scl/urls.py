@@ -60,7 +60,11 @@ urlpatterns = [
         name="api-company-insight",
     ),
     path("api/v1/insights/<uuid:insight_id>", api.insight_api),
-    path("api/v1/engagement/<uuid:engagement_id>", api.engagement_api, name="engagement_api"),
+    path(
+        "api/v1/engagement/<uuid:engagement_id>",
+        api.engagement_api,
+        name="engagement_api",
+    ),
     path(
         "api/v1/engagement/<str:duns_number>",
         api.add_engagement_api,
@@ -68,7 +72,11 @@ urlpatterns = [
     ),
     path("api/v1/engagement/<uuid:engagement_id>/note", api.engagement_note_api),
     path("api/v1/aws-credentials", api.aws_credentials_api),
-    path("api/v1/key-people/<str:duns_number>", api.key_people_api),
+    path(
+        "api/v1/key-people/<str:duns_number>",
+        api.KeyPeopleAPIView.as_view(),
+        name="api-key-people",
+    ),
     # Healthcheck
     path("lb-healthcheck", healthcheck.lb_healthcheck),
     path("pingdom/ping.xml", healthcheck.healthcheck),

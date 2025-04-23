@@ -102,17 +102,23 @@ class EngagementPageTest(TestCase):
 
 @pytest.mark.django_db
 def test_engagement_list_page_basic_access_unauthorised(
-    basic_access_user_client, company
+    basic_access_user_client, company_acc_manager
 ):
     response = basic_access_user_client.get(
-        reverse("company-engagements", kwargs={"duns_number": company.duns_number})
+        reverse(
+            "company-engagements",
+            kwargs={"duns_number": company_acc_manager.duns_number},
+        )
     )
     assert response.status_code == 403
 
 
 @pytest.mark.django_db
-def test_engagement_list_page_viewer_access(viewer_user_client, company):
+def test_engagement_list_page_viewer_access(viewer_user_client, company_acc_manager):
     response = viewer_user_client.get(
-        reverse("company-engagements", kwargs={"duns_number": company.duns_number})
+        reverse(
+            "company-engagements",
+            kwargs={"duns_number": company_acc_manager.duns_number},
+        )
     )
     assert response.status_code == 200

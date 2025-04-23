@@ -4,7 +4,6 @@ import reversion
 
 from django.urls import reverse
 
-from scl.core.constants import COUNTRIES_AND_TERRITORIES, SECTORS
 from scl.core.models import Insight
 from scl.core.tests import factories
 
@@ -36,19 +35,15 @@ def test_company_api_authorisation(method, exp_status, viewer_user, viewer_user_
     "method,exp_status", [("get", 200), ("post", 403), ("patch", 403), ("delete", 403)]
 )
 def test_company_insight_api_authorisation(
-    method, exp_status, viewer_user, viewer_user_client
+    method, exp_status, viewer_user_client, company_not_acc_manager
 ):
-    with reversion.create_revision():
-        company = factories.CompanyFactory()
-        reversion.set_user(viewer_user)
-
-    if method in ["post", "patch"]:
+    if method in ["post", "patch", "delete"]:
         data = {}
         response = getattr(viewer_user_client, method)(
             reverse(
                 "api-company-insight",
                 kwargs={
-                    "duns_number": company.duns_number,
+                    "duns_number": company_not_acc_manager.duns_number,
                     "insight_type": Insight.TYPE_HMG_PRIORITY,
                 },
             ),
@@ -61,7 +56,7 @@ def test_company_insight_api_authorisation(
             reverse(
                 "api-company-insight",
                 kwargs={
-                    "duns_number": company.duns_number,
+                    "duns_number": company_not_acc_manager.duns_number,
                     "insight_type": Insight.TYPE_HMG_PRIORITY,
                 },
             ),
@@ -71,14 +66,7 @@ def test_company_insight_api_authorisation(
 
 
 @pytest.mark.django_db
-def test_company_api_patch(viewer_user, viewer_user_client):
-    with reversion.create_revision():
-        company = factories.CompanyFactory()
-        reversion.set_user(viewer_user)
-        factories.CompanyAccountManagerFactory.create(
-            company=company, account_manager=viewer_user
-        )
-
+def test_company_api_patch(viewer_user_client, company_acc_manager):
     data = {
         "summary": "Lorem ipsum dolor sit amet",
         "title": "Company name",
@@ -89,7 +77,7 @@ def test_company_api_patch(viewer_user, viewer_user_client):
     }
 
     response = viewer_user_client.patch(
-        reverse("api-company", kwargs={"duns_number": company.duns_number}),
+        reverse("api-company", kwargs={"duns_number": company_acc_manager.duns_number}),
         json.dumps(data),
     )
 
@@ -104,32 +92,25 @@ def test_company_api_patch(viewer_user, viewer_user_client):
 
 
 @pytest.mark.django_db
-def test_company_api_get(viewer_user, viewer_user_client):
-    with reversion.create_revision():
-        company = factories.CompanyFactory()
-        reversion.set_user(viewer_user)
-        factories.CompanyAccountManagerFactory.create(
-            company=company, account_manager=viewer_user
-        )
-
+def test_company_api_get(viewer_user_client, company_acc_manager):
     response = viewer_user_client.get(
-        reverse("api-company", kwargs={"duns_number": company.duns_number}),
+        reverse("api-company", kwargs={"duns_number": company_acc_manager.duns_number}),
     )
 
     assert response.status_code == 200
     response_data = json.loads(response.content)
-    assert response_data["data"]["title"] == company.name
-    assert response_data["data"]["duns_number"] == company.duns_number
-    assert response_data["data"]["summary"] == company.summary
+    assert response_data["data"]["title"] == company_acc_manager.name
+    assert response_data["data"]["duns_number"] == company_acc_manager.duns_number
+    assert response_data["data"]["summary"] == company_acc_manager.summary
 
 
 @pytest.mark.django_db
-def test_company_insight_api_get(viewer_user_client, company):
+def test_company_insight_api_get(viewer_user_client, company_acc_manager):
     response_hmg = viewer_user_client.get(
         reverse(
             "api-company-insight",
             kwargs={
-                "duns_number": company.duns_number,
+                "duns_number": company_acc_manager.duns_number,
                 "insight_type": Insight.TYPE_HMG_PRIORITY,
             },
         ),
@@ -141,7 +122,7 @@ def test_company_insight_api_get(viewer_user_client, company):
     assert len(response_data["insights"]) == 6
     assert {
         str(i)
-        for i in company.insights.filter(
+        for i in company_acc_manager.insights.filter(
             insight_type=Insight.TYPE_HMG_PRIORITY
         ).values_list(
             "id",
@@ -153,7 +134,7 @@ def test_company_insight_api_get(viewer_user_client, company):
         reverse(
             "api-company-insight",
             kwargs={
-                "duns_number": company.duns_number,
+                "duns_number": company_acc_manager.duns_number,
                 "insight_type": Insight.TYPE_COMPANY_PRIORITY,
             },
         ),
@@ -165,7 +146,7 @@ def test_company_insight_api_get(viewer_user_client, company):
     assert len(response_data["insights"]) == 5
     assert {
         str(i)
-        for i in company.insights.filter(
+        for i in company_acc_manager.insights.filter(
             insight_type=Insight.TYPE_COMPANY_PRIORITY
         ).values_list(
             "id",
@@ -175,9 +156,14 @@ def test_company_insight_api_get(viewer_user_client, company):
 
 
 @pytest.mark.django_db
-def test_company_insight_api_post(viewer_user_client, company):
+def test_company_insight_api_post(viewer_user_client, company_acc_manager):
     # sanity check
-    assert company.insights.filter(insight_type=Insight.TYPE_HMG_PRIORITY).count() == 6
+    assert (
+        company_acc_manager.insights.filter(
+            insight_type=Insight.TYPE_HMG_PRIORITY
+        ).count()
+        == 6
+    )
 
     data = {
         "title": "Foo",
@@ -187,7 +173,7 @@ def test_company_insight_api_post(viewer_user_client, company):
         reverse(
             "api-company-insight",
             kwargs={
-                "duns_number": company.duns_number,
+                "duns_number": company_acc_manager.duns_number,
                 "insight_type": Insight.TYPE_HMG_PRIORITY,
             },
         ),
@@ -204,9 +190,11 @@ def test_company_insight_api_post(viewer_user_client, company):
 
 
 @pytest.mark.django_db
-def test_company_insight_api_patch(viewer_user_client, company):
+def test_company_insight_api_patch(viewer_user_client, company_acc_manager):
     # sanity check
-    existing_insights = company.insights.filter(insight_type=Insight.TYPE_HMG_PRIORITY)
+    existing_insights = company_acc_manager.insights.filter(
+        insight_type=Insight.TYPE_HMG_PRIORITY
+    )
     assert existing_insights.count() == 6
 
     data = [
@@ -225,7 +213,7 @@ def test_company_insight_api_patch(viewer_user_client, company):
         reverse(
             "api-company-insight",
             kwargs={
-                "duns_number": company.duns_number,
+                "duns_number": company_acc_manager.duns_number,
                 "insight_type": Insight.TYPE_HMG_PRIORITY,
             },
         ),
@@ -244,9 +232,11 @@ def test_company_insight_api_patch(viewer_user_client, company):
 
 
 @pytest.mark.django_db
-def test_company_insight_api_delete(viewer_user_client, company):
+def test_company_insight_api_delete(viewer_user_client, company_acc_manager):
     # sanity check
-    existing_insights = company.insights.filter(insight_type=Insight.TYPE_HMG_PRIORITY)
+    existing_insights = company_acc_manager.insights.filter(
+        insight_type=Insight.TYPE_HMG_PRIORITY
+    )
     assert existing_insights.count() == 6
 
     insight_to_delete = existing_insights[0]
@@ -259,7 +249,7 @@ def test_company_insight_api_delete(viewer_user_client, company):
         reverse(
             "api-company-insight",
             kwargs={
-                "duns_number": company.duns_number,
+                "duns_number": company_acc_manager.duns_number,
                 "insight_type": Insight.TYPE_HMG_PRIORITY,
             },
         ),
@@ -272,3 +262,131 @@ def test_company_insight_api_delete(viewer_user_client, company):
 
     assert insight_id not in [i["insightId"] for i in response_data["data"]]
     assert len(response_data["data"]) == 5
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "method,exp_status", [("get", 200), ("post", 403), ("patch", 403), ("delete", 403)]
+)
+def test_key_people_api_methods_authorisation(
+    method, exp_status, viewer_user_client, company_not_acc_manager
+):
+    if method in ["post", "patch", "delete"]:
+        data = {}
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-company-insight",
+                kwargs={
+                    "duns_number": company_not_acc_manager.duns_number,
+                    "insight_type": Insight.TYPE_HMG_PRIORITY,
+                },
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+    else:
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-company-insight",
+                kwargs={
+                    "duns_number": company_not_acc_manager.duns_number,
+                    "insight_type": Insight.TYPE_HMG_PRIORITY,
+                },
+            ),
+        )
+
+    assert response.status_code == exp_status
+
+
+@pytest.mark.django_db
+def test_key_people_api_get(viewer_user_client, company_acc_manager):
+    response = viewer_user_client.get(
+        reverse(
+            "api-key-people", kwargs={"duns_number": company_acc_manager.duns_number}
+        )
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert len(response_data["keyPeople"]) == company_acc_manager.key_people.count()
+
+
+@pytest.mark.django_db
+def test_key_people_api_post(viewer_user_client, company_acc_manager):
+    # sanity check
+    assert company_acc_manager.key_people.count() == 3
+    data = {
+        "name": "John Smith",
+        "role": "CEO",
+    }
+    response = viewer_user_client.post(
+        reverse(
+            "api-key-people", kwargs={"duns_number": company_acc_manager.duns_number}
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert len(response_data["data"]) == 4
+    assert "John Smith" in [d["name"] for d in response_data["data"]]
+    assert "CEO" in [d["role"] for d in response_data["data"]]
+
+
+@pytest.mark.django_db
+def test_key_people_api_patch(viewer_user_client, company_acc_manager):
+    # sanity check
+    assert company_acc_manager.key_people.count() == 3
+    key_person = company_acc_manager.key_people.first()
+    data = [
+        {
+            "name": "John Smith",
+            "role": "CEO",
+            "userId": str(key_person.id),
+        }
+    ]
+    response = viewer_user_client.patch(
+        reverse(
+            "api-key-people", kwargs={"duns_number": company_acc_manager.duns_number}
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert len(response_data["data"]) == 3
+
+    updated = [d for d in response_data["data"] if d["userId"] == str(key_person.id)][0]
+    assert updated["name"] == "John Smith"
+    assert updated["role"] == "CEO"
+
+
+@pytest.mark.django_db
+def test_key_people_api_delete(viewer_user_client, company_acc_manager):
+    # sanity check
+    assert company_acc_manager.key_people.count() == 3
+    key_person = company_acc_manager.key_people.first()
+    data = {
+        "id": str(key_person.id),
+    }
+    response = viewer_user_client.delete(
+        reverse(
+            "api-key-people", kwargs={"duns_number": company_acc_manager.duns_number}
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert len(response_data["data"]) == 2
+
+    assert "John Smith" not in [d["name"] for d in response_data["data"]]
+    assert "CEO" not in [d["role"] for d in response_data["data"]]
