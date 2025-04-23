@@ -1,20 +1,21 @@
-from datetime import date, datetime
-from scl.core.constants import SECTORS
-from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
 import json
+import logging
 import time
 import uuid
-import logging
-import waffle
+from datetime import date, datetime
 
 import boto3
+import reversion
+import waffle
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import JsonResponse
 from django.views import View
+from rest_framework import permissions, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-import reversion
-
+from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
 from scl.core.views.utils import get_all_sectors, get_company_sectors
 
 today = date.today()
@@ -358,48 +359,54 @@ def insight_api(request, insight_id):
         return JsonResponse({"status": "success"})
 
 
-def engagement_api(request, engagement_id):
-    data = json.loads(request.body)
-    engagement = Engagement.objects.get(id=engagement_id)
+class EngagementAPI(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    account_managers = engagement.company.account_manager.all()
-    is_account_manager = request.user in account_managers
+    def get_company_and_check_permission(self, request, company):
+        is_acount_manager = request.user in company.account_manager.all()
+        if not is_acount_manager:
+            return Response("Forbidden", status=status.HTTP_403_FORBIDDEN)
+        return None
 
-    if not is_account_manager:
-        return JsonResponse("Forbidden", status=403, safe=False)
-
-    if request.method == "PATCH":
+    def patch(self, request, engagement_id):
+        data = request.data
+        try:
+            engagement = Engagement.objects.get(id=engagement_id)
+        except Engagement.DoesNotExist:
+            return Response("Company not found", status=404)
+        error_response = self.get_company_and_check_permission(
+            request, engagement.company
+        )
+        if error_response:
+            return error_response
         with reversion.create_revision():
             engagement.title = data.get("title").strip()
             engagement.details = data.get("details").strip()
             engagement.save()
-
             reversion.set_user(request.user)
             reversion.set_comment(
                 "Updated title, and details via API "
                 f"({request.build_absolute_uri()} from {request.headers.get('referer')})"
             )
+            return JsonResponse(
+                {
+                    "data": {
+                        "title": engagement.title,
+                        "details": engagement.details,
+                    }
+                },
+                status=200,
+            )
 
-    return JsonResponse(
-        {
-            "data": {
-                "title": engagement.title,
-                "details": engagement.details,
-            }
-        },
-        status=200,
-    )
-
-
-def add_engagement_api(request, duns_number):
-    data = json.loads(request.body)
-    company = Company.objects.get(duns_number=duns_number)
-    is_account_manager = request.user in company.account_manager.all()
-
-    if not is_account_manager:
-        return JsonResponse(403, safe=False)
-
-    if request.method == "POST":
+    def post(self, request, duns_number):
+        data = request.data
+        try:
+            company = Company.objects.get(duns_number=duns_number)
+        except Company.DoesNotExist:
+            return Response("Company not found", status=404)
+        error_response = self.get_company_and_check_permission(request, company)
+        if error_response:
+            return error_response
         with reversion.create_revision():
             title = data.get("title")
             date = datetime.strptime(data.get("date"), "%Y-%m-%d").date()

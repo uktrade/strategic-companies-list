@@ -5,6 +5,7 @@ django-csp
 django_extensions
 django-reversion
 django-staff-sso-client
+djangorestframework
 sentry-sdk
 uvicorn
 gunicorn
