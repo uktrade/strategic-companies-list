@@ -27,9 +27,9 @@ describe("Company Briefing page", () => {
 
   it("asserts the summary section", () => {
     cy.assertCompanyBriefingSection("Summary", {
-        content: "Currently this company has no summary.",
-        buttonName: "Add summary",
-      });
+      content: "Currently this company has no summary.",
+      buttonName: "Add summary",
+    });
   });
 
   it("asserts the Key Facts section", () => {
@@ -99,5 +99,104 @@ describe("Company Briefing page", () => {
       "Engagements",
       "SCIT administrators",
     ]);
+  });
+});
+
+describe("Adding an engagement", () => {
+  const fillAndSubmitForm = (
+    { title, date, details },
+    { shouldSubmit, shouldCancel }
+  ) => {
+    cy.findByRole("heading", { name: "Add engagement" })
+      .parent()
+      .within(() => {
+        if (title) {
+          cy.findByLabelText("Title").type(title);
+        }
+
+        if (date) {
+          cy.findByLabelText("Date").type(date);
+        }
+
+        if (details) {
+          cy.findByLabelText("Details").type(details);
+        }
+
+        if (shouldSubmit) {
+          cy.findByRole("button", { name: "Save" }).click();
+        } else if (shouldCancel) {
+          cy.findByRole("button", { name: "Cancel" }).click();
+        }
+      });
+  };
+
+  const assertEngagementList = (expectedItems = []) => {
+    cy.findByRole("heading", { name: "Engagements" })
+      .closest("section")
+      .within(() => {
+        expectedItems.forEach((item, index) => {
+          cy.findAllByRole("listitem")
+            .eq(index)
+            .within(() => {
+              cy.findByRole("link").within(() => {
+                cy.findByText(item.date).should("exist");
+                cy.findByText(item.text).should("exist");
+              });
+            });
+        });
+      });
+  };
+
+  const assertViewAllEngagementsLink = () => {
+    cy.findByRole("heading", { name: "Engagements" })
+      .closest("section")
+      .within(() => {
+        cy.findByText("View all engagements")
+          .should("exist")
+          .and(
+            "have.attr",
+            "href",
+            `/company-briefing/${company.testingCorp.duns_number}/engagements`
+          );
+      });
+  };
+
+  it("should render error messages", () => {
+    cy.visit(`/company-briefing/${company.testingCorp.duns_number}`);
+    cy.findByRole("button", { name: "Add engagement" }).click();
+    fillAndSubmitForm(
+      {
+        title: "",
+        date: "",
+        details: "",
+      },
+      { shouldSubmit: true }
+    );
+    cy.assertFormErrors({
+      Title: "Title is required",
+      Date: "Date is required",
+      Details: "Details are required",
+    });
+  });
+
+  it("should add an engagement", () => {
+    cy.visit(`/company-briefing/${company.testingCorp.duns_number}`);
+    cy.findByRole("button", { name: "Add engagement" }).click();
+    fillAndSubmitForm(
+      {
+        title: "My engagement title",
+        date: "2026-12-03",
+        details: "My engagement details",
+      },
+      { shouldSubmit: true }
+    );
+    cy.assertBanner({
+      title: "Saved",
+      heading: "Engagement added",
+    });
+    assertEngagementList([
+      { date: "December 03, 2026", text: "My engagement title" },
+    ]);
+    assertViewAllEngagementsLink();
   });
 });
