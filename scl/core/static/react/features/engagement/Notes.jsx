@@ -40,7 +40,7 @@ const Notes = ({
     client.current = new TranscribeStreamingClient({
       region: "eu-west-2",
       credentials: async function () {
-        const response = await (await fetch("/api/v1/aws-credentials")).json();
+        const response = await (await fetch("/api/v1/aws-temporary-credentials")).json();
         const credentials = {
           accessKeyId: response.AccessKeyId,
           secretAccessKey: response.SecretAccessKey,
