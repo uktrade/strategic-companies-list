@@ -102,7 +102,7 @@ describe("Company Briefing page", () => {
   });
 });
 
-describe("Adding an engagement", () => {
+describe("Add/edit an engagement", () => {
   const fillAndSubmitForm = (
     { title, date, details },
     { shouldSubmit, shouldCancel }
@@ -198,5 +198,26 @@ describe("Adding an engagement", () => {
       { date: "December 03, 2026", text: "My engagement title" },
     ]);
     assertViewAllEngagementsLink();
+  });
+
+  it("should edit an engagement (fixes a typo)", () => {
+    cy.visit(`/company-briefing/${company.testingCorp.duns_number}`);
+    cy.clickButton("Add engagement");
+    fillAndSubmitForm(
+      {
+        title: "My engagement tite", // typo
+        date: "2026-12-03",
+        details: "My engagement details",
+      },
+      { shouldSubmit: true }
+    );
+    cy.clickLink('December 03, 2026 My engagement tite');
+    cy.clickButton("Edit details");
+    cy.findByLabelText("Title").type("My engagement title"); // typo fixed
+    cy.clickButton("Save");
+    cy.assertBanner({
+      title: "Saved",
+      heading: "Engagement updated",
+    });
   });
 });
