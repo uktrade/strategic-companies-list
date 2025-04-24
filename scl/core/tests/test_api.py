@@ -509,3 +509,108 @@ def test_engagement_note_api_delete(
     assert len(response_data["data"]) == 1
 
     assert str(engagement_note.id) not in [d["noteId"] for d in response_data["data"]]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "method,exp_status", [("get", 200), ("post", 405), ("patch", 403), ("delete", 403)]
+)
+def test_insight_api_methods_authorisation(
+    method, exp_status, viewer_user_client, company_not_acc_manager
+):
+    insight = company_not_acc_manager.insights.first()
+    if method in ["post", "patch", "delete"]:
+        data = {}
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-insight",
+                kwargs={"insight_id": insight.id},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+    else:
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-insight",
+                kwargs={"insight_id": insight.id},
+            ),
+        )
+
+    assert response.status_code == exp_status
+
+
+@pytest.mark.django_db
+def test_insight_api_get(viewer_user_client, company_acc_manager):
+    insight = company_acc_manager.insights.first()
+    response = viewer_user_client.get(
+        reverse(
+            "api-insight",
+            kwargs={"insight_id": insight.id},
+        ),
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+
+    assert response_data["id"] == str(insight.id)
+    assert response_data["title"] == insight.title
+    assert response_data["details"] == insight.details
+    assert response_data["created_by"] == insight.created_by.get_full_name()
+    assert response_data["created_at"] == insight.created_at.isoformat()
+    assert response_data["order"] == insight.order
+
+
+@pytest.mark.django_db
+def test_insight_api_patch(viewer_user_client, company_acc_manager):
+    insight = company_acc_manager.insights.first()
+    # sanity check
+    assert company_acc_manager.insights.count() == 11
+    data = {
+        "title": "Foo",
+        "details": "Lorem ipsum dolor sit amet",
+        "order": 1,
+    }
+    response = viewer_user_client.patch(
+        reverse(
+            "api-insight",
+            kwargs={"insight_id": insight.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert company_acc_manager.insights.count() == 11
+
+    assert response_data["id"] == str(insight.id)
+    assert response_data["title"] == "Foo"
+    assert response_data["details"] == "Lorem ipsum dolor sit amet"
+    assert response_data["created_by"] == insight.created_by.get_full_name()
+    assert response_data["created_at"] == insight.created_at.isoformat()
+    assert response_data["order"] == 1
+
+
+@pytest.mark.django_db
+def test_insight_api_delete(viewer_user_client, company_acc_manager):
+    insight = company_acc_manager.insights.first()
+    # sanity check
+    assert company_acc_manager.insights.count() == 11
+
+    response = viewer_user_client.delete(
+        reverse(
+            "api-insight",
+            kwargs={"insight_id": insight.id},
+        ),
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert company_acc_manager.insights.count() == 10
+
+    assert response_data["status"] == "success"

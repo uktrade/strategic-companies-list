@@ -11,6 +11,7 @@ import boto3
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views import View
 
 import reversion
@@ -59,8 +60,7 @@ def aws_temporary_credentials_api(request):
             status=503,
         )
 
-    is_account_manager = Company.objects.filter(
-        account_manager=request.user).exists()
+    is_account_manager = Company.objects.filter(account_manager=request.user).exists()
 
     if not is_account_manager:
         return JsonResponse(403, safe=False)
@@ -297,46 +297,54 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
         )
 
 
-def insight_api(request, insight_id):
-    try:
-        insight = Insight.objects.get(id=insight_id)
-    except Insight.DoesNotExist:
-        return JsonResponse({"error": "Insight not found"}, status=404)
+class InsightAPIView(CompanyAccountManagerUserMixin, View):
 
-    account_managers = list(insight.company.account_manager.all())
-    is_account_manager = request.user in account_managers
-    if not is_account_manager:
-        return JsonResponse(403, safe=False)
+    http_method_names = [
+        "get",
+        "patch",
+        "delete",
+    ]
 
-    if request.method == "GET":
+    @property
+    def company(self):
+        return self.insight.company
+
+    @property
+    def insight(self):
+        return get_object_or_404(Insight, id=self.kwargs["insight_id"])
+
+    @property
+    def data(self):
+        return json.loads(self.request.body)
+
+    def get(self, *args, **kwargs):
         return JsonResponse(
             {
-                "id": str(insight.id),
-                "title": insight.title,
-                "details": insight.details,
-                "created_by": f"{insight.created_by.first_name} {insight.created_by.last_name}",
-                "created_at": insight.created_at.isoformat(),
-                "order": insight.order,
+                "id": str(self.insight.id),
+                "title": self.insight.title,
+                "details": self.insight.details,
+                "created_by": self.insight.created_by.get_full_name(),
+                "created_at": self.insight.created_at.isoformat(),
+                "order": self.insight.order,
             }
         )
 
-    elif request.method == "PATCH":
-        data = json.loads(request.body)
-
+    def patch(self, *args, **kwargs):
         with reversion.create_revision():
-            if "title" in data:
-                insight.title = data["title"].strip()
-            if "details" in data:
-                insight.details = data["details"].strip()
-            if "order" in data:
-                insight.order = data["order"]
+            insight = self.insight
+            if "title" in self.data:
+                insight.title = self.data["title"].strip()
+            if "details" in self.data:
+                insight.details = self.data["details"].strip()
+            if "order" in self.data:
+                insight.order = self.data["order"]
 
             insight.save()
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 f"Updated {insight.insight_type} insight via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
         return JsonResponse(
@@ -344,21 +352,22 @@ def insight_api(request, insight_id):
                 "id": str(insight.id),
                 "title": insight.title,
                 "details": insight.details,
-                "created_by": f"{insight.created_by.first_name} {insight.created_by.last_name}",
+                "created_by": self.insight.created_by.get_full_name(),
                 "created_at": insight.created_at.isoformat(),
                 "order": insight.order,
             }
         )
 
-    elif request.method == "DELETE":
+    def delete(self, *args, **kwargs):
         with reversion.create_revision():
+            insight = self.insight
             insight_type = insight.insight_type
             insight.delete()
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 f"Deleted {insight_type} insight via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
         return JsonResponse({"status": "success"})
@@ -424,7 +433,7 @@ def add_engagement_api(request, duns_number):
             reversion.set_user(request.user)
             reversion.set_comment(
                 "Engagement added via API "
-                f"({request.build_absolute_uri()} from {request.headers['referer']})"
+                f"({request.build_absolute_uri()} from {request.headers.get('referer', '')})"
             )
 
             return JsonResponse(
