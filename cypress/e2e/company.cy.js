@@ -123,9 +123,9 @@ describe("Add/edit an engagement", () => {
         }
 
         if (shouldSubmit) {
-          cy.findByRole("button", { name: "Save" }).click();
+          cy.clickButton("Save")
         } else if (shouldCancel) {
-          cy.findByRole("button", { name: "Cancel" }).click();
+          cy.clickButton("Cancel");
         }
       });
   };
@@ -163,7 +163,7 @@ describe("Add/edit an engagement", () => {
 
   it("should render error messages", () => {
     cy.visit(`/company-briefing/${company.testingCorp.duns_number}`);
-    cy.findByRole("button", { name: "Add engagement" }).click();
+    cy.clickButton("Add engagement");
     fillAndSubmitForm(
       {
         title: "",
@@ -181,7 +181,7 @@ describe("Add/edit an engagement", () => {
 
   it("should add an engagement", () => {
     cy.visit(`/company-briefing/${company.testingCorp.duns_number}`);
-    cy.findByRole("button", { name: "Add engagement" }).click();
+    cy.clickButton("Add engagement");
     fillAndSubmitForm(
       {
         title: "My engagement title",
