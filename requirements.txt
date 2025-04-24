@@ -63,7 +63,7 @@ filelock==3.18.0
     # via virtualenv
 gunicorn==23.0.0
     # via -r requirements.in
-h11==0.14.0
+h11==0.16.0
     # via uvicorn
 identify==2.6.9
     # via pre-commit
