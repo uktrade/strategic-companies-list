@@ -200,28 +200,28 @@ describe("Add/edit an engagement", () => {
     assertViewAllEngagementsLink();
   });
 
-  // it("should edit an engagement (fixes a typo)", () => {
-  //   cy.intercept("POST", "/api/v1/engagement/*").as("apiRequest");
-  //   cy.intercept("PATCH", "/api/v1/engagement/*").as("apiRequestPATCH");
-  //   cy.visit(`/company-briefing/${company.testingCorp.duns_number}`);
-  //   cy.clickButton("Add engagement");
-  //   fillAndSubmitForm(
-  //     {
-  //       title: "My engagement tite", // typo
-  //       date: "2026-12-03",
-  //       details: "My engagement details",
-  //     },
-  //     { shouldSubmit: true }
-  //   );
-  //   cy.wait("@apiRequest");
-  //   cy.clickLink("December 03, 2026 My engagement tite");
-  //   cy.clickButton("Edit details");
-  //   cy.findByLabelText("Title").clear().type("My engagement title"); // typo fixed
-  //   cy.clickButton("Save");
-  //   cy.wait("@apiRequestPATCH");
-  //   cy.assertBanner({
-  //     title: "Saved",
-  //     heading: "Engagement updated",
-  //   });
-  // });
+  it.only("should edit an engagement (fixes a typo)", () => {
+    cy.intercept("POST", "/api/v1/engagement/*").as("apiRequest");
+    cy.intercept("PATCH", "/api/v1/engagement/*").as("apiRequestPATCH");
+    cy.visit(`/company-briefing/${company.testingCorp.duns_number}`);
+    cy.clickButton("Add engagement");
+    fillAndSubmitForm(
+      {
+        title: "My engagement tite", // typo
+        date: "2026-12-03",
+        details: "My engagement details",
+      },
+      { shouldSubmit: true }
+    );
+    cy.wait("@apiRequest");
+    cy.clickLink("December 03, 2026 My engagement tite");
+    cy.clickButton("Edit details");
+    cy.findByLabelText("Title").clear().type("My engagement title"); // typo fixed
+    cy.clickButton("Save");
+    cy.wait("@apiRequestPATCH");
+    cy.assertBanner({
+      title: "Saved",
+      heading: "Engagement updated",
+    });
+  });
 });
