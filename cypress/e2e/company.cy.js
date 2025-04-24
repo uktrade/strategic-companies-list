@@ -123,7 +123,7 @@ describe("Add/edit an engagement", () => {
         }
 
         if (shouldSubmit) {
-          cy.clickButton("Save")
+          cy.clickButton("Save");
         } else if (shouldCancel) {
           cy.clickButton("Cancel");
         }
@@ -201,6 +201,8 @@ describe("Add/edit an engagement", () => {
   });
 
   it("should edit an engagement (fixes a typo)", () => {
+    cy.intercept("POST", "/api/v1/engagement/*").as("apiRequest");
+    cy.intercept("PATCH", "/api/v1/engagement/*").as("apiRequestPATCH");
     cy.visit(`/company-briefing/${company.testingCorp.duns_number}`);
     cy.clickButton("Add engagement");
     fillAndSubmitForm(
@@ -211,10 +213,12 @@ describe("Add/edit an engagement", () => {
       },
       { shouldSubmit: true }
     );
-    cy.clickLink('December 03, 2026 My engagement tite');
+    cy.wait("@apiRequest");
+    cy.clickLink("December 03, 2026 My engagement tite");
     cy.clickButton("Edit details");
-    cy.findByLabelText("Title").type("My engagement title"); // typo fixed
+    cy.findByLabelText("Title").clear().type("My engagement title"); // typo fixed
     cy.clickButton("Save");
+    cy.wait("@apiRequestPATCH");
     cy.assertBanner({
       title: "Saved",
       heading: "Engagement updated",
