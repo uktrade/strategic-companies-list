@@ -66,13 +66,13 @@ urlpatterns = [
     ),
     path(
         "api/v1/engagement/<uuid:engagement_id>",
-        api.engagement_api,
-        name="engagement_api",
+        api.EngagementAPIView.as_view(),
+        name="api-engagement",
     ),
     path(
         "api/v1/engagement/<str:duns_number>",
-        api.add_engagement_api,
-        name="add-engagement",
+        api.CompanyEngagementAPIView.as_view(),
+        name="api-company-engagement",
     ),
     path(
         "api/v1/engagement/<uuid:engagement_id>/note",

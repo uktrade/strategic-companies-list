@@ -1,5 +1,6 @@
 DATE_FORMAT_LONG = "%B %d, %Y, %H:%M"
 DATE_FORMAT_SHORT = "%B %d, %Y"
+DATE_FORMAT_NUMERIC = "%Y-%m-%d"
 # DBT's official list of countries and territories
 COUNTRIES_AND_TERRITORIES = (
     ("AE-AZ", "Abu Dhabi"),

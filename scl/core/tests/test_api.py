@@ -5,6 +5,7 @@ import reversion
 from django.urls import reverse
 
 from scl.core.models import Insight, EngagementNote
+from scl.core.constants import DATE_FORMAT_SHORT
 from scl.core.tests import factories
 
 
@@ -614,3 +615,122 @@ def test_insight_api_delete(viewer_user_client, company_acc_manager):
     assert company_acc_manager.insights.count() == 10
 
     assert response_data["status"] == "success"
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "method,exp_status", [("get", 405), ("post", 405), ("patch", 403), ("delete", 405)]
+)
+def test_engagement_api_methods_authorisation(
+    method, exp_status, viewer_user_client, company_not_acc_manager
+):
+    engagement = company_not_acc_manager.engagements.first()
+    if method in ["post", "patch", "delete"]:
+        data = {}
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-engagement",
+                kwargs={"engagement_id": engagement.id},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+    else:
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-engagement",
+                kwargs={"engagement_id": engagement.id},
+            ),
+        )
+
+    assert response.status_code == exp_status
+
+
+@pytest.mark.django_db
+def test_engagement_api_patch(viewer_user_client, company_acc_manager):
+    engagement = company_acc_manager.engagements.first()
+    # sanity check
+    assert company_acc_manager.engagements.count() == 4
+    data = {
+        "title": "Foo",
+        "details": "Lorem ipsum dolor sit amet",
+    }
+    response = viewer_user_client.patch(
+        reverse(
+            "api-engagement",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert company_acc_manager.engagements.count() == 4
+
+    assert response_data["data"]["id"] == str(engagement.id)
+    assert response_data["data"]["title"] == "Foo"
+    assert response_data["data"]["details"] == "Lorem ipsum dolor sit amet"
+    assert response_data["data"]["date"] == engagement.date.strftime(DATE_FORMAT_SHORT)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "method,exp_status", [("get", 405), ("post", 403), ("patch", 405), ("delete", 405)]
+)
+def test_company_engagement_api_methods_authorisation(
+    method, exp_status, viewer_user_client, company_not_acc_manager
+):
+    engagement = company_not_acc_manager.engagements.first()
+    if method in ["post", "patch", "delete"]:
+        data = {}
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-company-engagement",
+                kwargs={"duns_number": engagement.company.duns_number},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+    else:
+        response = getattr(viewer_user_client, method)(
+            reverse(
+                "api-company-engagement",
+                kwargs={"duns_number": engagement.company.duns_number},
+            ),
+        )
+
+    assert response.status_code == exp_status
+
+
+@pytest.mark.django_db
+def test_company_engagement_api_post(viewer_user_client, company_acc_manager):
+    # sanity check
+    assert company_acc_manager.engagements.count() == 4
+    data = {
+        "title": "Foo",
+        "details": "Lorem ipsum dolor sit amet",
+        "date": "2026-01-27",
+    }
+    response = viewer_user_client.post(
+        reverse(
+            "api-company-engagement",
+            kwargs={"duns_number": company_acc_manager.duns_number},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert company_acc_manager.engagements.count() == 5
+
+    # API only returns the 4 most recent engagements
+    assert len(response_data["data"]) == 4
+    assert "Foo" in [d["title"] for d in response_data["data"]]
+    assert "Lorem ipsum dolor sit amet" in [d["details"] for d in response_data["data"]]
+    assert "January 27, 2026" in [d["date"] for d in response_data["data"]]
