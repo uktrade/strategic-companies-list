@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from scl.core.constants import SECTORS
+from scl.core.constants import DATE_FORMAT_SHORT, DATE_FORMAT_NUMERIC
 from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
 import json
 import time
@@ -373,67 +373,84 @@ class InsightAPIView(CompanyAccountManagerUserMixin, View):
         return JsonResponse({"status": "success"})
 
 
-def engagement_api(request, engagement_id):
-    data = json.loads(request.body)
-    engagement = Engagement.objects.get(id=engagement_id)
+class EngagementAPIView(CompanyAccountManagerUserMixin, View):
 
-    account_managers = engagement.company.account_manager.all()
-    is_account_manager = request.user in account_managers
+    http_method_names = [
+        "patch",
+    ]
 
-    if not is_account_manager:
-        return JsonResponse("Forbidden", status=403, safe=False)
+    @property
+    def data(self):
+        return json.loads(self.request.body)
 
-    if request.method == "PATCH":
+    @property
+    def company(self):
+        return self.engagement.company
+
+    @property
+    def engagement(self):
+        return Engagement.objects.get(id=self.kwargs["engagement_id"])
+
+    def patch(self, *args, **kwargs):
         with reversion.create_revision():
-            engagement.title = data.get("title").strip()
-            engagement.details = data.get("details").strip()
+            engagement = self.engagement
+            engagement.title = self.data.get("title").strip()
+            engagement.details = self.data.get("details").strip()
             engagement.save()
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Updated title, and details via API "
-                f"({request.build_absolute_uri()} from {request.headers.get('referer')})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer')})"
             )
 
-    return JsonResponse(
-        {
-            "data": {
-                "title": engagement.title,
-                "details": engagement.details,
-            }
-        },
-        status=200,
-    )
+        return JsonResponse(
+            {
+                "data": {
+                    "title": engagement.title,
+                    "details": engagement.details,
+                    "date": engagement.date.strftime(DATE_FORMAT_SHORT),
+                    "id": engagement.id,
+                }
+            },
+            status=200,
+        )
 
 
-def add_engagement_api(request, duns_number):
-    data = json.loads(request.body)
-    company = Company.objects.get(duns_number=duns_number)
-    is_account_manager = request.user in company.account_manager.all()
+class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
 
-    if not is_account_manager:
-        return JsonResponse(403, safe=False)
+    http_method_names = [
+        "post",
+    ]
 
-    if request.method == "POST":
+    @property
+    def data(self):
+        return json.loads(self.request.body)
+
+    @property
+    def company(self):
+        return Company.objects.get(duns_number=self.kwargs["duns_number"])
+
+    def post(self, *args, **kwargs):
         with reversion.create_revision():
-            title = data.get("title")
-            date = datetime.strptime(data.get("date"), "%Y-%m-%d").date()
-            details = data.get("details")
-            logger(company.id)
+            title = self.data.get("title")
+            date = datetime.strptime(self.data.get("date"), DATE_FORMAT_NUMERIC).date()
+            details = self.data.get("details")
+
             Engagement.objects.create(
-                company_id=company.id, title=title, date=date, details=details
+                company_id=self.company.id, title=title, date=date, details=details
             )
 
             engagements = list(
-                Engagement.objects.filter(company=company, date__gte=today).order_by(
-                    "date"
-                )
+                Engagement.objects.filter(
+                    company=self.company, date__gte=today
+                ).order_by("date")
             )[0:4]
 
-            reversion.set_user(request.user)
+            reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Engagement added via API "
-                f"({request.build_absolute_uri()} from {request.headers.get('referer', '')})"
+                f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
             return JsonResponse(
@@ -441,7 +458,8 @@ def add_engagement_api(request, duns_number):
                     "data": [
                         {
                             "title": engagement.title,
-                            "date": engagement.date.strftime("%B %d, %Y"),
+                            "details": engagement.details,
+                            "date": engagement.date.strftime(DATE_FORMAT_SHORT),
                             "id": engagement.id,
                         }
                         for engagement in engagements

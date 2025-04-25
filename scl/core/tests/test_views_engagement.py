@@ -73,7 +73,7 @@ class EngagementPageTest(TestCase):
         account_manager_client = Client()
         account_manager_client.force_login(self.account_manager)
         api_url = reverse(
-            "engagement_api", kwargs={"engagement_id": self.engagement.id}
+            "api-engagement", kwargs={"engagement_id": self.engagement.id}
         )
         patch_data = {"title": "new title", "details": "new details"}
         response = account_manager_client.patch(
@@ -92,7 +92,7 @@ class EngagementPageTest(TestCase):
         viewer_client = Client()
         viewer_client.force_login(self.viewer_user)
         api_url = reverse(
-            "engagement_api", kwargs={"engagement_id": self.engagement.id}
+            "api-engagement", kwargs={"engagement_id": self.engagement.id}
         )
         patch_data = {"title": "new title", "details": "new details"}
         response = viewer_client.patch(
