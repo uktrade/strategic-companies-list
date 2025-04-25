@@ -5,13 +5,12 @@
 
 <head>
   <!-- Google Tag Manager -->
-
     <script nonce="{{request.csp_nonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;var n=d.querySelector('[nonce]');
+    n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NGJX7GM2');</script>
-
   <!-- End Google Tag Manager -->
   <meta charset="utf-8">
   <title>Strategic Companies List - Department for Business and Trade</title>
@@ -24,39 +23,12 @@
   <link rel="manifest" href="{% static 'manifest.json' %}">
   <link rel="stylesheet" href="{% static 'govuk-frontend.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/scl.css' %}">
-  <style nonce="{{request.csp_nonce}}">
-    .spinner_7uc5 {
-      animation: spinner_3l8F 0.9s linear infinite;
-      animation-delay: -0.9s;
-    }
-    .spinner_RibN {
-      animation-delay: -0.7s;
-    }
-    .spinner_ZAxd {
-      animation-delay: -0.5s;
-    }
-    @keyframes spinner_3l8F {
-      0%,
-      66.66% {
-        animation-timing-function: cubic-bezier(0.14, 0.73, 0.34, 1);
-        y: 6px;
-        height: 12px;
-      }
-      33.33% {
-        animation-timing-function: cubic-bezier(0.65, 0.26, 0.82, 0.45);
-        y: 1px;
-        height: 22px;
-      }
-    }
-  </style>
 </head>
 
 <body class="govuk-template__body">
   <!-- Google Tag Manager (noscript) -->
 
-  <noscript><iframe src=https://www.googletagmanager.com/ns.html?id=GTM-NGJX7GM2
-
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <noscript><iframe nonce="{{request.csp_nonce}}" src="https://www.googletagmanager.com/ns.html?id=GTM-NGJX7GM2" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- End Google Tag Manager (noscript) -->
   <script nonce="{{request.csp_nonce}}">
