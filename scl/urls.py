@@ -59,7 +59,11 @@ urlpatterns = [
         api.CompanyInsightAPIView.as_view(),
         name="api-company-insight",
     ),
-    path("api/v1/insights/<uuid:insight_id>", api.insight_api),
+    path(
+        "api/v1/insights/<uuid:insight_id>",
+        api.InsightAPIView.as_view(),
+        name="api-insight",
+    ),
     path(
         "api/v1/engagement/<uuid:engagement_id>",
         api.engagement_api,
