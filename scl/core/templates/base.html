@@ -4,6 +4,7 @@
 <html lang="en" class="govuk-template scl-template">
 
 <head>
+{% if IS_PRODUCTION %}
   <!-- Google Tag Manager -->
     <script nonce="{{request.csp_nonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -12,6 +13,7 @@
     n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NGJX7GM2');</script>
   <!-- End Google Tag Manager -->
+  {% endif %}
   <meta charset="utf-8">
   <title>Strategic Companies Insight Tool - Department for Business and Trade</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -26,11 +28,13 @@
 </head>
 
 <body class="govuk-template__body">
+{% if IS_PRODUCTION %}
   <!-- Google Tag Manager (noscript) -->
 
   <noscript><iframe nonce="{{request.csp_nonce}}" src="https://www.googletagmanager.com/ns.html?id=GTM-NGJX7GM2" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- End Google Tag Manager (noscript) -->
+  {% endif %}
   <script nonce="{{request.csp_nonce}}">
     document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
   </script>
