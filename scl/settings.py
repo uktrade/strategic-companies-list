@@ -63,7 +63,7 @@ CSP_DEFAULT_SRC = "'self'"
 CSP_BASE_URI = "'self'"
 
 CSP_STYLE_SRC = [
-    "'self'",
+    "'unsafe-inline' 'self'",
     "https://googletagmanager.com",
     "https://fonts.googleapis.com",
 ]

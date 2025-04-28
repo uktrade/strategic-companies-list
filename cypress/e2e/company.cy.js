@@ -57,8 +57,8 @@ describe("Company Briefing page", () => {
     });
   });
 
-  it("asserts the HMG Priorities section", () => {
-    cy.assertCompanyBriefingSection("HMG Priorities", {
+  it("asserts the Government Priorities section", () => {
+    cy.assertCompanyBriefingSection("Government Priorities", {
       content: "Currently no HMG priorites are assigned.",
       hasPrivilegedTag: true,
       buttonName: "Add priority",
@@ -90,7 +90,7 @@ describe("Company Briefing page", () => {
       "Key Facts",
       "Key People",
       "Company Priorities",
-      "HMG Priorities",
+      "Government Priorities",
     ]);
   });
 

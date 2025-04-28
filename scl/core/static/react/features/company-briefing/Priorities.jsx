@@ -68,7 +68,7 @@ const Priorities = ({
 
   return (
     <LoadingSpinner isLoading={isLoading}>
-      <Section isPrivaliged title={title}>
+      <Section title={title}>
         {!priorities.length ? (
           <p className="govuk-body">{emptyMessage}</p>
         ) : (

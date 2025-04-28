@@ -33,7 +33,7 @@
             {% endfor %}
           </ul>
           {% else %}
-          <p class="govuk-body">There are no future engagements for companies you have privileged access to.</p>
+          <p class="govuk-body">There are no future engagements for companies you’re assigned to.</p>
           {% endif %}
         </div>
       </div>
@@ -41,7 +41,7 @@
         <div class="scl-key-info__panel">
           <div class="scl-key-info__panel-header">
             <h1 class="govuk-heading-m">Your companies</h1>
-            <p class="govuk-body scl-body--hide-on-mobile">These are the companies you have been granted privileged access to.</p>
+            <p class="govuk-body scl-body--hide-on-mobile">Below are companies you’re assigned to. You can edit and add information to them.</p>
           </div>
           <ul class="scl-key-list" id="your-scl-company-list">
             {% for company in your_companies %}
@@ -68,7 +68,7 @@
 
     <div class="govuk-form-group">
       <label class="govuk-label" for="event-name">
-        Search for a company by its name
+        Search by company name
       </label>
       <input class="govuk-input scl-input--search" data-module="scl-filter-list" data-scl-filter-list-target="#scl-company-list" data-scl-filter-list-no-results="#scl-company-search-no-results" name="companyName" type="text">
     </div>
