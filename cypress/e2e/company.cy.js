@@ -52,15 +52,13 @@ describe("Company Briefing page", () => {
   it("asserts the Company Priorities", () => {
     cy.assertCompanyBriefingSection("Company Priorities", {
       content: "Currently no company priorites are assigned.",
-      hasPrivilegedTag: true,
       buttonName: "Add priority",
     });
   });
 
-  it("asserts the HMG Priorities section", () => {
-    cy.assertCompanyBriefingSection("HMG Priorities", {
-      content: "Currently no HMG priorites are assigned.",
-      hasPrivilegedTag: true,
+  it("asserts the Government Priorities section", () => {
+    cy.assertCompanyBriefingSection("Government Priorities", {
+      content: "Currently no Government Priorities are assigned.",
       buttonName: "Add priority",
     });
   });
@@ -68,12 +66,11 @@ describe("Company Briefing page", () => {
   it("asserts the Engagements section", () => {
     cy.assertCompanyBriefingSection("Engagements", {
       content: "No current engagements.",
-      hasPrivilegedTag: true,
     });
   });
 
-  it("asserts the SCIT administrators section", () => {
-    cy.assertCompanyBriefingSection("SCIT administrators", {
+  it("asserts the 'People assigned to this company' section", () => {
+    cy.assertCompanyBriefingSection("People assigned to this company", {
       content: "Vyvyan Holland",
       links: [
         {
@@ -90,14 +87,14 @@ describe("Company Briefing page", () => {
       "Key Facts",
       "Key People",
       "Company Priorities",
-      "HMG Priorities",
+      "Government Priorities",
     ]);
   });
 
   it("asserts the side sections in the correct order", () => {
     cy.assertCompanyBriefingSectionOrder([
       "Engagements",
-      "SCIT administrators",
+      "People assigned to this company",
     ]);
   });
 });

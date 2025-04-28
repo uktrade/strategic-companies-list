@@ -8,10 +8,6 @@ import Details from "./Details";
 import { AccountContext } from "../../providers";
 
 const Page = ({ data, csrf_token }) => {
-  const [engagement, setEngagement] = useState({
-    title: data.title,
-    details: data.details,
-  });
 
   const [notificationMessage, setNotificationMessage] = useState(null);
   const [isUpdated, setIsUpdated] = useState(false);
@@ -50,8 +46,6 @@ const Page = ({ data, csrf_token }) => {
               <Details
                 data={data}
                 csrf_token={csrf_token}
-                engagement={engagement}
-                setEngagement={setEngagement}
                 isUpdatingDetails={isUpdatingDetails}
                 setIsUpdatingDetails={setIsUpdatingDetails}
                 showUpdateNotification={showUpdateNotification}

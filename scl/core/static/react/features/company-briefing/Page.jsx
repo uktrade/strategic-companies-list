@@ -109,9 +109,9 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                     />
                     <Priorities
                       id={id}
-                      title="HMG Priorities"
+                      title="Government Priorities"
                       insightType="hmg_priority"
-                      emptyMessage="Currently no HMG priorites are assigned."
+                      emptyMessage="Currently no Government Priorities are assigned."
                       csrf_token={csrf_token}
                       companyPriorities={data.hmg_priorities}
                       showUpdateNotification={showUpdateNotification}
@@ -129,10 +129,7 @@ const Page = ({ data, id, csrf_token, nonce }) => {
               />
             )}
 
-            <AccountManagers
-              isPrivaliged={false}
-              accountManagers={data.account_managers}
-            />
+            <AccountManagers accountManagers={data.account_managers} />
           </div>
         </div>
       </main>

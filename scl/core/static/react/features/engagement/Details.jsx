@@ -9,14 +9,13 @@ import { AccountContext } from "../../providers";
 
 const Details = ({
   data,
-  engagement,
-  setEngagement,
   csrf_token,
   showUpdateNotification,
   isUpdatingDetails,
   setIsUpdatingDetails,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [engagementDetails, setEngagementDetails] = useState(data);
 
   const { isAccountManager } = useContext(AccountContext);
 
@@ -29,7 +28,8 @@ const Details = ({
       payload,
       csrf_token
     );
-    setEngagement(data.data);
+    
+    setEngagementDetails(data.data);
     setIsLoading(false);
     setIsUpdatingDetails(false);
     showUpdateNotification("Engagement updated");
@@ -40,7 +40,7 @@ const Details = ({
       {!isUpdatingDetails && (
         <div className="govuk-!-margin-bottom-4">
           <h1 className="govuk-heading-l govuk-!-margin-bottom-4">
-            {data.title}
+            {engagementDetails.title}
           </h1>
           <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
             <strong>Created:</strong> {data.created.date} by {data.created.name}
@@ -53,11 +53,13 @@ const Details = ({
           <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible"></hr>
         </div>
       )}
-      {!isUpdatingDetails && <p className="govuk-body">{engagement.details}</p>}
+      {!isUpdatingDetails && (
+        <p className="govuk-body">{engagementDetails.details}</p>
+      )}
       {isUpdatingDetails && (
         <Update
           id={data.id}
-          data={engagement}
+          data={engagementDetails}
           onSubmit={onSubmit}
           setIsUpdatingDetails={setIsUpdatingDetails}
         />

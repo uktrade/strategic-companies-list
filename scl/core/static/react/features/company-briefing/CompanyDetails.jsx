@@ -29,7 +29,7 @@ const CompanyDetails = ({
       csrf_token
     );
 
-    setCompanyDetails(data);
+    setCompanyDetails(data.data);
     setIsLoading(false);
     setIsUpdating(false);
     showUpdateNotification("Company updated");
