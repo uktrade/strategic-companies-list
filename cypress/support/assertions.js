@@ -14,7 +14,6 @@ import "@testing-library/cypress/add-commands";
  * @param {string} [options.buttonName] - The name of a button to verify within the section
  * @param {Array<{text: string, href: string}>} [options.links] - Array of link objects to verify
  *    Each link object should have 'text' and 'href' properties
- * @param {boolean} [options.hasPrivilegedTag] - Whether to check for a red "PRIVILEGED" tag
  *
  * @example
  * // Assert a basic company briefing section with heading
@@ -43,15 +42,14 @@ import "@testing-library/cypress/add-commands";
  *   links: [
  *     text: "local.user@businessandtrade.gov.uk",
  *     href: "mailto:local.user@businessandtrade.gov.uk",
- *   ],
- *   hasPrivilegedTag: true
+ *   ]
  * });
  */
 
 Cypress.Commands.add(
   "assertCompanyBriefingSection",
   (headingText, options = {}) => {
-    const { content, buttonName, links, hasPrivilegedTag } = options;
+    const { content, buttonName, links } = options;
 
     cy.findByRole("heading", { name: headingText })
       .should("be.visible")
@@ -79,12 +77,6 @@ Cypress.Commands.add(
               link.href
             );
           });
-        }
-        if (hasPrivilegedTag) {
-          cy.findByText("PRIVILEGED")
-            .should("be.visible")
-            .and("have.attr", "class")
-            .and("include", "govuk-tag--red");
         }
       });
   }
