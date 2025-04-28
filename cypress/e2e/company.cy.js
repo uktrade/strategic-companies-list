@@ -59,7 +59,7 @@ describe("Company Briefing page", () => {
 
   it("asserts the Government Priorities section", () => {
     cy.assertCompanyBriefingSection("Government Priorities", {
-      content: "Currently no HMG priorites are assigned.",
+      content: "Currently no Government Priorities are assigned.",
       hasPrivilegedTag: true,
       buttonName: "Add priority",
     });

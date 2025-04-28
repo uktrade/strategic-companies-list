@@ -111,7 +111,7 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                       id={id}
                       title="Government Priorities"
                       insightType="hmg_priority"
-                      emptyMessage="Currently no HMG priorites are assigned."
+                      emptyMessage="Currently no Government Priorities are assigned."
                       csrf_token={csrf_token}
                       companyPriorities={data.hmg_priorities}
                       showUpdateNotification={showUpdateNotification}
