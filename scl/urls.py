@@ -93,3 +93,12 @@ urlpatterns = [
     path("lb-healthcheck", healthcheck.lb_healthcheck),
     path("pingdom/ping.xml", healthcheck.healthcheck),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
+# Add the Cypress test endpoint only in DEBUG mode
+if settings.DEBUG:
+    from scl.core.management.commands.createtestdatae2e import reset_e2e_test_database
+    
+    urlpatterns += [
+        path('__cypress__/reset-db/', reset_e2e_test_database, name='cypress-reset-db'),
+    ]
