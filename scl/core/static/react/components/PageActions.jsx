@@ -7,7 +7,7 @@ const PageActions = ({
 }) => {
   return (
     <div className="scl-page-header__actions">
-      {showAddEngagementBtn && (
+      {showAddEngagementBtn && !isAddingEngagement && (
         <button
           className={`govuk-button ${
             isAddingEngagement ? "govuk-button--secondary" : ""
@@ -16,7 +16,7 @@ const PageActions = ({
             setIsAddingEngagement(!isAddingEngagement);
           }}
         >
-          {isAddingEngagement ? "Cancel" : "Add engagement"}
+          {"Add engagement"}
         </button>
       )}
     </div>
