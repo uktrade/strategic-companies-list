@@ -42,7 +42,7 @@ class HomePageTest(TestCase):
         response.template_name == "core/index.html"
         soup = BeautifulSoup(response.content.decode(response.charset), features="lxml")
         h1_text = soup.find("h1").contents[0]
-        assert h1_text == "All 0 companies on the Strategic Companies List"
+        assert h1_text == "Full list of companies in this tool"
         companies = soup.find_all("li")
         assert len(companies) == 0
 
@@ -57,8 +57,13 @@ class HomePageTest(TestCase):
             company=company, account_manager=self.user
         )
         soup = self.soup()
-        all_comp_h1 = soup.find("h1", string=re.compile(r"\bAll\b")).contents[0]
-        assert all_comp_h1 == "All 4 companies on the Strategic Companies List"
+        all_comp_p = soup.find(
+            "p", string=re.compile(r"\bThere are 4 companies\b")
+        ).contents[0]
+        assert (
+            all_comp_p
+            == "There are 4 companies. You'll only be able to edit and add information to companies you're assigned to."
+        )
         companies = soup.select("ul#scl-company-list > li")
         assert len(companies) == 4
         your_comp_h1 = soup.find(
