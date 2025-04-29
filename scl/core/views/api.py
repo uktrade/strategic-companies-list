@@ -190,7 +190,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
 
             reversion.set_user(self.request.user)
             reversion.set_comment(
-                f"Deleted {self.kwargs["insight_type"]} insight via API "
+                f"Deleted {self.kwargs['insight_type']} insight via API "
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
@@ -222,7 +222,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
 
             reversion.set_user(self.request.user)
             reversion.set_comment(
-                f"Updated {self.kwargs["insight_type"]} insight via API "
+                f"Updated {self.kwargs['insight_type']} insight via API "
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
@@ -256,7 +256,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
 
             reversion.set_user(self.request.user)
             reversion.set_comment(
-                f"Created {self.kwargs["insight_type"]} insight via API "
+                f"Created {self.kwargs['insight_type']} insight via API "
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
