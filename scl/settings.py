@@ -165,7 +165,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
-    "scl.core.middleware.IPFilterMiddleware",
     "authbroker_client.middleware.ProtectAllViewsMiddleware",
     "scl.core.middleware.BasicAccessMiddleware",
     "waffle.middleware.WaffleMiddleware",
