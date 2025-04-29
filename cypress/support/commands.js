@@ -37,3 +37,12 @@ Cypress.Commands.add("resetDatabase", () => {
     return response.body;
   });
 });
+
+Cypress.Commands.add("visitCompanyBriefing", (companyKey) => {
+  const company = Cypress.env(companyKey);
+  if (!company || !company.duns_number) {
+    throw new Error(`Company data for ${companyKey} is not available`);
+  }
+  cy.visit(`/company-briefing/${company.duns_number}`);
+  return cy.wrap(company);
+});
