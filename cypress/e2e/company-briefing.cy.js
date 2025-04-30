@@ -1,30 +1,3 @@
-const fillAndSubmitForm = (
-  { title, date, details },
-  { shouldSubmit, shouldCancel }
-) => {
-  cy.findByRole("heading", { name: "Add engagement" })
-    .parent()
-    .within(() => {
-      if (title) {
-        cy.findByLabelText("Title").type(title);
-      }
-
-      if (date) {
-        cy.findByLabelText("Date").type(date);
-      }
-
-      if (details) {
-        cy.findByLabelText("Details").type(details);
-      }
-
-      if (shouldSubmit) {
-        cy.clickButton("Save");
-      } else if (shouldCancel) {
-        cy.clickButton("Cancel");
-      }
-    });
-};
-
 describe("Company Briefing page", () => {
   before(() => {
     cy.resetDatabase();
