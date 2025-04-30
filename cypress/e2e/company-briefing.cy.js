@@ -120,35 +120,28 @@ describe("Add/edit an engagement", () => {
   };
 
   it("should render error messages", () => {
-    cy.visitCompanyBriefing("TestingCorp").then((company) => {
-      cy.clickButton("Add engagement");
-      fillAndSubmitForm(
-        {
-          title: "",
-          date: "",
-          details: "",
-        },
-        { shouldSubmit: true }
-      );
-      cy.assertFormErrors({
-        Title: "Title is required",
-        Date: "Date is required",
-        Details: "Details are required",
-      });
+    cy.visitCompanyBriefing("TestingCorp");
+    cy.clickButton("Add engagement");
+    cy.fillAndSubmitEngagementForm({
+      title: "",
+      date: "",
+      details: "",
+    });
+    cy.assertFormErrors({
+      Title: "Title is required",
+      Date: "Date is required",
+      Details: "Details are required",
     });
   });
 
   it("should add an engagement", () => {
     cy.visitCompanyBriefing("TestingCorp").then((company) => {
       cy.clickButton("Add engagement");
-      fillAndSubmitForm(
-        {
-          title: "My engagement title",
-          date: "2026-12-03",
-          details: "My engagement details",
-        },
-        { shouldSubmit: true }
-      );
+      cy.fillAndSubmitEngagementForm({
+        title: "My engagement title",
+        date: "2026-12-03",
+        details: "My engagement details",
+      });
       cy.assertBanner({
         title: "Saved",
         heading: "Engagement added",
@@ -163,31 +156,35 @@ describe("Add/edit an engagement", () => {
   it("should edit an engagement (fixes a typo)", () => {
     cy.intercept("POST", "/api/v1/engagement/*").as("apiRequestPOST");
     cy.intercept("PATCH", "/api/v1/engagement/*").as("apiRequestPATCH");
-    cy.visitCompanyBriefing("TestingCorp").then((company) => {
-      cy.clickButton("Add engagement");
-      fillAndSubmitForm(
-        {
-          title: "My engagement tite", // typo
-          date: "2026-12-03",
-          details: "My engagement details",
-        },
-        { shouldSubmit: true }
-      );
-      cy.wait("@apiRequestPOST");
-      cy.clickLink("December 03, 2026 My engagement tite");
-      cy.clickButton("Edit details");
-      cy.findByLabelText("Title").clear().type("My engagement title"); // typo fixed
-      cy.clickButton("Save");
-      cy.wait("@apiRequestPATCH");
-      cy.assertBanner({
-        title: "Saved",
-        heading: "Engagement updated",
-      });
+    cy.visitCompanyBriefing("TestingCorp");
+    cy.clickButton("Add engagement");
+    cy.fillAndSubmitEngagementForm({
+      title: "My engagement tite", // typo
+      date: "2026-12-03",
+      details: "My engagement details",
+    });
+    cy.wait("@apiRequestPOST");
+    cy.clickLink("December 03, 2026 My engagement tite");
+    cy.clickButton("Edit details");
+    cy.findByLabelText("Title").clear().type("My engagement title"); // typo fixed
+    cy.clickButton("Save");
+    cy.wait("@apiRequestPATCH");
+    cy.assertBanner({
+      title: "Saved",
+      heading: "Engagement updated",
     });
   });
 });
 
-describe("add/edit an engagement note", () => {
+describe("add/edit/delete an engagement note", () => {
+  const engagementNote = {
+    title: "An engagement",
+    date: "2025-06-24",
+    details: "Details",
+  };
+
+  const engagementNoteLink = "June 24, 2025 An engagement";
+
   before(() => {
     cy.resetDatabase();
   });
@@ -195,36 +192,52 @@ describe("add/edit an engagement note", () => {
   it("should add an engagement note", () => {
     cy.intercept("POST", "/api/v1/engagement/*").as("createEngagement");
     cy.intercept("POST", "/api/v1/engagement/*/note").as("createNote");
-    cy.intercept("PATCH", "/api/v1/engagement/*/note").as("updateNote");
+
     cy.visitCompanyBriefing("TestingCorp");
+
+    // Create an engagement first
     cy.clickButton("Add engagement");
-    fillAndSubmitForm(
-      {
-        title: "An engagement",
-        date: "2025-06-24",
-        details: "Details",
-      },
-      { shouldSubmit: true }
-    );
+    cy.fillAndSubmitEngagementForm(engagementNote);
     cy.wait("@createEngagement");
-    cy.clickLink("June 24, 2025 An engagement");
+
+    // Now add a note
+    cy.clickLink(engagementNoteLink);
     cy.clickButton("Add note");
     cy.findByLabelText("Contents").type("My notes");
     cy.clickButton("Save");
     cy.wait("@createNote");
+
+    // Ensure the banner has been rendered
     cy.assertBanner({
       title: "Saved",
       heading: "Note added",
     });
+  });
+
+  it("should edit an engagement note", () => {
+    cy.intercept("PATCH", "/api/v1/engagement/*/note").as("updateNote");
+    cy.visitCompanyBriefing("TestingCorp");
+    cy.clickLink(engagementNoteLink);
     cy.clickButton("Edit note");
     cy.findByLabelText("Contents").clear().type("My notes!!!");
     cy.clickButton("Save");
     cy.wait("@updateNote");
-    // At this point the banner does not render under
-    // test, however, it renders when tested manually
-    // cy.assertBanner({
-    //   title: "Saved",
-    //   heading: "Note updated",
-    // });
+    cy.assertBanner({
+      title: "Saved",
+      heading: "Note updated",
+    });
+  });
+
+  it("should delete an engagement note", () => {
+    cy.intercept("DELETE", "/api/v1/engagement/*/note").as("deleteNote");
+    cy.visitCompanyBriefing("TestingCorp");
+    cy.clickLink(engagementNoteLink);
+    cy.clickButton("Edit note");
+    cy.findByText("Delete").click();
+    cy.wait("@deleteNote");
+    cy.assertBanner({
+      title: "Saved",
+      heading: "Note deleted",
+    });
   });
 });
