@@ -38,15 +38,6 @@ Cypress.Commands.add("resetDatabase", () => {
   });
 });
 
-Cypress.Commands.add("visitCompanyBriefing", (companyKey) => {
-  const company = Cypress.env(companyKey);
-  if (!company || !company.duns_number) {
-    throw new Error(`Company data for ${companyKey} is not available`);
-  }
-  cy.visit(`/company-briefing/${company.duns_number}`);
-  return cy.wrap(company);
-});
-
 Cypress.Commands.add(
   "fillAndSubmitEngagementForm",
   ({ title, date, details, shouldSubmit = true, shouldCancel }) => {
