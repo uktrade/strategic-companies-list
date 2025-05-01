@@ -5,8 +5,6 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 
-from scl.core.models import User, Company, CompanyAccountManager
-
 @user_passes_test(lambda u: u.is_superuser)
 def reset_e2e_test_database(request):
     """
@@ -16,9 +14,7 @@ def reset_e2e_test_database(request):
     3. Creating a test superuser with the right permissions
     4. Loading fixture data for testing
     
-    This endpoint is:
-    - Restricted to superusers only
-    - Returns the test data in a format compatible with Cypress tests
+    This endpoint is restricted to superusers only
     
     WARNING: This will delete ALL data in the database. Only use for e2e testing
     """
@@ -48,13 +44,9 @@ def reset_e2e_test_database(request):
         # Load the fixtures
         call_command('loaddata', 'scl/core/fixtures/e2e-fixtures.json')
         
-        # Extract data from loaded fixtures for Cypress e2e testing
-        extracted_data = extract_test_data()
-        
         return JsonResponse({
             'status': 'success',
             'message': 'Database reset with fixture data',
-            'data': extracted_data
         })
         
     except Exception as e:
@@ -65,49 +57,3 @@ def reset_e2e_test_database(request):
             'traceback': traceback.format_exc()
         }, status=500)
 
-    
-
-def extract_test_data():
-    """
-    Extracts relevant test data from the database after fixtures are loaded.
-    """
-    # Get the companies from the fixtures
-    companies = {}
-    for company in Company.objects.select_related().all():
-        company_key = company.name.replace(' ', '')
-        companies[company_key] = {
-            'id': str(company.id),
-            'duns_number': company.duns_number,
-            'name': company.name
-        }
-    
-    # Get the users from the fixtures
-    users = {}
-    for user in User.objects.all():
-        user_key = f"{user.first_name}{user.last_name}"
-        users[user_key] = {
-            'id': user.id,
-            'email': user.email,
-            'name': f"{user.first_name} {user.last_name}"
-        }
-    
-    # Get account managers from the fixtures
-    account_managers = {}
-    for cam in CompanyAccountManager.objects.select_related('company', 'account_manager').all():
-        company_name = cam.company.name.replace(' ', '')
-        key = f"{company_name}Manager"
-        account_managers[key] = {
-            'id': str(cam.id),
-            'company_id': str(cam.company.id),
-            'company_name': cam.company.name,
-            'company_duns': cam.company.duns_number,
-            'manager_id': cam.account_manager.id,
-            'manager_name': f"{cam.account_manager.first_name} {cam.account_manager.last_name}",
-            'is_lead': cam.is_lead
-        }
-    
-    return {
-        'companies': companies,
-        'users': users,
-        'accountManagers': account_managers
-        }

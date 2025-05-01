@@ -1,10 +1,15 @@
+// Testing Corp has an account manager
+const company = {
+  duns_number: "123456",
+};
+
 describe("Company Briefing page", () => {
   before(() => {
     cy.resetDatabase();
   });
 
   it("should have all the elements on the page", () => {
-    const company = Cypress.env("TestingCorp");
+
     cy.visit(`/company-briefing/${company.duns_number}`);
 
     cy.findByRole("heading", {
@@ -121,7 +126,6 @@ describe("Add/edit an engagement", () => {
   };
 
   it("should render error messages", () => {
-    const company = Cypress.env("TestingCorp");
     cy.visit(`/company-briefing/${company.duns_number}`);
 
     cy.clickButton("Add engagement");
@@ -138,7 +142,6 @@ describe("Add/edit an engagement", () => {
   });
 
   it("should add an engagement", () => {
-    const company = Cypress.env("TestingCorp");
     cy.visit(`/company-briefing/${company.duns_number}`);
     cy.clickButton("Add engagement");
     cy.fillAndSubmitEngagementForm({
@@ -157,7 +160,6 @@ describe("Add/edit an engagement", () => {
   });
 
   it("should edit an engagement (fixes a typo)", () => {
-    const company = Cypress.env("TestingCorp");
     cy.intercept("POST", "/api/v1/engagement/*").as("apiRequestPOST");
     cy.intercept("PATCH", "/api/v1/engagement/*").as("apiRequestPATCH");
     cy.visit(`/company-briefing/${company.duns_number}`);
@@ -194,7 +196,6 @@ describe("add/edit/delete an engagement note", () => {
   });
 
   it("should add an engagement note", () => {
-    const company = Cypress.env("TestingCorp");
     cy.intercept("POST", "/api/v1/engagement/*").as("createEngagement");
     cy.intercept("POST", "/api/v1/engagement/*/note").as("createNote");
     cy.visit(`/company-briefing/${company.duns_number}`);
@@ -219,7 +220,6 @@ describe("add/edit/delete an engagement note", () => {
   });
 
   it("should edit an engagement note", () => {
-    const company = Cypress.env("TestingCorp");
     cy.intercept("PATCH", "/api/v1/engagement/*/note").as("updateNote");
     cy.visit(`/company-briefing/${company.duns_number}`);
     cy.clickLink(engagementNoteLink);
@@ -235,7 +235,6 @@ describe("add/edit/delete an engagement note", () => {
 
   it("should delete an engagement note", () => {
     cy.intercept("DELETE", "/api/v1/engagement/*/note").as("deleteNote");
-    const company = Cypress.env("TestingCorp");
     cy.visit(`/company-briefing/${company.duns_number}`);
     cy.clickLink(engagementNoteLink);
     cy.clickButton("Edit note");
