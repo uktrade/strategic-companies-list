@@ -45,6 +45,16 @@ const Create = ({
             {errors?.contents?.message}
           </p>
         )}
+        {isAWSTranscribeActive && (
+           <div style={{ display: "flex", justifyContent: "flex-end"}}>
+            <TranscriptButton
+              className="govuk-!-margin-bottom-2"
+              onClick={handleOnTranscribe}
+              isTranscribing={isTranscribing}
+              disabled={isTranscribing && !hasFinalisedTranscription}
+            />
+            </div>
+          )}
         <textarea
           className="govuk-textarea govuk-!-margin-bottom-4"
           id="contents"
@@ -63,14 +73,6 @@ const Create = ({
           >
             Save
           </button>
-          {isAWSTranscribeActive && (
-            <TranscriptButton
-              className="govuk-!-margin-right-4"
-              onClick={handleOnTranscribe}
-              isTranscribing={isTranscribing}
-              disabled={isTranscribing && !hasFinalisedTranscription}
-            />
-          )}
           <button
             className="govuk-button govuk-button--secondary"
             onClick={() => setIsCreating(false)}
