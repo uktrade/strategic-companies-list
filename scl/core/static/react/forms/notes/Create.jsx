@@ -46,12 +46,14 @@ const Create = ({
           </p>
         )}
         {isAWSTranscribeActive && (
+           <div style={{ display: "flex", justifyContent: "flex-end"}}>
             <TranscriptButton
-              className="govuk-!-margin-right-4"
+              className="govuk-!-margin-bottom-2"
               onClick={handleOnTranscribe}
               isTranscribing={isTranscribing}
               disabled={isTranscribing && !hasFinalisedTranscription}
             />
+            </div>
           )}
         <textarea
           className="govuk-textarea govuk-!-margin-bottom-4"
