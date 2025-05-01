@@ -53,48 +53,49 @@ class CompanyAccountManagerUserMixin(UserPassesTestMixin):
         return handler(request, *args, **kwargs)
 
 
-def aws_temporary_credentials_api(request):
-    if settings.DISABLE_TRANSCRIBE:
+class AWSTemporaryCredentialsAPIView(UserPassesTestMixin, View):
+    http_method_names = [
+        "get",
+    ]
+
+    def test_func(self):
+        return Company.objects.filter(account_manager=self.request.user).exists()
+
+    @property
+    def client(self):
+        return boto3.client("sts")
+
+    def get(self, *args, **kwargs):
+        if settings.DISABLE_TRANSCRIBE:
+            return JsonResponse({}, status=503)
+
+        if not waffle.flag_is_active(self.request, "AWS_TRANSCRIBE"):
+            return JsonResponse({}, status=403)
+
+        # Creating new credentials unfortunately sometimes fails
+        max_attempts = 3
+        for i in range(0, 3):
+            try:
+                credentials = self.client.assume_role(
+                    RoleArn=settings.AWS_TRANSCRIBE_ROLE_ARN,
+                    RoleSessionName="scl_" + str(uuid.uuid4()),
+                    DurationSeconds=60 * 15,  # 15 minutes
+                )["Credentials"]
+            except Exception:
+                if i == max_attempts - 1:
+                    raise
+                else:
+                    time.sleep(1)
+
         return JsonResponse(
-            {},
-            status=503,
+            {
+                "AccessKeyId": credentials["AccessKeyId"],
+                "SecretAccessKey": credentials["SecretAccessKey"],
+                "SessionToken": credentials["SessionToken"],
+                "Expiration": credentials["Expiration"],
+            },
+            status=200,
         )
-
-    is_account_manager = Company.objects.filter(account_manager=request.user).exists()
-
-    if not is_account_manager:
-        return JsonResponse(403, safe=False)
-
-    if not waffle.flag_is_active(request, "AWS_TRANSCRIBE"):
-        return JsonResponse(403, safe=False)
-
-    client = boto3.client("sts")
-    role_arn = settings.AWS_TRANSCRIBE_ROLE_ARN
-
-    # Creating new credentials unfortunately sometimes fails
-    max_attempts = 3
-    for i in range(0, 3):
-        try:
-            credentials = client.assume_role(
-                RoleArn=role_arn,
-                RoleSessionName="scl_" + str(uuid.uuid4()),
-                DurationSeconds=60 * 15,  # 15 minutes
-            )["Credentials"]
-        except Exception:
-            if i == max_attempts - 1:
-                raise
-            else:
-                time.sleep(1)
-
-    return JsonResponse(
-        {
-            "AccessKeyId": credentials["AccessKeyId"],
-            "SecretAccessKey": credentials["SecretAccessKey"],
-            "SessionToken": credentials["SessionToken"],
-            "Expiration": credentials["Expiration"],
-        },
-        status=200,
-    )
 
 
 class CompanyAPIView(CompanyAccountManagerUserMixin, View):

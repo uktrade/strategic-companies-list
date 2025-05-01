@@ -84,7 +84,11 @@ urlpatterns = [
         api.KeyPeopleAPIView.as_view(),
         name="api-key-people",
     ),
-    path("api/v1/aws-temporary-credentials", api.aws_temporary_credentials_api),
+    path(
+        "api/v1/aws-temporary-credentials",
+        api.AWSTemporaryCredentialsAPIView.as_view(),
+        name="api-aws-temporary-credentials",
+    ),
     # Healthcheck
     path("lb-healthcheck", healthcheck.lb_healthcheck),
     path("pingdom/ping.xml", healthcheck.healthcheck),

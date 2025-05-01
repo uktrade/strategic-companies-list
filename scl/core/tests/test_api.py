@@ -1,6 +1,8 @@
+from unittest import mock
 import pytest
 import json
 import reversion
+from waffle.testutils import override_flag
 
 from django.urls import reverse
 
@@ -734,3 +736,74 @@ def test_company_engagement_api_post(viewer_user_client, company_acc_manager):
     assert "Foo" in [d["title"] for d in response_data["data"]]
     assert "Lorem ipsum dolor sit amet" in [d["details"] for d in response_data["data"]]
     assert "January 27, 2026" in [d["date"] for d in response_data["data"]]
+
+
+@pytest.mark.django_db
+def test_aws_creds_api_not_acc_manager_403(viewer_user_client):
+    response = viewer_user_client.get(
+        reverse(
+            "api-aws-temporary-credentials",
+        ),
+    )
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_aws_creds_api_flag_off_403(viewer_user_client, company_acc_manager):
+    with override_flag("AWS_TRANSCRIBE", active=False):
+        response = viewer_user_client.get(
+            reverse(
+                "api-aws-temporary-credentials",
+            ),
+        )
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_aws_creds_api_disable_transcribe_503(
+    viewer_user_client, company_acc_manager, settings
+):
+    settings.DISABLE_TRANSCRIBE = True
+    response = viewer_user_client.get(
+        reverse(
+            "api-aws-temporary-credentials",
+        ),
+    )
+
+    assert response.status_code == 503
+
+
+@pytest.mark.django_db
+@mock.patch("scl.core.views.api.AWSTemporaryCredentialsAPIView.client")
+def test_aws_creds_api_flag_on_200(
+    mock_client, viewer_user_client, company_acc_manager, settings
+):
+    settings.AWS_TRANSCRIBE_ROLE_ARN = "Test"
+    mock_response = {
+        "Credentials": {
+            "AccessKeyId": "access key",
+            "SecretAccessKey": "secret access key",
+            "SessionToken": "session token",
+            "Expiration": "expiration",
+        }
+    }
+    mock_client.assume_role = mock.MagicMock(return_value=mock_response)
+
+    with override_flag("AWS_TRANSCRIBE", active=True):
+        response = viewer_user_client.get(
+            reverse(
+                "api-aws-temporary-credentials",
+            ),
+        )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert set(response_data.keys()) == {
+        "AccessKeyId",
+        "SecretAccessKey",
+        "SessionToken",
+        "Expiration",
+    }
