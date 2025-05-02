@@ -20,6 +20,9 @@ const Engagements = ({ engagements, duns_number }) => (
                     {engagement.title}
                   </span>
                 </a>
+                <div className="govuk-!-display-none engagement-details">
+                  <p class="govuk-body">{engagement.details}</p>
+                </div>
               </li>
             );
           })}

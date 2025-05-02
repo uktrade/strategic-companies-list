@@ -267,6 +267,7 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                                 {
                                     "id": str(engagement.id),
                                     "title": engagement.title,
+                                    "details": engagement.details,
                                     "date": engagement.date.strftime(
                                         constants.DATE_FORMAT_SHORT
                                     ),
