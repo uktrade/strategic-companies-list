@@ -2,7 +2,10 @@ import React from "react";
 import Section from "../../components/Section";
 
 const AccountManagers = ({ accountManagers }) => (
-  <Section title="People assigned to this company">
+  <Section
+    className="govuk-!-display-none-print"
+    title="People assigned to this company"
+  >
     {accountManagers.length ? (
       <>
         <ul className="scl-multiline-list">

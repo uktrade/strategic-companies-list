@@ -1,8 +1,13 @@
 @media print {
-  .scl-template {
-    background: none;
+  a.govuk-link {
+    color: #000 !important;
+  }
+  // Hide link values
+  a[href]::after {
+    display: none;
   }
 
+  // Hide global header, footer and breadcrumb
   .govuk-header,
   .scl-page-header__actions,
   .scl-breadcrumb,
@@ -10,15 +15,74 @@
     display: none;
   }
 
-  a[href]:after {
-    content: none !important;
-  }
+  // The styles below are scoped to the company briefing page as these rules are specifically used for the one pager
+  #company-briefing {
+    // GDS styles
+    .govuk-grid-column-one-third,
+    .govuk-grid-column-two-thirds {
+      width: 100%;
+      float: none;
+    }
 
-  .scl-tag {
-    padding: 0;
-  }
+    .govuk-tag--grey {
+      background: transparent;
+    }
 
-  .scl-tag--date {
-    text-align: left;
+    // SCL layout and components
+    .engagement-details {
+      display: block !important;
+      margin-top: 10px;
+    }
+
+    .scl-page-header {
+      display: block;
+      margin-bottom: 40px;
+    }
+    .scl-page-header__two-thirds {
+      width: 100%;
+    }
+
+    .scl-multiline-list {
+      font-size: 12pt;
+    }
+
+    .scl-tag--small {
+      padding: 0;
+      font-size: 12pt;
+    }
+
+    .scl-tag--date {
+      width: 100%;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .scl-body--small {
+      display: none;
+    }
+
+    .scl-multiline-list__item {
+      margin-bottom: 30px;
+    }
+
+    .scl-multiline-list__link_text {
+      font-size: 14pt;
+      font-weight: 700;
+    }
+
+    .card {
+      border: none;
+      padding: 0;
+      margin: 0 0 40px 0 !important;
+    }
+
+    // HTML elements
+    section {
+      border: none;
+      padding: 0 0 20px 0;
+    }
+    button {
+      display: none;
+    }
   }
 }
