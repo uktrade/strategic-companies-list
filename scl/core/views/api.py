@@ -1,26 +1,26 @@
-from datetime import date, datetime
-from scl.core.constants import DATE_FORMAT_SHORT, DATE_FORMAT_NUMERIC
-from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
 import json
+import logging
 import time
 import uuid
-import logging
-import waffle
+from datetime import date, datetime
 
 import boto3
+import reversion
+import waffle
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 
-import reversion
-
+from scl.core.constants import DATE_FORMAT_NUMERIC, DATE_FORMAT_SHORT
+from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
 from scl.core.views.utils import get_all_sectors, get_company_sectors
 
 today = date.today()
 
-logger = logging.getLogger().warning
+
+logger = logging.getLogger(__name__)
 
 
 class CompanyAccountManagerUserMixin(UserPassesTestMixin):
@@ -34,13 +34,19 @@ class CompanyAccountManagerUserMixin(UserPassesTestMixin):
         """
         Combination of django's UserPassesTestMixin and View dispatch method, modified to only protect methods listed in protected_methods.
         """
-
+        logger.info("Received request %s on %s", request.method, request.path)
         if request.method.lower() in self.http_method_names:
             user_test_result = self.get_test_func()()
             if (
                 request.method.lower() in self.protected_methods
                 and not user_test_result
             ):
+                logger.warning(
+                    "User %s does not have permission to %s on %s",
+                    request.user,
+                    request.method,
+                    request.path,
+                )
                 return self.handle_no_permission()
 
             handler = getattr(
@@ -48,6 +54,7 @@ class CompanyAccountManagerUserMixin(UserPassesTestMixin):
             )
 
         else:
+            logger.warning("Method %s on %s not allowed", request.method, request.path)
             handler = self.http_method_not_allowed
 
         return handler(request, *args, **kwargs)
@@ -66,12 +73,13 @@ class AWSTemporaryCredentialsAPIView(UserPassesTestMixin, View):
         return boto3.client("sts")
 
     def get(self, *args, **kwargs):
+        logger.info("Received request %s on %s", self.request.method, self.request.path)
         if settings.DISABLE_TRANSCRIBE:
             return JsonResponse({}, status=503)
 
         if not waffle.flag_is_active(self.request, "AWS_TRANSCRIBE"):
             return JsonResponse({}, status=403)
-
+        logger.info("AWS transcribe service access active")
         # Creating new credentials unfortunately sometimes fails
         max_attempts = 3
         for i in range(0, 3):
@@ -107,10 +115,20 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def data(self):
-        return json.loads(self.request.body)
+        response = json.loads(self.request.body)
+        logger.info(
+            "Response: %s for %s on %s",
+            response,
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     @property
     def company(self):
+        logger.info(
+            "Requesting company with duns_number: %s", self.kwargs["duns_number"]
+        )
         return Company.objects.get(duns_number=self.kwargs["duns_number"])
 
     def patch(self, *args, **kwargs):
@@ -133,25 +151,31 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
                 "Updated company via API "
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
-
-            return JsonResponse(
-                {
-                    "data": {
-                        "title": updated_company.name,
-                        "duns_number": updated_company.duns_number,
-                        "company_sectors": get_company_sectors(updated_company),
-                        "all_sectors": get_all_sectors(),
-                        "summary": updated_company.summary,
-                        "last_updated": updated_company.last_updated.strftime(
-                            "%B %d, %Y, %H:%M"
-                        ),
-                    }
-                },
-                status=200,
-            )
+        response = JsonResponse(
+            {
+                "data": {
+                    "title": updated_company.name,
+                    "duns_number": updated_company.duns_number,
+                    "company_sectors": get_company_sectors(updated_company),
+                    "all_sectors": get_all_sectors(),
+                    "summary": updated_company.summary,
+                    "last_updated": updated_company.last_updated.strftime(
+                        "%B %d, %Y, %H:%M"
+                    ),
+                }
+            },
+            status=200,
+        )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def get(self, *args, **kwargs):
-        return JsonResponse(
+        response = JsonResponse(
             {
                 "data": {
                     "title": self.company.name,
@@ -161,6 +185,13 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
             },
             status=200,
         )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
 
 class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
@@ -174,10 +205,20 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def data(self):
-        return json.loads(self.request.body)
+        response = json.loads(self.request.body)
+        logger.info(
+            "Response: %s for %s on %s",
+            response,
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     @property
     def company(self):
+        logger.info(
+            "Requesting company with duns_number: %s", self.kwargs["duns_number"]
+        )
         return Company.objects.get(duns_number=self.kwargs["duns_number"])
 
     def delete(self, *args, **kwargs):
@@ -194,8 +235,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
                 f"Deleted {self.kwargs['insight_type']} insight via API "
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
-
-        return JsonResponse(
+        response = JsonResponse(
             {
                 "data": [
                     {
@@ -208,6 +248,13 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             },
             status=200,
         )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def patch(self, *args, **kwargs):
         with reversion.create_revision():
@@ -227,7 +274,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
-        return JsonResponse(
+        response = JsonResponse(
             {
                 "data": [
                     {
@@ -240,6 +287,13 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             },
             status=200,
         )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def post(self, *args, **kwargs):
         with reversion.create_revision():
@@ -260,8 +314,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
                 f"Created {self.kwargs['insight_type']} insight via API "
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
-
-        return JsonResponse(
+        response = JsonResponse(
             {
                 "data": [
                     {
@@ -274,6 +327,13 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
             },
             status=200,
         )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def get(self, *args, **kwargs):
         insights = list(
@@ -281,7 +341,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
                 insight_type=self.kwargs["insight_type"]
             ).order_by("order")
         )
-        return JsonResponse(
+        response = JsonResponse(
             {
                 "insights": [
                     {
@@ -296,6 +356,13 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
                 ]
             }
         )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
 
 class InsightAPIView(CompanyAccountManagerUserMixin, View):
@@ -316,10 +383,17 @@ class InsightAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def data(self):
-        return json.loads(self.request.body)
+        response = json.loads(self.request.body)
+        logger.info(
+            "Response: %s for %s on %s",
+            response,
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def get(self, *args, **kwargs):
-        return JsonResponse(
+        response = JsonResponse(
             {
                 "id": str(self.insight.id),
                 "title": self.insight.title,
@@ -329,6 +403,13 @@ class InsightAPIView(CompanyAccountManagerUserMixin, View):
                 "order": self.insight.order,
             }
         )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def patch(self, *args, **kwargs):
         with reversion.create_revision():
@@ -348,7 +429,7 @@ class InsightAPIView(CompanyAccountManagerUserMixin, View):
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
-        return JsonResponse(
+        response = JsonResponse(
             {
                 "id": str(insight.id),
                 "title": insight.title,
@@ -358,6 +439,13 @@ class InsightAPIView(CompanyAccountManagerUserMixin, View):
                 "order": insight.order,
             }
         )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def delete(self, *args, **kwargs):
         with reversion.create_revision():
@@ -371,7 +459,14 @@ class InsightAPIView(CompanyAccountManagerUserMixin, View):
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
-        return JsonResponse({"status": "success"})
+        response = JsonResponse({"status": "success"})
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
 
 class EngagementAPIView(CompanyAccountManagerUserMixin, View):
@@ -382,7 +477,14 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def data(self):
-        return json.loads(self.request.body)
+        response = json.loads(self.request.body)
+        logger.info(
+            "Response: %s for %s on %s",
+            response,
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     @property
     def company(self):
@@ -390,6 +492,7 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def engagement(self):
+        logger.info("Requesting enagement with id: %s", self.kwargs["engagement_id"])
         return Engagement.objects.get(id=self.kwargs["engagement_id"])
 
     def patch(self, *args, **kwargs):
@@ -405,7 +508,7 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer')})"
             )
 
-        return JsonResponse(
+        response = JsonResponse(
             {
                 "data": {
                     "title": engagement.title,
@@ -416,6 +519,13 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
             },
             status=200,
         )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
 
 class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
@@ -426,10 +536,20 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def data(self):
-        return json.loads(self.request.body)
+        response = json.loads(self.request.body)
+        logger.info(
+            "Response: %s for %s on %s",
+            response,
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     @property
     def company(self):
+        logger.info(
+            "Requesting company with duns_number: %s", self.kwargs["duns_number"]
+        )
         return Company.objects.get(duns_number=self.kwargs["duns_number"])
 
     def post(self, *args, **kwargs):
@@ -453,21 +573,27 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
                 "Engagement added via API "
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
-
-            return JsonResponse(
-                {
-                    "data": [
-                        {
-                            "title": engagement.title,
-                            "details": engagement.details,
-                            "date": engagement.date.strftime(DATE_FORMAT_SHORT),
-                            "id": engagement.id,
-                        }
-                        for engagement in engagements
-                    ]
-                },
-                status=200,
-            )
+        response = JsonResponse(
+            {
+                "data": [
+                    {
+                        "title": engagement.title,
+                        "details": engagement.details,
+                        "date": engagement.date.strftime(DATE_FORMAT_SHORT),
+                        "id": engagement.id,
+                    }
+                    for engagement in engagements
+                ]
+            },
+            status=200,
+        )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
 
 class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
@@ -480,7 +606,14 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def data(self):
-        return json.loads(self.request.body)
+        response = json.loads(self.request.body)
+        logger.info(
+            "Response: %s for %s on %s",
+            response,
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     @property
     def company(self):
@@ -488,6 +621,7 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def engagement(self):
+        logger.info("Requesting enagement with id: %s", self.kwargs["engagement_id"])
         return Engagement.objects.get(id=self.kwargs["engagement_id"])
 
     def patch(self, *args, **kwargs):
@@ -506,18 +640,25 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
-            return JsonResponse(
-                {
-                    "data": [
-                        {
-                            "noteId": str(note.id),
-                            "contents": note.contents,
-                        }
-                        for note in updated_notes
-                    ],
-                },
-                status=200,
-            )
+        response = JsonResponse(
+            {
+                "data": [
+                    {
+                        "noteId": str(note.id),
+                        "contents": note.contents,
+                    }
+                    for note in updated_notes
+                ],
+            },
+            status=200,
+        )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def post(self, *args, **kwargs):
         with reversion.create_revision():
@@ -534,19 +675,25 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
             )
 
             notes = self.engagement.notes.all()
-
-            return JsonResponse(
-                {
-                    "data": [
-                        {
-                            "noteId": str(note.id),
-                            "contents": note.contents,
-                        }
-                        for note in notes
-                    ],
-                },
-                status=200,
-            )
+        response = JsonResponse(
+            {
+                "data": [
+                    {
+                        "noteId": str(note.id),
+                        "contents": note.contents,
+                    }
+                    for note in notes
+                ],
+            },
+            status=200,
+        )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def delete(self, *args, **kwargs):
         with reversion.create_revision():
@@ -560,19 +707,25 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
             )
 
             notes = self.engagement.notes.all()
-
-            return JsonResponse(
-                {
-                    "data": [
-                        {
-                            "noteId": str(note.id),
-                            "contents": note.contents,
-                        }
-                        for note in notes
-                    ],
-                },
-                status=200,
-            )
+        response = JsonResponse(
+            {
+                "data": [
+                    {
+                        "noteId": str(note.id),
+                        "contents": note.contents,
+                    }
+                    for note in notes
+                ],
+            },
+            status=200,
+        )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
 
 class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
@@ -586,10 +739,20 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
 
     @property
     def data(self):
-        return json.loads(self.request.body)
+        response = json.loads(self.request.body)
+        logger.info(
+            "Response: %s for %s on %s",
+            response,
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     @property
     def company(self):
+        logger.info(
+            "Requesting company with duns_number: %s", self.kwargs["duns_number"]
+        )
         return Company.objects.get(duns_number=self.kwargs["duns_number"])
 
     def post(self, *args, **kwargs):
@@ -606,15 +769,22 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
                 "Person created"
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
-            return JsonResponse(
-                {
-                    "data": [
-                        {"name": people.name, "role": people.role, "userId": people.id}
-                        for people in updated_people
-                    ]
-                },
-                status=200,
-            )
+        response = JsonResponse(
+            {
+                "data": [
+                    {"name": people.name, "role": people.role, "userId": people.id}
+                    for people in updated_people
+                ]
+            },
+            status=200,
+        )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def delete(self, *args, **kwargs):
         with reversion.create_revision():
@@ -628,15 +798,22 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
                 "Person deleted"
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
-            return JsonResponse(
-                {
-                    "data": [
-                        {"name": people.name, "role": people.role, "userId": people.id}
-                        for people in updated_people
-                    ]
-                },
-                status=200,
-            )
+        response = JsonResponse(
+            {
+                "data": [
+                    {"name": people.name, "role": people.role, "userId": people.id}
+                    for people in updated_people
+                ]
+            },
+            status=200,
+        )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def patch(self, *args, **kwargs):
         with reversion.create_revision():
@@ -653,19 +830,26 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
                 "Key people updated"
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
-            return JsonResponse(
-                {
-                    "data": [
-                        {"name": people.name, "role": people.role, "userId": people.id}
-                        for people in updated_people
-                    ]
-                },
-                status=200,
-            )
+        response = JsonResponse(
+            {
+                "data": [
+                    {"name": people.name, "role": people.role, "userId": people.id}
+                    for people in updated_people
+                ]
+            },
+            status=200,
+        )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
 
     def get(self, *args, **kwargs):
         key_people = list(self.company.key_people.all())
-        return JsonResponse(
+        response = JsonResponse(
             {
                 "keyPeople": [
                     {"name": people.name, "role": people.role, "userId": people.id}
@@ -674,3 +858,10 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
             },
             status=200,
         )
+        logger.info(
+            "Response: %s for %s on %s",
+            response.json(),
+            self.request.method,
+            self.request.path,
+        )
+        return response
