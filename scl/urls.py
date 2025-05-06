@@ -90,8 +90,8 @@ urlpatterns = [
         name="api-aws-temporary-credentials",
     ),
     # Healthcheck
-    path("lb-healthcheck", healthcheck.lb_healthcheck),
-    path("pingdom/ping.xml", healthcheck.healthcheck),
+    path("lb-healthcheck", healthcheck.lb_healthcheck, name="lb-healthcheck"),
+    path("pingdom/ping.xml", healthcheck.healthcheck, name="healthcheck"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
