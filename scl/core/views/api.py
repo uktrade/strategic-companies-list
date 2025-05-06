@@ -168,7 +168,7 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -187,7 +187,7 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -250,7 +250,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -289,7 +289,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -329,7 +329,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -358,7 +358,7 @@ class CompanyInsightAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -405,7 +405,7 @@ class InsightAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -441,7 +441,7 @@ class InsightAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -462,7 +462,7 @@ class InsightAPIView(CompanyAccountManagerUserMixin, View):
         response = JsonResponse({"status": "success"})
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -521,7 +521,7 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -589,7 +589,7 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -654,7 +654,7 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -689,7 +689,7 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -721,7 +721,7 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -780,7 +780,7 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -809,7 +809,7 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -841,7 +841,7 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
@@ -860,7 +860,7 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
         )
         logger.info(
             "Response: %s for %s on %s",
-            response.json(),
+            response.content,
             self.request.method,
             self.request.path,
         )
