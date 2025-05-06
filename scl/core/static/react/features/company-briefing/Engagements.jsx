@@ -37,7 +37,17 @@ const Engagements = ({ engagements, duns_number }) => (
         </p>
       </>
     ) : (
-      <p className="govuk-body">No current engagements.</p>
+      <>
+        <p className="govuk-body">No current engagements.</p>
+        <p className="govuk-body govuk-!-margin-top-0 govuk-!-margin-bottom-0 scl-body--small">
+          <a
+            href={`/company-briefing/${duns_number}/engagements`}
+            className="govuk-link govuk-link--no-visited-state scl-link--no-underline"
+          >
+            View all engagements
+          </a>
+        </p>
+      </>
     )}
   </Section>
 );
