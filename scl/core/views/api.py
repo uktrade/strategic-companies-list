@@ -83,14 +83,17 @@ class AWSTemporaryCredentialsAPIView(UserPassesTestMixin, View):
         # Creating new credentials unfortunately sometimes fails
         max_attempts = 3
         for i in range(0, 3):
+            logger.info("AWS transcribe create new credentials attempt %s of %s", i + 1, 3)
             try:
                 credentials = self.client.assume_role(
                     RoleArn=settings.AWS_TRANSCRIBE_ROLE_ARN,
                     RoleSessionName="scl_" + str(uuid.uuid4()),
                     DurationSeconds=60 * 15,  # 15 minutes
                 )["Credentials"]
-            except Exception:
+            except Exception as e:
+                logger.error(e)
                 if i == max_attempts - 1:
+                    logger.error("Max attempts on creating credentials reached")
                     raise
                 else:
                     time.sleep(1)
