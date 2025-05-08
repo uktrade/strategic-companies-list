@@ -188,3 +188,6 @@ scl/static
 
 # Assets
 assets/
+
+# e2e
+cypress/screenshots/
