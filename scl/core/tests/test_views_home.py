@@ -151,4 +151,4 @@ def test_company_engagement_list_200(viewer_user, viewer_user_client):
     )
 
     assert response.status_code == 200
-    assert response.template_name == ["company_engagements.html"]
+    assert response.template_name == ["enagagements_total.html"]

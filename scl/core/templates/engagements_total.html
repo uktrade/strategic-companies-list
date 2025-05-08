@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bleach_tags %}
+{% load scl_html %}
+
+{% block content %}
+<div class="govuk-width-container">
+  <nav class="govuk-breadcrumbs" aria-label="Breadcrumb">
+    <ol class="govuk-breadcrumbs__list">
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="/">Home</a>
+      </li>
+      <li class="govuk-breadcrumbs__list-item">
+        <a href="/company-briefing/{{company.duns_number}}" class="govuk-breadcrumbs__link">{{company.name}}</a>
+      </li>
+        <li class="govuk-breadcrumbs__list-item">
+        Engagements
+      </li>
+    </ol>
+  </nav>
+  <main class="govuk-main-wrapper" id="main-content">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        {% include './partials/header.html' with title=company.name show_print_button=False %}
+      </div>
+    </div>
+    <hr class="govuk-section-break govuk-section-break--xmargl govuk-section-break--visible govuk-!-margin-top-2 govuk-!-margin-bottom-8">
+    <div class="govuk-width-container">
+      {% include "./partials/react-slot.html" with mount_id="engagements-total" props=props %}
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+  <script type="module" src="{% static 'js/engagements-total.js' %}"></script>
+{% endblock %}
+
