@@ -10,7 +10,7 @@ const Page = ({ data, csrf_token }) => {
         <TabsListItem>Upcoming Engagements</TabsListItem>
         <TabsListItem>Past Engagements</TabsListItem>
         <TabsListPanel>
-        <h2 class="govuk-heading-l">Upcoming Engagements</h2>
+          <h2 class="govuk-heading-l">Upcoming Engagements</h2>
           <Table
             headers={["Date", "Engagements"]}
             numRows={data.engagements.length}
@@ -19,7 +19,9 @@ const Page = ({ data, csrf_token }) => {
           >
             {data.engagements.map((x) => (
               <Row>
-                <Cell><strong>{x.date}</strong></Cell>
+                <Cell>
+                  <strong>{x.date}</strong>
+                </Cell>
                 <Cell>
                   <a className="govuk-link" href={x.link}>
                     {x.title}
@@ -30,7 +32,7 @@ const Page = ({ data, csrf_token }) => {
           </Table>
         </TabsListPanel>
         <TabsListPanel>
-        <h2 class="govuk-heading-l">Past Engagements</h2>
+          <h2 class="govuk-heading-l">Past Engagements</h2>
           <Table
             headers={["Date", "Engagements"]}
             numRows={data.past_engagements.length}
@@ -39,7 +41,9 @@ const Page = ({ data, csrf_token }) => {
           >
             {data.past_engagements.map((x) => (
               <Row>
-                <Cell><strong>{x.date}</strong></Cell>
+                <Cell>
+                  <strong>{x.date}</strong>
+                </Cell>
                 <Cell>
                   <a className="govuk-link" href={x.link}>
                     {x.title}
