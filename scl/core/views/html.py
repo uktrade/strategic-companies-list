@@ -1,17 +1,17 @@
 import json
 import logging
-
 from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import JsonResponse
 from django.template.response import TemplateResponse
-from django.views.generic import TemplateView, DetailView
-
+from django.views.generic import DetailView, TemplateView
+from django.urls import reverse
 from reversion.models import Version
 
 from scl.core import constants
-from scl.core.models import Company, Engagement, CompanyAccountManager, Insight
+from scl.core.models import Company, CompanyAccountManager, Engagement, Insight
 from scl.core.views.utils import (
     get_all_feature_flags,
     get_all_sectors,
@@ -116,7 +116,7 @@ class EngagementDetailView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
 
 class CompanyEngagementListView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
     model = Company
-    template_name = "company_engagements.html"
+    template_name = "engagements_total.html"
 
     @property
     def company(self):
@@ -137,13 +137,31 @@ class CompanyEngagementListView(ViewerOrCompanyAccountManagerUserMixin, DetailVi
         engagements = list(
             self.object.engagements.filter(date__gte=today).order_by("-date")
         )
-
+        engagement_to_dict = lambda x: {
+            "id": str(x.id),
+            "title": x.title,
+            "date": str(x.date),
+            "link": reverse("engagement", args=[x.pk]),
+            "company": {
+                "title": self.object.name,
+                "summary": self.object.summary,
+                "duns_number": self.object.duns_number,
+            },
+            "details": x.details,
+        }
+        props = json.dumps(
+            {
+                "past_engagements": list(map(engagement_to_dict, past_engagements)),
+                "engagements": list(map(engagement_to_dict, engagements)),
+            }
+        )
         context.update(
             {
                 "company": self.object,
                 "add_engagement_link": f"/company-briefing/{self.object.duns_number}/add-engagement",
                 "engagements": engagements,
                 "past_engagements": past_engagements,
+                "props": props,
             }
         )
         return context
