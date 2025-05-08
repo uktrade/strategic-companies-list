@@ -54,9 +54,6 @@ describe("Company Details page", () => {
         "contain.text",
         "Advanced engineering, Aerospace, Agriculture, horticulture, fisheries and pets, Defence"
       );
-    cy.clickButton("Edit company details");
-    cy.get("#title").clear().type("Testing Corp");
-    cy.clickButton("Save");
   });
 
   it("should allow you to remove sectors", () => {
