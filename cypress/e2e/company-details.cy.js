@@ -54,6 +54,9 @@ describe("Company Details page", () => {
         "contain.text",
         "Advanced engineering, Aerospace, Agriculture, horticulture, fisheries and pets, Defence"
       );
+    cy.clickButton("Edit company details");
+    cy.get("#title").clear().type("Testing Corp");
+    cy.clickButton("Save");
   });
 
   it("should allow you to remove sectors", () => {
@@ -83,15 +86,9 @@ describe("Company Details page", () => {
     cy.visit(`/company-briefing/${company.duns_number}`);
     cy.clickButton("Edit company details");
     cy.get("#title").clear().type("Test title");
-    cy.get(
-      `[aria-label="Remove Advanced engineering"]`
-    ).click();
-    cy.get(
-      `[aria-label="Remove Aerospace"]`
-    ).click();
-    cy.get(
-      `[aria-label="Remove Defence"]`
-    ).click();
+    cy.get(`[aria-label="Remove Advanced engineering"]`).click();
+    cy.get(`[aria-label="Remove Aerospace"]`).click();
+    cy.get(`[aria-label="Remove Defence"]`).click();
     cy.clickButton("Save");
     cy.findByRole("heading", {
       level: 1,
