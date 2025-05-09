@@ -32,9 +32,12 @@ const Details = ({ data, csrf_token }) => {
 
     if (status == 200) {
       setEngagementDetails(data.data);
-      setNotification({ message: "Engagement updated", success: true });
+      setNotification({ message: "Engagement updated"});
     } else {
-      setNotification({ message: data.message, success: false });
+      setNotification({
+        message: `Status ${status}: ${data.message || data.error}`,
+        status: "warning",
+      });
     }
   };
 
@@ -42,7 +45,7 @@ const Details = ({ data, csrf_token }) => {
     <LoadingSpinner isLoading={isLoading}>
       <NotificationBanner
         message={notification?.message}
-        success={notification?.success}
+        status={notification?.status}
       />
       {!isUpdating && (
         <div className="govuk-!-margin-bottom-4">

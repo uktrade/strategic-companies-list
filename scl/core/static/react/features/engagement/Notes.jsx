@@ -172,9 +172,12 @@ const Notes = ({ csrf_token, data }) => {
 
       if (status === 200) {
         setNotes(data.data);
-        setNotification({ message: "Note added", success: true });
+        setNotification({ message: "Note added" });
       } else {
-        setNotification({ message: data.message, status: "warning" });
+        setNotification({
+          message: `Status ${status}: ${data.message || data.error}`,
+          status: "warning",
+        });
       }
     }
     if (method === "update") {
@@ -188,9 +191,12 @@ const Notes = ({ csrf_token, data }) => {
 
       if (status === 200) {
         setNotes(data.data);
-        setNotification({ message: "Note updated", success: true });
+        setNotification({ message: "Note updated" });
       } else {
-        setNotification({ message: data.message, status: "warning" });
+        setNotification({
+          message: `Status ${status}: ${data.message || data.error}`,
+          status: "warning",
+        });
       }
     }
   };
@@ -207,9 +213,12 @@ const Notes = ({ csrf_token, data }) => {
 
     if (status === 200) {
       setNotes(data.data);
-      setNotification({ message: "Note deleted", success: true });
+      setNotification({ message: "Note deleted" });
     } else {
-      setNotification({ message: data.message, status: "warning" });
+      setNotification({
+        message: `Status ${status}: ${data.message || data.error}`,
+        status: "warning",
+      });
     }
   };
 
@@ -224,7 +233,7 @@ const Notes = ({ csrf_token, data }) => {
       <LoadingSpinner isLoading={isLoading}>
         <NotificationBanner
           message={notification?.message}
-          success={notification?.success}
+          status={notification?.status}
         />
         {!isCreating &&
           !isUpdating &&

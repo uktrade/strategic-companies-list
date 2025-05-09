@@ -9,7 +9,7 @@ const NotificationBanner = ({ message, status = "info" }) => {
         setIsUpdated(false);
       }, 3000);
     }
-  }, [message]);
+  }, []);
   
   if (isUpdated) {
     if (status === "info") {

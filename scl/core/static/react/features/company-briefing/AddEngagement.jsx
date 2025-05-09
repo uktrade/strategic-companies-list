@@ -15,10 +15,6 @@ const AddEngagement = ({
 
   const ENDPOINT = `/api/v1/engagement/${data.duns_number}`;
 
-  useEffect(() => {
-    setIsEngagementsUpdated(false);
-  }, []);
-
   const onSubmitAddEngagement = async (payload) => {
     setIsLoading(true);
     const { data, status } = await ApiProxy.post(ENDPOINT, payload, csrf_token);
@@ -29,7 +25,10 @@ const AddEngagement = ({
       setNotification({ message: "Engagement added" });
       setIsEngagementsUpdated(true);
     } else {
-      setNotification({ message: data.message, status: "warning" });
+      setNotification({
+        message: `Status ${status}: ${data.message || data.error}`,
+        status: "warning",
+      });
       setIsEngagementsUpdated(true);
     }
   };

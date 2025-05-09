@@ -34,9 +34,12 @@ const KeyPeople = ({ id, csrf_token, keyPeople }) => {
 
     if (status == 200) {
       setPeople(data.data);
-      setNotification({ message: "Key person deleted", success: true });
+      setNotification({ message: "Key person deleted" });
     } else {
-      setNotification({ message: data.message, status: "warning" });
+      setNotification({
+        message: `Status ${status}: ${data.message || data.error}`,
+        status: "warning",
+      });
     }
   };
 
@@ -54,9 +57,12 @@ const KeyPeople = ({ id, csrf_token, keyPeople }) => {
 
       if (status == 200) {
         setPeople(data.data);
-        setNotification({ message: "Key person created", success: true });
+        setNotification({ message: "Key person created" });
       } else {
-        setNotification({ message: data.message, status: "warning" });
+        setNotification({
+          message: `Status ${status}: ${data.message || data.error}`,
+          status: "warning",
+        });
       }
     }
 
@@ -71,9 +77,12 @@ const KeyPeople = ({ id, csrf_token, keyPeople }) => {
 
       if (status == 200) {
         setPeople(data.data);
-        setNotification({ message: "Key person updated", success: true });
+        setNotification({ message: "Key person updated" });
       } else {
-        setNotification({ message: data.message, status: "warning" });
+        setNotification({
+          message: `Status ${status}: ${data.message || data.error}`,
+          status: "warning",
+        });
       }
     }
   };
@@ -83,7 +92,7 @@ const KeyPeople = ({ id, csrf_token, keyPeople }) => {
       <Section title="Key People">
         <NotificationBanner
           message={notification?.message}
-          success={notification?.success}
+          status={notification?.status}
         />
 
         {!people?.length ? (

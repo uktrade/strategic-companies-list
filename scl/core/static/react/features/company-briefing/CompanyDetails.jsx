@@ -33,7 +33,10 @@ const CompanyDetails = ({ data, csrf_token, isAddingEngagement, nonce }) => {
       setCompanyDetails(data.data);
       setNotification({ message: "Company details updated" });
     } else {
-      setNotification({ message: data.message, status: "warning" });
+      setNotification({
+        message: `Status ${status}: ${data.message || data.error}`,
+        status: "warning",
+      });
     }
   };
 
