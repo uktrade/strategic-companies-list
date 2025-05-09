@@ -21,7 +21,7 @@ const Engagements = ({ engagements, duns_number }) => (
                   </span>
                 </a>
                 <div className="govuk-!-display-none engagement-details">
-                  <p class="govuk-body">{engagement.details}</p>
+                  <p className="govuk-body">{engagement.details}</p>
                 </div>
               </li>
             );

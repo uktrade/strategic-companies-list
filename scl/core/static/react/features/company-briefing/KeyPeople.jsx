@@ -5,17 +5,20 @@ import Update from "../../forms/key-people/Update";
 import Create from "../../forms/key-people/Create";
 import Section from "../../components/Section";
 import SectionActions from "../../components/SectionActions";
+import NotificationBanner from "../../components/NotificationBanner";
 
-const KeyPeople = ({
-  id,
-  csrf_token,
-  keyPeople,
-  showUpdateNotification,
-}) => {
+const KeyPeople = ({ id, csrf_token, keyPeople }) => {
   const [people, setPeople] = useState(keyPeople);
+  const [notification, setNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+
+  const resetState = () => {
+    setIsLoading(false);
+    setIsUpdating(false);
+    setIsCreating(false);
+  };
 
   const ENDPOINT = `/api/v1/key-people/${id}`;
 
@@ -26,45 +29,63 @@ const KeyPeople = ({
       { id: userId },
       csrf_token
     );
-    setPeople(data.data);
-    if (data.data.length <= 0) {
-      setIsUpdating(false);
-      setIsCreating(false);
+
+    resetState();
+
+    if (status == 200) {
+      setPeople(data.data);
+      setNotification({ message: "Key person deleted", success: true });
+    } else {
+      setNotification({ message: data.message, status: "warning" });
     }
-    setIsLoading(false);
-    showUpdateNotification("Key person deleted");
   };
 
   const onSubmit = async (payload, method) => {
+    setIsLoading(true);
+
     if (method === "create") {
-      setIsLoading(true);
       const { data, status } = await ApiProxy.post(
         ENDPOINT,
         payload,
         csrf_token
       );
-      setPeople(data.data);
-      setIsLoading(false);
-      setIsCreating(false);
-      showUpdateNotification('Key person created');
+
+      resetState();
+
+      if (status == 200) {
+        setPeople(data.data);
+        setNotification({ message: "Key person created", success: true });
+      } else {
+        setNotification({ message: data.message, status: "warning" });
+      }
     }
+
     if (method === "update") {
-      setIsLoading(true);
       const { data, status } = await ApiProxy.update(
         ENDPOINT,
         payload.people,
         csrf_token
       );
-      setPeople(data.data);
-      setIsLoading(false);
-      setIsUpdating(false);
-      showUpdateNotification('Key person updated');
+
+      resetState();
+
+      if (status == 200) {
+        setPeople(data.data);
+        setNotification({ message: "Key person updated", success: true });
+      } else {
+        setNotification({ message: data.message, status: "warning" });
+      }
     }
   };
 
   return (
     <LoadingSpinner isLoading={isLoading}>
       <Section title="Key People">
+        <NotificationBanner
+          message={notification?.message}
+          success={notification?.success}
+        />
+
         {!people?.length ? (
           <p className="govuk-body">Currently no key people are assigned.</p>
         ) : (
@@ -99,7 +120,7 @@ const KeyPeople = ({
           <SectionActions
             addLabel="Add people"
             editLabel="Edit people"
-            showEdit={Boolean(people.length)}
+            showEdit={Boolean(people?.length)}
             setIsCreating={() => setIsCreating(!isCreating)}
             setIsUpdating={() => setIsUpdating(!isUpdating)}
           />

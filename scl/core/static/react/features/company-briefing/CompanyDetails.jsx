@@ -3,40 +3,46 @@ import React, { useState, useContext } from "react";
 import ApiProxy from "../../proxy";
 import Update from "../../forms/company-details/Update";
 import LoadingSpinner from "../../components/Spinner";
+import NotificationBanner from "../../components/NotificationBanner";
 
-import { AccountContext } from "../../providers";
+import { GlobalContext } from "../../providers";
 
-const CompanyDetails = ({
-  data,
-  csrf_token,
-  isAddingEngagement,
-  nonce,
-  showUpdateNotification,
-}) => {
+const CompanyDetails = ({ data, csrf_token, isAddingEngagement, nonce }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [notification, setNotification] = useState(null);
   const [companyDetails, setCompanyDetails] = useState(data);
 
-  const { isAccountManager } = useContext(AccountContext);
+  const { isAccountManager } = useContext(GlobalContext);
 
   const ENDPOINT = `/api/v1/company/${data.duns_number}`;
 
   const onSubmit = async (payload) => {
     setIsLoading(true);
+
     const { data, status } = await ApiProxy.update(
       ENDPOINT,
       payload,
       csrf_token
     );
 
-    setCompanyDetails(data.data);
     setIsLoading(false);
     setIsUpdating(false);
-    showUpdateNotification("Company updated");
+
+    if (status === 200) {
+      setCompanyDetails(data.data);
+      setNotification({ message: "Company details updated" });
+    } else {
+      setNotification({ message: data.message, status: "warning" });
+    }
   };
 
   return (
     <LoadingSpinner isLoading={isLoading}>
+        <NotificationBanner
+          message={notification?.message}
+          status={notification?.status}
+        />
       <div className="govuk-!-margin-bottom-4">
         <h1 className="govuk-heading-l govuk-!-margin-bottom-4">
           {companyDetails.title}

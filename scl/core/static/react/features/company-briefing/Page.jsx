@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-
-import ApiProxy from "../../proxy";
+import React, { useState, useContext } from "react";
 
 import PageActions from "../../components/PageActions";
 import Breadcrumb from "../../components/Breadcrumb";
@@ -12,39 +10,17 @@ import CompanyDetails from "./CompanyDetails";
 import Engagements from "./Engagements";
 import AccountManagers from "./AccountManagers";
 import AddEngagement from "./AddEngagement";
-import NotificationBanner from "../../components/NotificationBanner";
 import Summary from "./Summary";
+import NotificationBanner from "../../components/NotificationBanner";
 
 const Page = ({ data, id, csrf_token, nonce }) => {
-  const [notificationMessage, setNotificationMessage] = useState(null);
-  const [isUpdated, setIsUpdated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [engagements, setEngagements] = useState(data.engagements);
   const [isAddingEngagement, setIsAddingEngagement] = useState(false);
-
-  const showUpdateNotification = (notificationMessage) => {
-    setNotificationMessage(notificationMessage);
-    setIsUpdated(!isUpdated);
-    setTimeout(() => {
-      setIsUpdated(false);
-    }, 2000);
-  };
-
-  const ENDPOINT = `/api/v1/engagement/${data.duns_number}`;
-
-  const onSubmitAddEngagement = async (payload) => {
-    setIsLoading(true);
-    const { data, status } = await ApiProxy.post(ENDPOINT, payload, csrf_token);
-
-    setEngagements(data.data);
-    setIsLoading(false);
-    setIsAddingEngagement(false);
-    showUpdateNotification("Engagement added");
-  };
+  const [notification, setNotification] = useState(null);
+  const [isEngagementsUpdated, setIsEngagementsUpdated] = useState(false);
+  const [engagements, setEngagements] = useState(data.engagements);
 
   return (
     <>
-      {isUpdated && <NotificationBanner message={notificationMessage} />}
       <Breadcrumb
         links={[
           {
@@ -56,12 +32,17 @@ const Page = ({ data, id, csrf_token, nonce }) => {
         <div className="govuk-grid-row">
           <div className="scl-page-header">
             <div className="scl-page-header__two-thirds">
+              {isEngagementsUpdated && (
+                <NotificationBanner
+                  message={notification.message}
+                  status={notification.status}
+                />
+              )}
               <CompanyDetails
                 data={data}
                 nonce={nonce}
                 isAddingEngagement={isAddingEngagement}
                 csrf_token={csrf_token}
-                showUpdateNotification={showUpdateNotification}
               />
             </div>
             <div className="scl-page-header__one-third">
@@ -78,21 +59,19 @@ const Page = ({ data, id, csrf_token, nonce }) => {
           <div className="govuk-grid-column-two-thirds">
             {isAddingEngagement ? (
               <AddEngagement
-                isLoading={isLoading}
+                data={data}
+                csrf_token={csrf_token}
+                setNotification={setNotification}
+                setEngagements={setEngagements}
                 setIsAddingEngagement={setIsAddingEngagement}
-                onSubmitAddEngagement={onSubmitAddEngagement}
+                setIsEngagementsUpdated={setIsEngagementsUpdated}
               />
             ) : (
               <>
-                <Summary
-                  data={data}
-                  csrf_token={csrf_token}
-                  showUpdateNotification={showUpdateNotification}
-                />
+                <Summary data={data} csrf_token={csrf_token} />
                 <KeyFacts data={data} />
                 <KeyPeople
                   id={id}
-                  showUpdateNotification={showUpdateNotification}
                   csrf_token={csrf_token}
                   keyPeople={data.key_people}
                 />
@@ -105,7 +84,6 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                       emptyMessage="Currently no company priorites are assigned."
                       csrf_token={csrf_token}
                       companyPriorities={data.company_priorities}
-                      showUpdateNotification={showUpdateNotification}
                     />
                     <Priorities
                       id={id}
@@ -114,7 +92,6 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                       emptyMessage="Currently no Government Priorities are assigned."
                       csrf_token={csrf_token}
                       companyPriorities={data.hmg_priorities}
-                      showUpdateNotification={showUpdateNotification}
                     />
                   </>
                 )}

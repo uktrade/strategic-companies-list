@@ -8,7 +8,7 @@ export default class ApiProxy {
 
   static async handleFetch(endpoint, requestOptions) {
     let data = {};
-    let status = 500;
+    let status;
     try {
       const response = await fetch(endpoint, requestOptions);
       data = await response.json();

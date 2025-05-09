@@ -1,6 +1,6 @@
 import React, { StrictMode, createContext } from "react";
 import { createRoot } from "react-dom/client";
-import { AccountContextProvider } from "./providers";
+import { GlobalContextProvider } from "./providers";
 
 const mount = (Component, id) => {
   const rootElement = document.getElementById(id);
@@ -10,14 +10,14 @@ const mount = (Component, id) => {
 
   root.render(
     <StrictMode>
-      <AccountContextProvider
+      <GlobalContextProvider
         values={{
           featureFlags: props.data.flags,
           isAccountManager: props.data.is_account_manager,
         }}
       >
         <Component {...props} />
-      </AccountContextProvider>
+      </GlobalContextProvider>
     </StrictMode>
   );
 };

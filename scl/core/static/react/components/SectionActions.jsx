@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-import { AccountContext } from "../providers";
+import { GlobalContext } from "../providers";
 
 const SectionActions = ({
   addLabel,
@@ -9,7 +9,7 @@ const SectionActions = ({
   setIsUpdating,
   setIsCreating,
 }) => {
-  const { isAccountManager } = useContext(AccountContext);
+  const { isAccountManager } = useContext(GlobalContext);
 
   return (
     <>
