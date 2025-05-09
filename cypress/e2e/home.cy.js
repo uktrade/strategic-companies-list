@@ -1,4 +1,7 @@
 describe("Homepage", () => {
+  before(() => {
+    cy.resetDatabase();
+  });
   it("should render a list of companies", () => {
     cy.visit("/");
     cy.findByRole("heading", {

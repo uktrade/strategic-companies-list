@@ -46,6 +46,7 @@ export const MultiSelect = ({ control, data, nonce }) => {
         render={({ field }) => (
           <Select
             {...field}
+            id={"sectors_select"}
             styles={styles}
             isMulti
             defaultValue={data.company_sectors}
