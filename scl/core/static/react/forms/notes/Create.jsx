@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 
 import { useForm } from "react-hook-form";
 import TranscriptButton from "../../components/TranscriptButton";
-import { AccountContext } from "../../providers";
+import { GlobalContext } from "../../providers";
 import { AWS_TRANSCRIBE } from "../../constants";
 import { isFeatureFlagActive } from "../../utils";
 
@@ -19,11 +19,10 @@ const Create = ({
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm();
 
-  const { featureFlags } = useContext(AccountContext);
+  const { featureFlags } = useContext(GlobalContext);
 
   const isAWSTranscribeActive = isFeatureFlagActive(featureFlags, AWS_TRANSCRIBE)
 
@@ -46,15 +45,15 @@ const Create = ({
           </p>
         )}
         {isAWSTranscribeActive && (
-           <div style={{ display: "flex", justifyContent: "flex-end"}}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <TranscriptButton
               className="govuk-!-margin-bottom-2"
               onClick={handleOnTranscribe}
               isTranscribing={isTranscribing}
               disabled={isTranscribing && !hasFinalisedTranscription}
             />
-            </div>
-          )}
+          </div>
+        )}
         <textarea
           className="govuk-textarea govuk-!-margin-bottom-4"
           id="contents"
@@ -62,6 +61,7 @@ const Create = ({
           rows="5"
           {...register("contents", {
             required: "Contents are required",
+            validate: (value) => value.trim() !== "" || "Contents are required",
           })}
         ></textarea>
 

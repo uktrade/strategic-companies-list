@@ -191,3 +191,7 @@ assets/
 
 # e2e
 cypress/screenshots/
+
+#vscode
+
+.vscode/

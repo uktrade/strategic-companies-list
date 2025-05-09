@@ -1,33 +1,19 @@
 import React, { useState, useContext } from "react";
 
 import Breadcrumb from "../../components/Breadcrumb";
-import NotificationBanner from "../../components/NotificationBanner";
 import Notes from "./Notes";
 import Details from "./Details";
 
-import { AccountContext } from "../../providers";
+import { GlobalContext } from "../../providers";
 
 const Page = ({ data, csrf_token }) => {
-
-  const [notificationMessage, setNotificationMessage] = useState(null);
-  const [isUpdated, setIsUpdated] = useState(false);
-  const [isUpdatingDetails, setIsUpdatingDetails] = useState(false);
   const [isUpdatingNotes, setIsUpdatingNotes] = useState(false);
   const [isCreatingNotes, setIsCreatingNotes] = useState(false);
 
-  const { isAccountManager } = useContext(AccountContext);
-
-  const showUpdateNotification = (notificationMessage) => {
-    setNotificationMessage(notificationMessage);
-    setIsUpdated(!isUpdated);
-    setTimeout(() => {
-      setIsUpdated(false);
-    }, 2000);
-  };
+  const { isAccountManager } = useContext(GlobalContext);
 
   return (
     <>
-      {isUpdated && <NotificationBanner message={notificationMessage} />}
       <Breadcrumb
         links={[
           {
@@ -46,9 +32,6 @@ const Page = ({ data, csrf_token }) => {
               <Details
                 data={data}
                 csrf_token={csrf_token}
-                isUpdatingDetails={isUpdatingDetails}
-                setIsUpdatingDetails={setIsUpdatingDetails}
-                showUpdateNotification={showUpdateNotification}
               />
               {isAccountManager && (
                 <Notes
@@ -58,7 +41,6 @@ const Page = ({ data, csrf_token }) => {
                   isCreatingNotes={isCreatingNotes}
                   setIsUpdatingNotes={setIsUpdatingNotes}
                   setIsCreatingNotes={setIsCreatingNotes}
-                  showUpdateNotification={showUpdateNotification}
                 />
               )}
             </div>

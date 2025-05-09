@@ -6,6 +6,7 @@ import Card from "../../components/Card";
 import Update from "../../forms/company-priorites/Update";
 import Create from "../../forms/company-priorites/Create";
 import SectionActions from "../../components/SectionActions";
+import NotificationBanner from "../../components/NotificationBanner";
 
 const Priorities = ({
   id,
@@ -14,12 +15,18 @@ const Priorities = ({
   companyPriorities,
   emptyMessage,
   title,
-  showUpdateNotification,
 }) => {
   const [priorities, setPriorities] = useState(companyPriorities);
   const [isLoading, setIsLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+
+  const resetState = () => {
+    setIsLoading(false);
+    setIsUpdating(false);
+    setIsCreating(false);
+  };
 
   const ENDPOINT = `/api/v1/company/${id}/insights/${insightType}`;
 
@@ -30,27 +37,35 @@ const Priorities = ({
       { insightId },
       csrf_token
     );
-    setPriorities(data.data);
-    if (data.data.length <= 0) {
-      setIsUpdating(false);
-      setIsCreating(false);
+
+    resetState();
+
+    if (status == 200) {
+      setPriorities(data.data);
+      setNotification({ message: "Priortiy deleted", success: true });
+    } else {
+      setNotification({ message: data.message, status: "warning" });
     }
-    setIsLoading(false);
-    showUpdateNotification("Priority deleted");
   };
 
   const onSubmit = async (payload, method) => {
+    setIsLoading(true);
+
     if (method === "create") {
-      setIsLoading(true);
       const { data, status } = await ApiProxy.post(
         ENDPOINT,
         payload,
         csrf_token
       );
-      setPriorities(data.data);
-      setIsLoading(false);
-      setIsCreating(false);
-      showUpdateNotification('Priority created');
+
+      resetState();
+
+      if (status == 200) {
+        setPriorities(data.data);
+        setNotification({ message: "Priortiy created", success: true });
+      } else {
+        setNotification({ message: data.message, status: "warning" });
+      }
     }
     if (method === "update") {
       setIsLoading(true);
@@ -59,16 +74,25 @@ const Priorities = ({
         payload.priorities,
         csrf_token
       );
-      setPriorities(data.data);
-      setIsLoading(false);
-      setIsUpdating(false);
-      showUpdateNotification("Priority updated");
+
+      resetState();
+
+      if (status == 200) {
+        setPriorities(data.data);
+        setNotification({ message: "Priortiy updated", success: true });
+      } else {
+        setNotification({ message: data.message, status: "warning" });
+      }
     }
   };
 
   return (
     <LoadingSpinner isLoading={isLoading}>
       <Section title={title}>
+        <NotificationBanner
+          message={notification?.message}
+          success={notification?.success}
+        />
         {!priorities.length ? (
           <p className="govuk-body">{emptyMessage}</p>
         ) : (

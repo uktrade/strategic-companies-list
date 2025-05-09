@@ -1,7 +1,15 @@
 import React, { createContext } from "react";
 
-export const AccountContext = createContext();
+export const GlobalContext = createContext();
 
-export const AccountContextProvider = ({ values, children }) => (
-  <AccountContext.Provider value={values}>{children}</AccountContext.Provider>
-);
+export const GlobalContextProvider = ({ values, children }) => {
+  return (
+    <GlobalContext.Provider
+      value={{
+        ...values,
+      }}
+    >
+      {children}
+    </GlobalContext.Provider>
+  );
+};

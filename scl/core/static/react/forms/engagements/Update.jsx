@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const Update = ({ onSubmit, data, setIsUpdatingDetails }) => {
+const Update = ({ onSubmit, data, setIsUpdating }) => {
   const {
     register,
     handleSubmit,
@@ -62,7 +62,7 @@ const Update = ({ onSubmit, data, setIsUpdatingDetails }) => {
           </button>
           <a
             className="govuk-button govuk-button--secondary"
-            onClick={() => setIsUpdatingDetails(false)}
+            onClick={() => setIsUpdating(false)}
           >
             Cancel
           </a>

@@ -11,20 +11,17 @@ import ApiProxy from "../../proxy";
 import Card from "../../components/Card";
 import LoadingSpinner from "../../components/Spinner";
 import SectionActions from "../../components/SectionActions";
+import NotificationBanner from "../../components/NotificationBanner";
+
 import Create from "../../forms/notes/Create";
 import Update from "../../forms/notes/Update";
 
-const Notes = ({
-  csrf_token,
-  data,
-  showUpdateNotification,
-  isUpdatingNotes,
-  setIsUpdatingNotes,
-  setIsCreatingNotes,
-  isCreatingNotes,
-}) => {
+const Notes = ({ csrf_token, data }) => {
   const [notes, setNotes] = useState(data.notes);
   const [isLoading, setIsLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [hasFinalisedTranscription, setHasFinalisedTranscription] =
     useState(false);
@@ -40,7 +37,9 @@ const Notes = ({
     client.current = new TranscribeStreamingClient({
       region: "eu-west-2",
       credentials: async function () {
-        const response = await (await fetch("/api/v1/aws-temporary-credentials")).json();
+        const response = await (
+          await fetch("/api/v1/aws-temporary-credentials")
+        ).json();
         const credentials = {
           accessKeyId: response.AccessKeyId,
           secretAccessKey: response.SecretAccessKey,
@@ -65,7 +64,7 @@ const Notes = ({
   useEffect(() => {
     setFinalTranscription("");
     setPartialTranscription("");
-  }, [isCreatingNotes]);
+  }, [isCreating, isUpdating]);
 
   const handleOnTranscribe = async (e) => {
     e.preventDefault();
@@ -154,60 +153,80 @@ const Notes = ({
     }
   }
 
+  const resetState = () => {
+    setIsLoading(false);
+    setIsUpdating(false);
+    setIsCreating(false);
+  };
+
   const onSubmit = async (payload, method) => {
+    setIsLoading(true);
     if (method === "create") {
-      setIsLoading(true);
       const { data, status } = await ApiProxy.post(
         ENDPOINT,
         payload,
         csrf_token
       );
-      setNotes(data.data);
-      setIsLoading(false);
-      setIsCreatingNotes(false);
-      showUpdateNotification("Note added");
+
+      resetState();
+
+      if (status === 200) {
+        setNotes(data.data);
+        setNotification({ message: "Note added", success: true });
+      } else {
+        setNotification({ message: data.message, status: "warning" });
+      }
     }
     if (method === "update") {
-      setIsLoading(true);
       const { data, status } = await ApiProxy.update(
         ENDPOINT,
         payload,
         csrf_token
       );
-      setNotes(data.data);
-      setIsLoading(false);
-      setIsUpdatingNotes(false);
-      showUpdateNotification("Note updated");
+
+      resetState();
+
+      if (status === 200) {
+        setNotes(data.data);
+        setNotification({ message: "Note updated", success: true });
+      } else {
+        setNotification({ message: data.message, status: "warning" });
+      }
     }
   };
 
   const onDelete = async (noteId) => {
-    setIsLoading(true);
     const { data, status } = await ApiProxy.delete(
       ENDPOINT,
       { id: noteId },
       csrf_token
     );
-    setNotes(data.data);
-    if (data.data.length <= 0) {
-      setIsUpdatingNotes(false);
-      setIsCreatingNotes(false);
+
+    resetState();
+
+    if (status === 200) {
+      setNotes(data.data);
+      setNotification({ message: "Note deleted", success: true });
+    } else {
+      setNotification({ message: data.message, status: "warning" });
     }
-    setIsLoading(false);
-    showUpdateNotification("Note deleted");
   };
 
   return (
     <>
-      {!isCreatingNotes && !isUpdatingNotes && (
+      {!isCreating && !isUpdating && (
         <>
           <h2 className="govuk-heading-m govuk-!-margin-top-8">Notes</h2>
           <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-4" />
         </>
       )}
       <LoadingSpinner isLoading={isLoading}>
-        {!isCreatingNotes &&
-          !isUpdatingNotes &&
+        <NotificationBanner
+          message={notification?.message}
+          success={notification?.success}
+        />
+        {!isCreating &&
+          !isUpdating &&
           (notes.length ? (
             notes.map((note) => (
               <Card key={note.noteId} className="govuk-!-margin-bottom-4">
@@ -218,10 +237,10 @@ const Notes = ({
             <p className="govuk-body">You currently have no notes.</p>
           ))}
       </LoadingSpinner>
-      {isCreatingNotes && (
+      {isCreating && (
         <Create
           onSubmit={onSubmit}
-          setIsCreating={setIsCreatingNotes}
+          setIsCreating={setIsCreating}
           transcript={finalTranscription}
           partialTranscript={partialTranscription}
           handleOnTranscribe={handleOnTranscribe}
@@ -229,21 +248,21 @@ const Notes = ({
           hasFinalisedTranscription={hasFinalisedTranscription}
         />
       )}
-      {isUpdatingNotes && (
+      {isUpdating && (
         <Update
           data={notes}
           onSubmit={onSubmit}
           onDelete={onDelete}
-          setIsUpdating={setIsUpdatingNotes}
+          setIsUpdating={setIsUpdating}
         />
       )}
-      {!isCreatingNotes && !isUpdatingNotes && (
+      {!isCreating && !isUpdating && (
         <SectionActions
           addLabel="Add note"
           showEdit={Boolean(notes.length)}
           editLabel={`Edit ${notes.length > 1 ? "notes" : "note"}`}
-          setIsCreating={() => setIsCreatingNotes(!isCreatingNotes)}
-          setIsUpdating={() => setIsUpdatingNotes(!isUpdatingNotes)}
+          setIsCreating={() => setIsCreating(!isCreating)}
+          setIsUpdating={() => setIsUpdating(!isUpdating)}
         />
       )}
     </>
