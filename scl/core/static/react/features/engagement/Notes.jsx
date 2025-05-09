@@ -196,6 +196,7 @@ const Notes = ({ csrf_token, data }) => {
   };
 
   const onDelete = async (noteId) => {
+    setIsLoading(true);
     const { data, status } = await ApiProxy.delete(
       ENDPOINT,
       { id: noteId },
