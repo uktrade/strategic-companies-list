@@ -36,7 +36,10 @@ const Summary = ({ data, csrf_token }) => {
       setSummary(data.data.summary);
       setNotification({ message: "Summary updated" });
     } else {
-      setNotification({ message: data.message, status: "warning" });
+      setNotification({
+        message: `Status ${status}: ${data.message || data.error}`,
+        status: "warning",
+      });
     }
   };
 

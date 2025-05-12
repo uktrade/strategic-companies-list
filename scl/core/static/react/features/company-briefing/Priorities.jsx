@@ -42,9 +42,12 @@ const Priorities = ({
 
     if (status == 200) {
       setPriorities(data.data);
-      setNotification({ message: "Priortiy deleted", success: true });
+      setNotification({ message: "Priortiy deleted" });
     } else {
-      setNotification({ message: data.message, status: "warning" });
+      setNotification({
+        message: `Status ${status}: ${data.message || data.error}`,
+        status: "warning",
+      });
     }
   };
 
@@ -62,9 +65,12 @@ const Priorities = ({
 
       if (status == 200) {
         setPriorities(data.data);
-        setNotification({ message: "Priortiy created", success: true });
+        setNotification({ message: "Priortiy created" });
       } else {
-        setNotification({ message: data.message, status: "warning" });
+        setNotification({
+          message: `Status ${status}: ${data.message || data.error}`,
+          status: "warning",
+        });
       }
     }
     if (method === "update") {
@@ -79,9 +85,12 @@ const Priorities = ({
 
       if (status == 200) {
         setPriorities(data.data);
-        setNotification({ message: "Priortiy updated", success: true });
+        setNotification({ message: "Priortiy updated"});
       } else {
-        setNotification({ message: data.message, status: "warning" });
+        setNotification({
+          message: `Status ${status}: ${data.message || data.error}`,
+          status: "warning",
+        });
       }
     }
   };
@@ -91,7 +100,7 @@ const Priorities = ({
       <Section title={title}>
         <NotificationBanner
           message={notification?.message}
-          success={notification?.success}
+          status={notification?.status}
         />
         {!priorities.length ? (
           <p className="govuk-body">{emptyMessage}</p>

@@ -9,7 +9,7 @@ import reversion
 import waffle
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 
@@ -21,6 +21,16 @@ today = date.today()
 
 
 logger = logging.getLogger(__name__)
+
+
+def csrf_failure(request, reason=""):
+    if (
+        request.headers.get("Content-Type") == "application/json"
+        or request.headers.get("Accept") == "application/json"
+    ):
+        return JsonResponse({"error": "CSRF Failed", "reason": reason}, status=403)
+
+    return HttpResponse("<h1>CSRF verification failed</h1>", reason, status=403)
 
 
 class CompanyAccountManagerUserMixin(UserPassesTestMixin):
@@ -83,7 +93,9 @@ class AWSTemporaryCredentialsAPIView(UserPassesTestMixin, View):
         # Creating new credentials unfortunately sometimes fails
         max_attempts = 3
         for i in range(0, 3):
-            logger.info("AWS transcribe create new credentials attempt %s of %s", i + 1, 3)
+            logger.info(
+                "AWS transcribe create new credentials attempt %s of %s", i + 1, 3
+            )
             try:
                 credentials = self.client.assume_role(
                     RoleArn=settings.AWS_TRANSCRIBE_ROLE_ARN,
