@@ -177,6 +177,7 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
 
     def get_object(self):
         queryset = self.get_queryset()
+        print("180", self.kwargs["duns_number"])
         return queryset.get(duns_number=self.kwargs["duns_number"])
 
     def get_context_data(self, **kwargs):
@@ -251,6 +252,7 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                                 "name": people.name,
                                 "role": people.role,
                                 "userId": str(people.id),
+                                "email": people.email,
                             }
                             for people in key_people
                         ],

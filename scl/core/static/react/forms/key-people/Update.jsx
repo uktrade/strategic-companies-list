@@ -77,7 +77,7 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
                   )}
                   <input
                     className="govuk-input govuk-!-margin-bottom-4"
-                    id="role"
+                    id={`people.${index}.role`}
                     type="text"
                     {...register(`people.${index}.role`, {
                       required: "Role is required",
@@ -89,12 +89,12 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
                   {errors && (
                     <p className="govuk-error-message">
                       <span className="govuk-visually-hidden">Error:</span>
-                      {errors?.email?.message}
+                      {errors.people?.[index]?.email?.message}
                     </p>
                   )}
                   <input
                     className="govuk-input govuk-!-margin-bottom-4"
-                    id="email"
+                    id={`people.${index}.email`}
                     type="text"
                     {...register(`people.${index}.email`, {
                       required: "Email is required",
@@ -119,7 +119,9 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
             </button>
             <button
               className="govuk-button govuk-button--secondary"
+              id="cancel-edit-key-person"
               onClick={() => setIsUpdating(false)}
+              type="button"
             >
               Cancel
             </button>

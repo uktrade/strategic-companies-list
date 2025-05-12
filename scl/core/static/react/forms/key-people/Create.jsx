@@ -62,9 +62,9 @@ const Create = ({ onSubmit, setIsCreating }) => {
           className="govuk-input govuk-!-margin-bottom-4"
           id="email"
           type="text"
-          {...register("email"), {
+          {...register("email", {
             required: "Email is required",
-          }}
+          })}
         />
         <div className="govuk-!-margin-top-2">
           <button type="submit" className="govuk-button govuk-!-margin-right-2">
@@ -72,7 +72,9 @@ const Create = ({ onSubmit, setIsCreating }) => {
           </button>
           <button
             className="govuk-button govuk-button--secondary"
+            id="cancel-add-key-person"
             onClick={() => setIsCreating(false)}
+            type="button"
           >
             Cancel
           </button>
