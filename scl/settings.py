@@ -58,6 +58,7 @@ SESSION_COOKIE_NAME = "scl-session-id"
 
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_NAME = "scl-csrf-token"
+CSRF_FAILURE_VIEW = "scl.core.views.api.csrf_failure"
 
 CSP_DEFAULT_SRC = "'self'"
 
