@@ -1,11 +1,11 @@
 import uuid
-from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.contrib.postgres.fields import ArrayField
-
-from .constants import COUNTRIES_AND_TERRITORIES, SECTORS
 
 import reversion
+from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
+from django.db import models
+
+from .constants import COUNTRIES_AND_TERRITORIES, SECTORS
 
 
 @reversion.register()
@@ -28,27 +28,38 @@ class Company(models.Model):
 
     name = models.CharField(blank=False, null=False, max_length=128)
     duns_number = models.CharField(
-        blank=False, null=False, max_length=9, verbose_name='DUNS number')
+        blank=False, null=False, max_length=9, verbose_name="DUNS number"
+    )
 
     summary = models.TextField(null=True, blank=True, max_length=500)
 
     global_hq_name = models.CharField(
-        max_length=128, blank=True, null=False, default='',
-        verbose_name="Global HQ name")
+        max_length=128,
+        blank=True,
+        null=False,
+        default="",
+        verbose_name="Global HQ name",
+    )
     global_hq_country = models.CharField(
-        max_length=5, null=True, blank=True, choices=COUNTRIES_AND_TERRITORIES,
-        verbose_name="Global HQ country")
+        max_length=5,
+        null=True,
+        blank=True,
+        choices=COUNTRIES_AND_TERRITORIES,
+        verbose_name="Global HQ country",
+    )
     global_turnover_millions_usd = models.BigIntegerField(
-        null=True, blank=True, verbose_name="Global turnover (millions USD)")
+        null=True, blank=True, verbose_name="Global turnover (millions USD)"
+    )
     global_number_of_employees = models.BigIntegerField(
-        null=True, blank=True, verbose_name="Global number of employees")
+        null=True, blank=True, verbose_name="Global number of employees"
+    )
 
     sectors = ArrayField(
         models.CharField(max_length=6, choices=SECTORS),
         blank=True,
         null=True,
         default=list,
-        verbose_name="Sectors"
+        verbose_name="Sectors",
     )
 
     account_manager = models.ManyToManyField(
@@ -67,8 +78,9 @@ class Company(models.Model):
 
     @property
     def get_global_hq_country(self):
-        return dict(COUNTRIES_AND_TERRITORIES).get(self.global_hq_country,
-                                                   self.global_hq_country)
+        return dict(COUNTRIES_AND_TERRITORIES).get(
+            self.global_hq_country, self.global_hq_country
+        )
 
     class Meta:
         verbose_name_plural = "companies"
@@ -86,7 +98,8 @@ class CompanyAccountManager(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['company', 'account_manager'], name="company_account_manager")
+                fields=["company", "account_manager"], name="company_account_manager"
+            )
         ]
         verbose_name = "account manager"
         verbose_name_plural = "account managers"
@@ -98,18 +111,20 @@ class Insight(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    TYPE_COMPANY_PRIORITY = 'company_priority'
-    TYPE_HMG_PRIORITY = 'hmg_priority'
+    TYPE_COMPANY_PRIORITY = "company_priority"
+    TYPE_HMG_PRIORITY = "hmg_priority"
 
     INSIGHT_TYPES = [
-        (TYPE_COMPANY_PRIORITY, 'Company Priority'),
-        (TYPE_HMG_PRIORITY, 'HMG Priority'),
+        (TYPE_COMPANY_PRIORITY, "Company Priority"),
+        (TYPE_HMG_PRIORITY, "HMG Priority"),
     ]
 
     company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name='insights')
+        Company, on_delete=models.CASCADE, related_name="insights"
+    )
     created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='created_insights')
+        User, on_delete=models.CASCADE, related_name="created_insights"
+    )
     insight_type = models.CharField(max_length=20, choices=INSIGHT_TYPES)
     title = models.CharField(max_length=255)
     details = models.TextField(blank=True, max_length=500)
@@ -117,7 +132,7 @@ class Insight(models.Model):
     order = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ['insight_type', 'order', '-created_at']
+        ordering = ["insight_type", "order", "-created_at"]
 
 
 @reversion.register()
@@ -128,7 +143,8 @@ class Engagement(models.Model):
     date = models.DateField(null=True, blank=False)
 
     company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="engagements")
+        Company, on_delete=models.CASCADE, related_name="engagements"
+    )
     details = models.TextField(null=True, blank=True, max_length=500)
 
 
@@ -136,11 +152,12 @@ class Engagement(models.Model):
 class EngagementNote(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='created_by', null=True, blank=True)
+        User, on_delete=models.CASCADE, related_name="created_by", null=True, blank=True
+    )
     engagement = models.ForeignKey(
-        Engagement, on_delete=models.CASCADE, related_name="notes")
-    contents = models.TextField(
-        null=False, blank=True, default='', max_length=500)
+        Engagement, on_delete=models.CASCADE, related_name="notes"
+    )
+    contents = models.TextField(null=False, blank=True, default="", max_length=500)
 
 
 @reversion.register()
@@ -149,10 +166,12 @@ class KeyPeople(models.Model):
     name = models.CharField(blank=False, null=False, max_length=128)
     role = models.CharField(blank=False, null=False, max_length=128)
     company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="key_people")
+        Company, on_delete=models.CASCADE, related_name="key_people"
+    )
+    email = models.EmailField(blank=True, max_length=254)
 
     class Meta:
-        verbose_name_plural = 'Key people'
+        verbose_name_plural = "Key people"
 
     def __str__(self):
         return f"{self.name} ({self.role}) - {self.company.name}"

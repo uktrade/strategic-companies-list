@@ -86,6 +86,7 @@ class KeyPeopleFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("name")
     role = factory.Faker("job")
     company = factory.SubFactory(CompanyFactory)
+    email = factory.Faker("test@email.com")
 
     class Meta:
         model = "core.KeyPeople"

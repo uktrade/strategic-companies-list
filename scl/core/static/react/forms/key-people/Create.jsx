@@ -49,7 +49,21 @@ const Create = ({ onSubmit, setIsCreating }) => {
             required: "Role is required",
           })}
         />
-
+        <label className="govuk-label" htmlFor="role">
+          Email
+        </label>
+        {errors && (
+          <p className="govuk-error-message">
+            <span className="govuk-visually-hidden">Error:</span>
+            {errors?.email?.message}
+          </p>
+        )}
+        <input
+          className="govuk-input govuk-!-margin-bottom-4"
+          id="email"
+          type="text"
+          {...register("email")}
+        />
         <div className="govuk-!-margin-top-2">
           <button type="submit" className="govuk-button govuk-!-margin-right-2">
             Save
