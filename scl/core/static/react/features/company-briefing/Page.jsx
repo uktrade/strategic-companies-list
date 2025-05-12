@@ -57,7 +57,13 @@ const Page = ({ data, id, csrf_token, nonce }) => {
         </div>
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-two-thirds">
-            {isAddingEngagement ? (
+            <div
+              className={`${
+                isAddingEngagement
+                  ? "govuk-!-display-block"
+                  : "govuk-!-display-none"
+              }`}
+            >
               <AddEngagement
                 data={data}
                 csrf_token={csrf_token}
@@ -66,37 +72,43 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                 setIsAddingEngagement={setIsAddingEngagement}
                 setIsEngagementsUpdated={setIsEngagementsUpdated}
               />
-            ) : (
-              <>
-                <Summary data={data} csrf_token={csrf_token} />
-                <KeyFacts data={data} />
-                <KeyPeople
-                  id={id}
-                  csrf_token={csrf_token}
-                  keyPeople={data.key_people}
-                />
-                {data.has_access && (
-                  <>
-                    <Priorities
-                      id={id}
-                      insightType="company_priority"
-                      title="Company Priorities"
-                      emptyMessage="Currently no company priorites are assigned."
-                      csrf_token={csrf_token}
-                      companyPriorities={data.company_priorities}
-                    />
-                    <Priorities
-                      id={id}
-                      title="Government Priorities"
-                      insightType="hmg_priority"
-                      emptyMessage="Currently no Government Priorities are assigned."
-                      csrf_token={csrf_token}
-                      companyPriorities={data.hmg_priorities}
-                    />
-                  </>
-                )}
-              </>
-            )}
+            </div>
+
+            <div
+              className={`${
+                isAddingEngagement
+                  ? "govuk-!-display-none"
+                  : "govuk-!-display-block"
+              }`}
+            >
+              <Summary data={data} csrf_token={csrf_token} />
+              <KeyFacts data={data} />
+              <KeyPeople
+                id={id}
+                csrf_token={csrf_token}
+                keyPeople={data.key_people}
+              />
+              {data.has_access && (
+                <>
+                  <Priorities
+                    id={id}
+                    insightType="company_priority"
+                    title="Company Priorities"
+                    emptyMessage="Currently no company priorites are assigned."
+                    csrf_token={csrf_token}
+                    companyPriorities={data.company_priorities}
+                  />
+                  <Priorities
+                    id={id}
+                    title="Government Priorities"
+                    insightType="hmg_priority"
+                    emptyMessage="Currently no Government Priorities are assigned."
+                    csrf_token={csrf_token}
+                    companyPriorities={data.hmg_priorities}
+                  />
+                </>
+              )}
+            </div>
           </div>
           <div className="govuk-grid-column-one-third">
             {data.has_access && (
