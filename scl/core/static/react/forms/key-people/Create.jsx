@@ -49,7 +49,7 @@ const Create = ({ onSubmit, setIsCreating }) => {
             required: "Role is required",
           })}
         />
-        <label className="govuk-label" htmlFor="role">
+        <label className="govuk-label" htmlFor="email">
           Email
         </label>
         {errors && (
@@ -62,7 +62,9 @@ const Create = ({ onSubmit, setIsCreating }) => {
           className="govuk-input govuk-!-margin-bottom-4"
           id="email"
           type="text"
-          {...register("email")}
+          {...register("email"), {
+            required: "Email is required",
+          }}
         />
         <div className="govuk-!-margin-top-2">
           <button type="submit" className="govuk-button govuk-!-margin-right-2">

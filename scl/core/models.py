@@ -168,7 +168,7 @@ class KeyPeople(models.Model):
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, related_name="key_people"
     )
-    email = models.EmailField(blank=True, max_length=254)
+    email = models.EmailField(default="N/A", max_length=254)
 
     class Meta:
         verbose_name_plural = "Key people"

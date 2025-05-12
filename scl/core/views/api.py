@@ -756,10 +756,11 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
     def data(self):
         response = json.loads(self.request.body)
         logger.info(
-            "Request: %s for %s on %s",
+            "Request: %s for %s on %s with %s",
             response,
             self.request.method,
             self.request.path,
+            self.request.body,
         )
         return response
 
@@ -837,7 +838,7 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
                 person = KeyPeople.objects.get(id=d["userId"])
                 person.name = d["name"]
                 person.role = d["role"]
-                person.email = d["email"]
+                person.email = d.get("email")
                 person.save()
 
             updated_people = list(self.company.key_people.all())

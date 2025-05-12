@@ -83,7 +83,7 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
                       required: "Role is required",
                     })}
                   />
-                  <label className="govuk-label" htmlFor="role">
+                  <label className="govuk-label" htmlFor="email">
                     Email
                   </label>
                   {errors && (
@@ -96,7 +96,9 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
                     className="govuk-input govuk-!-margin-bottom-4"
                     id="email"
                     type="text"
-                    {...register("email")}
+                    {...register(`people.${index}.email`, {
+                      required: "Email is required",
+                    })}
                   />
                   <input
                     id={`people.${index}.id`}
