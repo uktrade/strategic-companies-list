@@ -1,13 +1,13 @@
-from unittest import mock
-import pytest
 import json
+from unittest import mock
+
+import pytest
 import reversion
+from django.urls import reverse
 from waffle.testutils import override_flag
 
-from django.urls import reverse
-
-from scl.core.models import Insight, EngagementNote
 from scl.core.constants import DATE_FORMAT_SHORT
+from scl.core.models import EngagementNote, Insight
 from scl.core.tests import factories
 
 
