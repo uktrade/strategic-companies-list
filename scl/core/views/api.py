@@ -897,20 +897,6 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
             status=200,
         )
         logger.info(
-            "HEELOO",
-            {
-                "keyPeople": [
-                    {
-                        "name": people.name,
-                        "role": people.role,
-                        "userId": people.id,
-                        "email": people.email,
-                    }
-                    for people in key_people
-                ]
-            },
-        )
-        logger.info(
             "Response: %s for %s on %s",
             response.content,
             self.request.method,

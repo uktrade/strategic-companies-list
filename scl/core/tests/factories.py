@@ -86,7 +86,7 @@ class KeyPeopleFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("name")
     role = factory.Faker("job")
     company = factory.SubFactory(CompanyFactory)
-    email = factory.Faker("test@email.com")
+    email = factory.LazyAttribute(lambda o: f"test.user+{o.username}@example.com")
 
     class Meta:
         model = "core.KeyPeople"
