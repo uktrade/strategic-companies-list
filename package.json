@@ -1,4 +1,7 @@
 {
+  "engines": {
+   "node": ">=22.0.0 <23.0.0"
+  },
   "scripts": {
     "dev": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
     "build": "./node_modules/.bin/webpack build --config webpack.prod.js",
