@@ -100,33 +100,10 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
                       required: "Email is required",
                     })}
                   />
-                  <label className="govuk-label" htmlFor="email">
-                    Email
-                  </label>
-                  {errors && (
-                    <p className="govuk-error-message">
-                      <span className="govuk-visually-hidden">Error:</span>
-                      {errors.people?.[index]?.email?.message}
-                    </p>
-                  )}
-                  <input
-                    className="govuk-input govuk-!-margin-bottom-4"
-                    id={`people.${index}.email`}
-                    type="text"
-                    {...register(`people.${index}.email`, {
-                      required: "Email is required",
-                    })}
-                  />
-                  <input
-                    id={`people.${index}.id`}
-                    type="hidden"
-                    {...register(`people.${index}.id`)}
-                  />
                 </fieldset>
               </div>
             );
           })}
-
           <div className="govuk-!-margin-top-2">
             <button
               type="submit"
