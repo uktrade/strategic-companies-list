@@ -756,10 +756,11 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
     def data(self):
         response = json.loads(self.request.body)
         logger.info(
-            "Response: %s for %s on %s",
+            "Request: %s for %s on %s with %s",
             response,
             self.request.method,
             self.request.path,
+            self.request.body,
         )
         return response
 
@@ -775,6 +776,7 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
             KeyPeople.objects.create(
                 name=self.data.get("name"),
                 role=self.data.get("role"),
+                email=self.data.get("email"),
                 company=self.company,
             )
             updated_people = list(self.company.key_people.all().order_by("name"))
@@ -787,7 +789,12 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
         response = JsonResponse(
             {
                 "data": [
-                    {"name": people.name, "role": people.role, "userId": people.id}
+                    {
+                        "name": people.name,
+                        "role": people.role,
+                        "userId": people.id,
+                        "email": people.email,
+                    }
                     for people in updated_people
                 ]
             },
@@ -816,7 +823,12 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
         response = JsonResponse(
             {
                 "data": [
-                    {"name": people.name, "role": people.role, "userId": people.id}
+                    {
+                        "name": people.name,
+                        "role": people.role,
+                        "userId": people.id,
+                        "email": people.email,
+                    }
                     for people in updated_people
                 ]
             },
@@ -836,6 +848,7 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
                 person = KeyPeople.objects.get(id=d["userId"])
                 person.name = d["name"]
                 person.role = d["role"]
+                person.email = d.get("email")
                 person.save()
 
             updated_people = list(self.company.key_people.all())
@@ -848,7 +861,12 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
         response = JsonResponse(
             {
                 "data": [
-                    {"name": people.name, "role": people.role, "userId": people.id}
+                    {
+                        "name": people.name,
+                        "role": people.role,
+                        "userId": people.id,
+                        "email": people.email,
+                    }
                     for people in updated_people
                 ]
             },
@@ -867,7 +885,12 @@ class KeyPeopleAPIView(CompanyAccountManagerUserMixin, View):
         response = JsonResponse(
             {
                 "keyPeople": [
-                    {"name": people.name, "role": people.role, "userId": people.id}
+                    {
+                        "name": people.name,
+                        "role": people.role,
+                        "userId": people.id,
+                        "email": people.email,
+                    }
                     for people in key_people
                 ]
             },

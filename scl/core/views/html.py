@@ -251,6 +251,7 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                                 "name": people.name,
                                 "role": people.role,
                                 "userId": str(people.id),
+                                "email": people.email,
                             }
                             for people in key_people
                         ],

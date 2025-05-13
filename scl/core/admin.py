@@ -91,5 +91,5 @@ class InsightAdmin(VersionAdmin):
 
 @admin.register(KeyPeople)
 class KeyPeopleAdmin(admin.ModelAdmin):
-    list_display = ("name", "role")
+    list_display = ("name", "role", "email")
     list_filter = ("company",)

@@ -1,13 +1,13 @@
-from unittest import mock
-import pytest
 import json
+from unittest import mock
+
+import pytest
 import reversion
+from django.urls import reverse
 from waffle.testutils import override_flag
 
-from django.urls import reverse
-
-from scl.core.models import Insight, EngagementNote
 from scl.core.constants import DATE_FORMAT_SHORT
+from scl.core.models import EngagementNote, Insight
 from scl.core.tests import factories
 
 
@@ -323,6 +323,7 @@ def test_key_people_api_post(viewer_user_client, company_acc_manager):
     data = {
         "name": "John Smith",
         "role": "CEO",
+        "email": "john.smith@company.co.uk",
     }
     response = viewer_user_client.post(
         reverse(
@@ -337,7 +338,7 @@ def test_key_people_api_post(viewer_user_client, company_acc_manager):
     response_data = json.loads(response.content)
     assert len(response_data["data"]) == 4
     assert "John Smith" in [d["name"] for d in response_data["data"]]
-    assert "CEO" in [d["role"] for d in response_data["data"]]
+    assert "john.smith@company.co.uk" in [d["email"] for d in response_data["data"]]
 
 
 @pytest.mark.django_db
@@ -350,6 +351,7 @@ def test_key_people_api_patch(viewer_user_client, company_acc_manager):
             "name": "John Smith",
             "role": "CEO",
             "userId": str(key_person.id),
+            "email": "john.smith@company.co.uk",
         }
     ]
     response = viewer_user_client.patch(
@@ -368,6 +370,7 @@ def test_key_people_api_patch(viewer_user_client, company_acc_manager):
     updated = [d for d in response_data["data"] if d["userId"] == str(key_person.id)][0]
     assert updated["name"] == "John Smith"
     assert updated["role"] == "CEO"
+    assert updated["email"] == "john.smith@company.co.uk"
 
 
 @pytest.mark.django_db
@@ -393,6 +396,7 @@ def test_key_people_api_delete(viewer_user_client, company_acc_manager):
 
     assert "John Smith" not in [d["name"] for d in response_data["data"]]
     assert "CEO" not in [d["role"] for d in response_data["data"]]
+    assert "john.smith@company.co.uk" not in [d["email"] for d in response_data["data"]]
 
 
 @pytest.mark.django_db
