@@ -17,15 +17,15 @@ describe("Company Details page", () => {
     cy.visit(`/company-briefing/${company.duns_number}`);
     cy.clickButton("Add people");
     cy.findByRole("textbox", {
-      name: /name/i,
-    })
-      .clear()
-      .type("Test Person");
-    cy.findByRole("textbox", {
       name: /role/i,
     })
       .clear()
       .type("Dogsbody");
+    cy.findByRole("textbox", {
+      name: /name/i,
+    })
+      .clear()
+      .type("Test Person");
     cy.findByRole("textbox", {
       name: /email/i,
     })
@@ -39,12 +39,12 @@ describe("Company Details page", () => {
     cy.visit(`/company-briefing/${company.duns_number}`);
     cy.clickButton("Add people");
     cy.findByRole("textbox", {
-      name: /name/i,
+      name: /role/i,
     })
       .clear()
       .type("Shouldn't Exist");
     cy.findByRole("textbox", {
-      name: /role/i,
+      name: /name/i,
     })
       .clear()
       .type("Shouldn't Exist");
@@ -90,18 +90,18 @@ describe("Company Details page", () => {
     cy.get(".govuk-error-message").contains("Role is required");
     cy.get(".govuk-error-message").contains("Email is required");
     cy.findByRole("textbox", {
-      name: /name/i,
-    })
-      .clear()
-      .type("Test Person");
-    cy.clickButton("Save");
-    cy.get(".govuk-error-message").contains("Role is required");
-    cy.get(".govuk-error-message").contains("Email is required");
-    cy.findByRole("textbox", {
       name: /role/i,
     })
       .clear()
       .type("Test Role");
+    cy.clickButton("Save");
+    cy.get(".govuk-error-message").contains("Name is required");
+    cy.get(".govuk-error-message").contains("Email is required");
+    cy.findByRole("textbox", {
+      name: /name/i,
+    })
+      .clear()
+      .type("Test Person");
     cy.clickButton("Save");
     cy.get(".govuk-error-message").contains("Email is required");
   });
