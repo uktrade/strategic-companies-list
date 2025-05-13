@@ -15,23 +15,6 @@ const Create = ({ onSubmit, setIsCreating }) => {
         onSubmit={handleSubmit((data) => onSubmit(data, "create"))}
         className="scl-inine-form"
       >
-        <label className="govuk-label" htmlFor="name">
-          Name
-        </label>
-        {errors && (
-          <p className="govuk-error-message">
-            <span className="govuk-visually-hidden">Error:</span>
-            {errors?.name?.message}
-          </p>
-        )}
-        <input
-          className="govuk-input govuk-!-margin-bottom-4"
-          id="name"
-          type="text"
-          {...register("name", {
-            required: "Name is required",
-          })}
-        />
         <label className="govuk-label" htmlFor="role">
           Role
         </label>
@@ -47,6 +30,23 @@ const Create = ({ onSubmit, setIsCreating }) => {
           type="text"
           {...register("role", {
             required: "Role is required",
+          })}
+        />
+        <label className="govuk-label" htmlFor="name">
+          Name
+        </label>
+        {errors && (
+          <p className="govuk-error-message">
+            <span className="govuk-visually-hidden">Error:</span>
+            {errors?.name?.message}
+          </p>
+        )}
+        <input
+          className="govuk-input govuk-!-margin-bottom-4"
+          id="name"
+          type="text"
+          {...register("name", {
+            required: "Name is required",
           })}
         />
         <label className="govuk-label" htmlFor="email">

@@ -49,23 +49,6 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
                       Update: {field.name}
                     </h2>
                   </legend>
-                  <label className="govuk-label" htmlFor="name">
-                    Name
-                  </label>
-                  {errors.people && (
-                    <p className="govuk-error-message">
-                      <span className="govuk-visually-hidden">Error:</span>
-                      {errors.people?.[index]?.name?.message}
-                    </p>
-                  )}
-                  <input
-                    className="govuk-input govuk-!-margin-bottom-4"
-                    id={`people.${index}.name`}
-                    type="text"
-                    {...register(`people.${index}.name`, {
-                      required: "Name is required",
-                    })}
-                  />
                   <label className="govuk-label" htmlFor="role">
                     Role
                   </label>
@@ -81,6 +64,23 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
                     type="text"
                     {...register(`people.${index}.role`, {
                       required: "Role is required",
+                    })}
+                  />
+                  <label className="govuk-label" htmlFor="name">
+                    Name
+                  </label>
+                  {errors.people && (
+                    <p className="govuk-error-message">
+                      <span className="govuk-visually-hidden">Error:</span>
+                      {errors.people?.[index]?.name?.message}
+                    </p>
+                  )}
+                  <input
+                    className="govuk-input govuk-!-margin-bottom-4"
+                    id={`people.${index}.name`}
+                    type="text"
+                    {...register(`people.${index}.name`, {
+                      required: "Name is required",
                     })}
                   />
                   <label className="govuk-label" htmlFor="email">
@@ -100,16 +100,10 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
                       required: "Email is required",
                     })}
                   />
-                  <input
-                    id={`people.${index}.id`}
-                    type="hidden"
-                    {...register(`people.${index}.id`)}
-                  />
                 </fieldset>
               </div>
             );
           })}
-
           <div className="govuk-!-margin-top-2">
             <button
               type="submit"

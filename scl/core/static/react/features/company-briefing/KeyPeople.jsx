@@ -105,7 +105,7 @@ const KeyPeople = ({ id, csrf_token, keyPeople }) => {
                 <li key={index} className="scl-key-people-list__item">
                   <div>
                     <span>
-                      {people.role}: {people.name}
+                      {people.role} - {people.name} {`(${people.email})`}
                     </span>
                   </div>
                 </li>
