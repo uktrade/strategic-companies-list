@@ -128,8 +128,6 @@ describe("Company Details page", () => {
     cy.visit(`/company-briefing/${company.duns_number}`);
     cy.clickButton("Edit people");
     cy.contains("Delete").click();
-    cy.get("section")
-      .contains("Test Person")
-      .should("not.exist");
+    cy.get("section").contains("Test Person").should("not.exist");
   });
 });
