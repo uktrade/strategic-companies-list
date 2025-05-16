@@ -9,7 +9,6 @@ describe("Company Briefing page", () => {
   });
 
   it("should have all the elements on the page", () => {
-
     cy.visit(`/company-briefing/${company.duns_number}`);
 
     cy.findByRole("heading", {
@@ -76,10 +75,7 @@ describe("Company Briefing page", () => {
       "HMG priorities for engagement",
     ]);
 
-    cy.assertCompanyBriefingSectionOrder([
-      "Engagements",
-      "Account managers",
-    ]);
+    cy.assertCompanyBriefingSectionOrder(["Engagements", "Account managers"]);
   });
 });
 
