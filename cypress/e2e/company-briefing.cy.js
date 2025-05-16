@@ -9,7 +9,6 @@ describe("Company Briefing page", () => {
   });
 
   it("should have all the elements on the page", () => {
-
     cy.visit(`/company-briefing/${company.duns_number}`);
 
     cy.findByRole("heading", {
@@ -30,12 +29,7 @@ describe("Company Briefing page", () => {
       "be.visible"
     );
 
-    cy.assertCompanyBriefingSection("Summary", {
-      content: "Currently this company has no summary.",
-      buttonName: "Add summary",
-    });
-
-    cy.assertCompanyBriefingSection("Key Facts", {
+    cy.assertCompanyBriefingSection("Summary and key facts", {
       content: [
         "Headquartered in Canada",
         "Has a global turnover of $1000000000",
@@ -43,19 +37,19 @@ describe("Company Briefing page", () => {
       ],
     });
 
-    cy.assertCompanyBriefingSection("Key People", {
+    cy.assertCompanyBriefingSection("Key people in this company", {
       content: "Currently no key people are assigned.",
       buttonName: "Add people",
     });
 
-    cy.assertCompanyBriefingSection("Company Priorities", {
+    cy.assertCompanyBriefingSection("Company priorities for HMG engagement", {
       content: "Currently no company priorites are assigned.",
       hasPrivilegedTag: true,
       buttonName: "Add priority",
     });
 
-    cy.assertCompanyBriefingSection("Government Priorities", {
-      content: "Currently no Government Priorities are assigned.",
+    cy.assertCompanyBriefingSection("HMG priorities for engagement", {
+      content: "Currently no government priorities are assigned.",
       buttonName: "Add priority",
     });
 
@@ -64,7 +58,7 @@ describe("Company Briefing page", () => {
       hasPrivilegedTag: true,
     });
 
-    cy.assertCompanyBriefingSection("People assigned to this company", {
+    cy.assertCompanyBriefingSection("Account managers", {
       content: "Vyvyan Holland",
       links: [
         {
@@ -75,17 +69,13 @@ describe("Company Briefing page", () => {
     });
 
     cy.assertCompanyBriefingSectionOrder([
-      "Summary",
-      "Key Facts",
-      "Key People",
-      "Company Priorities",
-      "Government Priorities",
+      "Summary and key facts",
+      "Key people in this company",
+      "Company priorities for HMG engagement",
+      "HMG priorities for engagement",
     ]);
 
-    cy.assertCompanyBriefingSectionOrder([
-      "Engagements",
-      "People assigned to this company",
-    ]);
+    cy.assertCompanyBriefingSectionOrder(["Engagements", "Account managers"]);
   });
 });
 

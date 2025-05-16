@@ -4,7 +4,9 @@ import Section from "../../components/Section";
 const AccountManagers = ({ accountManagers }) => (
   <Section
     className="govuk-!-display-none-print"
-    title="People assigned to this company"
+    caption="Only account managers can add or edit this company's information."
+    captionStyle={{ color: "#505A5F", marginBottom: "15px" }}
+    title="Account managers"
   >
     {accountManagers.length ? (
       <>
