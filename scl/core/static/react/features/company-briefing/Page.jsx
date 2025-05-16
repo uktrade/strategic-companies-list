@@ -4,7 +4,6 @@ import PageActions from "../../components/PageActions";
 import Breadcrumb from "../../components/Breadcrumb";
 
 import KeyPeople from "./KeyPeople";
-import KeyFacts from "./KeyFacts";
 import Priorities from "./Priorities";
 import CompanyDetails from "./CompanyDetails";
 import Engagements from "./Engagements";
@@ -82,7 +81,6 @@ const Page = ({ data, id, csrf_token, nonce }) => {
               }`}
             >
               <Summary data={data} csrf_token={csrf_token} />
-              <KeyFacts data={data} />
               <KeyPeople
                 id={id}
                 csrf_token={csrf_token}
@@ -93,16 +91,18 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                   <Priorities
                     id={id}
                     insightType="company_priority"
-                    title="Company Priorities"
+                    caption="Account managers can enter what the company is lobbying for, relevant issues or policy concerns."
+                    title="Company priorities for HMG engagement"
                     emptyMessage="Currently no company priorites are assigned."
                     csrf_token={csrf_token}
                     companyPriorities={data.company_priorities}
                   />
                   <Priorities
                     id={id}
-                    title="Government Priorities"
+                    caption="Account managers can enter how this company can support government priorities, highlight opoortunities or share useful department-specific insights."
+                    title="HMG priorities for engagement"
                     insightType="hmg_priority"
-                    emptyMessage="Currently no Government Priorities are assigned."
+                    emptyMessage="Currently no government priorities are assigned."
                     csrf_token={csrf_token}
                     companyPriorities={data.hmg_priorities}
                   />

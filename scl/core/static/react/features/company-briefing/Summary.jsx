@@ -5,6 +5,7 @@ import Update from "../../forms/summary/Update";
 import ApiProxy from "../../proxy";
 import LoadingSpinner from "../../components/Spinner";
 import NotificationBanner from "../../components/NotificationBanner";
+import KeyFacts from "./KeyFacts";
 
 import { GlobalContext } from "../../providers";
 
@@ -45,48 +46,22 @@ const Summary = ({ data, csrf_token }) => {
 
   return (
     <LoadingSpinner isLoading={isLoading}>
-      <Section title="Summary">
+      <Section
+        caption="This publicly available information provides an overview of the company."
+        title="Summary and key facts"
+      >
         <NotificationBanner
           message={notification?.message}
           status={notification?.status}
         />
         {!summary ? (
-          <p className="govuk-body">Currently this company has no summary.</p>
+          <p className="govuk-body">
+            Currently there is no summary for this company.
+          </p>
         ) : (
           !isCreating && !isUpdating && <p className="govuk-body">{summary}</p>
         )}
-
-        {isCreating && (
-          <Update onSubmit={onSubmit} setIsCreating={setIsCreating} />
-        )}
-
-        {isUpdating && (
-          <Update
-            onSubmit={onSubmit}
-            data={summary}
-            setIsCreating={setIsUpdating}
-          />
-        )}
-
-        {!isCreating && !isUpdating && isAccountManager && (
-          <div className="govuk-!-margin-top-6">
-            {Boolean(summary.length) ? (
-              <button
-                className="govuk-button govuk-button--secondary"
-                onClick={() => setIsUpdating(!isUpdating)}
-              >
-                Edit summary
-              </button>
-            ) : (
-              <button
-                className="govuk-button govuk-button--secondary govuk-!-margin-right-2 govuk-!-margin-bottom-2"
-                onClick={() => setIsCreating(!isCreating)}
-              >
-                Add summary
-              </button>
-            )}
-          </div>
-        )}
+        <KeyFacts data={data} />
       </Section>
     </LoadingSpinner>
   );
