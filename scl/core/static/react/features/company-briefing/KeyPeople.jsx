@@ -7,7 +7,8 @@ import Section from "../../components/Section";
 import SectionActions from "../../components/SectionActions";
 import NotificationBanner from "../../components/NotificationBanner";
 
-const KeyPeople = ({ id, csrf_token, keyPeople }) => {
+const KeyPeople = ({ id, csrf_token, keyPeople, isAccountManager }) => {
+  console.log(isAccountManager);
   const [people, setPeople] = useState(keyPeople);
   const [notification, setNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -105,7 +106,8 @@ const KeyPeople = ({ id, csrf_token, keyPeople }) => {
                 <li key={index} className="scl-key-people-list__item">
                   <div>
                     <span>
-                      {people.role} - {people.name} {`(${people.email})`}
+                      {people.role} - {people.name}
+                      {isAccountManager ? ` (${people.email})` : ""}
                     </span>
                   </div>
                 </li>

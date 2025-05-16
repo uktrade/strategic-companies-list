@@ -87,8 +87,9 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                 id={id}
                 csrf_token={csrf_token}
                 keyPeople={data.key_people}
+                isAccountManager={data.is_account_manager}
               />
-              {data.has_access && (
+              {data.has_access && data.is_account_manager && (
                 <>
                   <Priorities
                     id={id}
@@ -111,7 +112,7 @@ const Page = ({ data, id, csrf_token, nonce }) => {
             </div>
           </div>
           <div className="govuk-grid-column-one-third">
-            {data.has_access && (
+            {data.has_access && data.is_account_manager && (
               <Engagements
                 engagements={engagements}
                 duns_number={data.duns_number}
