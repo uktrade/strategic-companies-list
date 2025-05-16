@@ -54,7 +54,7 @@ const Summary = ({ data, csrf_token }) => {
           message={notification?.message}
           status={notification?.status}
         />
-        {!summary ? (
+        {!summary && data.global_hq_country && !data.turn_over && !data.employees ? (
           <p className="govuk-body">
             Currently there is no summary for this company.
           </p>
