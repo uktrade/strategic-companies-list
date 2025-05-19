@@ -8,7 +8,7 @@ const Section = ({
   captionStyle = { color: "#505A5F", marginBottom: "20px" },
 }) => (
   <section className={`section ${className}`}>
-    <h2 className="govuk-heading-m govuk-!-margin-bottom-4">{title}</h2>
+    <h2 className="govuk-heading-m govuk-!-margin-bottom-3">{title}</h2>
     {caption && (
       <p className="govuk-body" style={captionStyle}>
         {caption}
