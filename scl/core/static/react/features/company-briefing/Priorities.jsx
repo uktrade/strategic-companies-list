@@ -15,6 +15,7 @@ const Priorities = ({
   companyPriorities,
   emptyMessage,
   title,
+  caption,
 }) => {
   const [priorities, setPriorities] = useState(companyPriorities);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +86,7 @@ const Priorities = ({
 
       if (status == 200) {
         setPriorities(data.data);
-        setNotification({ message: "Priortiy updated"});
+        setNotification({ message: "Priortiy updated" });
       } else {
         setNotification({
           message: `Status ${status}: ${data.message || data.error}`,
@@ -97,7 +98,7 @@ const Priorities = ({
 
   return (
     <LoadingSpinner isLoading={isLoading}>
-      <Section title={title}>
+      <Section caption={caption} title={title}>
         <NotificationBanner
           message={notification?.message}
           status={notification?.status}

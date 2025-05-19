@@ -3,10 +3,8 @@ import Section from "../../components/Section";
 
 const KeyFacts = ({ data }) => {
   return (
-    <Section title="Key Facts">
-      {!data.global_hq_country && !data.turn_over && !data.employees ? (
-        <p className="govuk-body">Currently there are no key facts.</p>
-      ) : (
+    <>
+      {data.global_hq_country && data.turn_over && data.employees && (
         <ul className="govuk-list govuk-list--bullet scl-key-people-list">
           {data.global_hq_country && (
             <li className="scl-key-people-list__item">
@@ -25,7 +23,7 @@ const KeyFacts = ({ data }) => {
           )}
         </ul>
       )}
-    </Section>
+    </>
   );
 };
 

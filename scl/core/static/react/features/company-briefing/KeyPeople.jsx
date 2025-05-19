@@ -90,7 +90,7 @@ const KeyPeople = ({ id, csrf_token, keyPeople, isAccountManager }) => {
 
   return (
     <LoadingSpinner isLoading={isLoading}>
-      <Section title="Key People">
+      <Section title="Key people in this company">
         <NotificationBanner
           message={notification?.message}
           status={notification?.status}

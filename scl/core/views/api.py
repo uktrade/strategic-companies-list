@@ -153,8 +153,6 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
                 company.name = self.data.get("title").strip()
             if self.data.get("sectors"):
                 company.sectors = [key["value"] for key in self.data.get("sectors")]
-            if self.data.get("summary"):
-                company.summary = self.data.get("summary").strip()
             company.save()
 
             updated_company = Company.objects.get(
@@ -173,7 +171,6 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
                     "duns_number": updated_company.duns_number,
                     "company_sectors": get_company_sectors(updated_company),
                     "all_sectors": get_all_sectors(),
-                    "summary": updated_company.summary,
                     "last_updated": updated_company.last_updated.strftime(
                         "%B %d, %Y, %H:%M"
                     ),
