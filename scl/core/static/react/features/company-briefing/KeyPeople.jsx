@@ -8,7 +8,6 @@ import SectionActions from "../../components/SectionActions";
 import NotificationBanner from "../../components/NotificationBanner";
 
 const KeyPeople = ({ id, csrf_token, keyPeople, isAccountManager }) => {
-  console.log(isAccountManager);
   const [people, setPeople] = useState(keyPeople);
   const [notification, setNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
