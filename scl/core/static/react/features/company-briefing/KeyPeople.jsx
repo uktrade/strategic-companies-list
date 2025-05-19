@@ -106,7 +106,7 @@ const KeyPeople = ({ id, csrf_token, keyPeople, isAccountManager }) => {
                   <div>
                     <span>
                       {people.role} - {people.name}
-                      {isAccountManager ? ` (${people.email})` : ""}
+                      {isAccountManager && ` (${people.email})`}
                     </span>
                   </div>
                 </li>
