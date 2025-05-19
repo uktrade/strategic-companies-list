@@ -73,7 +73,6 @@ def test_company_insight_api_authorisation(
 @pytest.mark.django_db
 def test_company_api_patch(viewer_user_client, company_acc_manager):
     data = {
-        "summary": "Lorem ipsum dolor sit amet",
         "title": "Company name",
         "sectors": [
             {"value": "SL0001", "label": "Advanced engineering"},
@@ -89,7 +88,6 @@ def test_company_api_patch(viewer_user_client, company_acc_manager):
     assert response.status_code == 200
     response_data = json.loads(response.content)
     assert response_data["data"]["title"] == "Company name"
-    assert response_data["data"]["summary"] == "Lorem ipsum dolor sit amet"
     assert response_data["data"]["company_sectors"] == [
         {"label": "Advanced engineering", "value": "SL0001"},
         {"label": "Aerospace", "value": "SL0011"},
