@@ -89,16 +89,9 @@ export const Table = ({
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
           {headers.map((header) => (
-            <Cell
-              header
-              scope="col"
-              style={{
-                ...headerStyles,
-                ...(hasStickyHeaders ? { ...styleStickyHeader.th } : {}),
-              }}
-            >
+            <th scope="col" class="govuk-table__header">
               {header}
-            </Cell>
+            </th>
           ))}
         </tr>
       </thead>
