@@ -529,8 +529,6 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
 
             last_updated = versions.first().revision
             first_created = versions.last().revision
-            print(">>>>>>>> first_created", first_created)
-            print(">>>>>>>> last_updated", last_updated)
 
             reversion.set_user(self.request.user)
             reversion.set_comment(
