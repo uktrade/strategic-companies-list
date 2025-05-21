@@ -138,7 +138,7 @@ class Insight(models.Model):
 @reversion.register()
 class Engagement(models.Model):
 
-    TYPE_LEGACY = "legacy"
+    TYPE_LEGACY = "Legacy"
     TYPE_EMAIL_WEBSITE = "email_website"
     TYPE_FACE_TO_FACE = "face_to_face"
     TYPE_LETTER = "letter"
@@ -149,13 +149,13 @@ class Engagement(models.Model):
 
     ENGAGEMENT_TYPES = [
         (TYPE_LEGACY, TYPE_LEGACY),
-        (TYPE_EMAIL_WEBSITE, "Email/Website"),
-        (TYPE_FACE_TO_FACE, "Face to Face"),
+        (TYPE_EMAIL_WEBSITE, "Email or website"),
+        (TYPE_FACE_TO_FACE, "Face to face"),
         (TYPE_LETTER, "Letter"),
         (TYPE_NON_CONTACT_RESEARCH, "Non contact research"),
-        (TYPE_SOCIAL_MEDIA, "Social Media"),
+        (TYPE_SOCIAL_MEDIA, "Social media"),
         (TYPE_TELEPHONE, "Telephone"),
-        (TYPE_VIDEO_TELECONF, "Video/Teleconf"),
+        (TYPE_VIDEO_TELECONF, "Video or teleconference"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
