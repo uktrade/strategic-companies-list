@@ -28,7 +28,7 @@ const Create = ({
 
   setValue("contents", transcript + " " + partialTranscript);
 
-  const errorDisplay = function () {
+  const ErrorDisplay = function () {
     if (errors) {
       return (
         <p className="govuk-error-message">
@@ -48,10 +48,13 @@ const Create = ({
       >
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-three-quarters">
-            <label className="govuk-label govuk-!-font-weight-bold" htmlFor="contents">
+            <label
+              className="govuk-label govuk-!-font-weight-bold"
+              htmlFor="contents"
+            >
               Add business intelligence
             </label>
-            {errorDisplay}
+            <ErrorDisplay />
           </div>
           <div className="govuk-grid-column-one-quarter">
             {isAWSTranscribeActive && (
@@ -72,8 +75,9 @@ const Create = ({
           type="text"
           rows="5"
           {...register("contents", {
-            required: "Contents are required",
-            validate: (value) => value.trim() !== "" || "Contents are required",
+            required: "Business intelligence is required",
+            validate: (value) =>
+              value.trim() !== "" || "Business intelligence is required",
           })}
         ></textarea>
 

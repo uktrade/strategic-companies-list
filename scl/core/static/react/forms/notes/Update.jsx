@@ -39,13 +39,11 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
               Delete
             </a>
             <fieldset className="govuk-fieldset" key={`${field.name}-${index}`}>
-              <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
-                <h2 className="govuk-fieldset__heading">
-                  Update business intelligence
-                </h2>
-              </legend>
-              <label className="govuk-label" htmlFor="contents">
-                Contents
+              <label
+                className="govuk-label govuk-!-font-weight-bold"
+                htmlFor="contents"
+              >
+                Update business intelligence
               </label>
               {errors && (
                 <p className="govuk-error-message">

@@ -39,10 +39,10 @@ const assertEmptyNotes = () => {
   cy.findByText(
     "This engagement has no business intelligence recorded."
   ).should("be.visible");
-  cy.findByRole("button", { name: "Add Business intelligence" }).should(
+  cy.findByRole("button", { name: "Add business intelligence" }).should(
     "be.visible"
   );
-  cy.findByRole("button", { name: "Edit Business intelligence" }).should(
+  cy.findByRole("button", { name: "Edit business intelligence" }).should(
     "not.exist"
   );
 };
@@ -207,8 +207,8 @@ describe("Add/edit/delete a business intelligence note", () => {
   });
   context("when the user views the note form", () => {
     it("should render correctly", () => {
-      cy.clickButton("Add Business intelligence");
-      cy.findByLabelText("Contents").should("be.visible");
+      cy.clickButton("Add business intelligence");
+      cy.findByLabelText("Add business intelligence").should("be.visible");
       cy.findByRole("button", { name: "Delete" }).should("not.exist");
       cy.findAllByRole("button", { name: "Save" }).should("be.visible");
       cy.findAllByRole("button", { name: "Cancel" }).should("be.visible");
@@ -216,17 +216,17 @@ describe("Add/edit/delete a business intelligence note", () => {
   });
   context("when the the user tries to add a note without any input", () => {
     it("should display an error", () => {
-      cy.clickButton("Add Business intelligence");
+      cy.clickButton("Add business intelligence");
       cy.clickButton("Save");
       cy.assertFormErrors({
-        Contents: "Contents are required",
+        "Add business intelligence": "Business intelligence is required",
       });
     });
   });
   context("when the user adds a note correctly", () => {
     it("should display an error", () => {
-      cy.clickButton("Add Business intelligence");
-      cy.findByLabelText("Contents").type("Some notes");
+      cy.clickButton("Add business intelligence");
+      cy.findByLabelText("Add business intelligence").type("Some notes");
       cy.clickButton("Save");
       cy.assertBanner({
         title: "Saved",
@@ -237,8 +237,10 @@ describe("Add/edit/delete a business intelligence note", () => {
   });
   context("when the user edits a note", () => {
     it("should update the contents of the note", () => {
-      cy.clickButton("Edit Business intelligence");
-      cy.findByLabelText("Contents").clear().type("Some longer notes");
+      cy.clickButton("Edit business intelligence");
+      cy.findByLabelText("Update business intelligence")
+        .clear()
+        .type("Some longer notes");
       cy.clickButton("Save");
       cy.assertBanner({
         title: "Saved",
@@ -249,7 +251,7 @@ describe("Add/edit/delete a business intelligence note", () => {
   });
   context("when the user deletes a note", () => {
     it("should remove the note from the engagement", () => {
-      cy.clickButton("Edit Business intelligence");
+      cy.clickButton("Edit business intelligence");
       cy.findByText("Delete").click();
       cy.assertBanner({
         title: "Saved",

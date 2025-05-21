@@ -284,9 +284,9 @@ const Notes = ({
       )}
       {!isCreating && !isUpdating && !isUpdatingEngagement && (
         <SectionActions
-          addLabel="Add Business intelligence"
+          addLabel="Add business intelligence"
           showEdit={Boolean(notes.length)}
-          editLabel="Edit Business intelligence"
+          editLabel="Edit business intelligence"
           setIsCreating={() => setIsCreating(!isCreating)}
           setIsUpdating={() => setIsUpdating(!isUpdating)}
         />
