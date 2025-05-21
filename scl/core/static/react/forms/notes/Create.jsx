@@ -28,7 +28,7 @@ const Create = ({
 
   setValue("contents", transcript + " " + partialTranscript);
 
-  const errorList = function () {
+  const errorDisplay = function () {
     if (errors) {
       return (
         <p className="govuk-error-message">
@@ -46,13 +46,14 @@ const Create = ({
         onSubmit={handleSubmit((data) => onSubmit(data, "create"))}
         className="scl-inine-form"
       >
-        <div class="govuk-grid-row">
-          <div class="govuk-grid-column-three-quarters">
+        <div className="govuk-grid-row">
+          <div className="govuk-grid-column-three-quarters">
             <label className="govuk-label govuk-!-font-weight-bold" htmlFor="contents">
               Add business intelligence
             </label>
+            {errorDisplay}
           </div>
-          <div class="govuk-grid-column-one-quarter">
+          <div className="govuk-grid-column-one-quarter">
             {isAWSTranscribeActive && (
               <div style={{ float: "right" }}>
                 <TranscriptButton
@@ -65,7 +66,6 @@ const Create = ({
             )}
           </div>
         </div>
-        {errorList}
         <textarea
           className="govuk-textarea govuk-!-margin-bottom-4"
           id="contents"
@@ -77,7 +77,7 @@ const Create = ({
           })}
         ></textarea>
 
-        <hr class="govuk-!-margin-top-5 govuk-!-margin-bottom-5" />
+        <hr className="govuk-!-margin-top-5 govuk-!-margin-bottom-5" />
 
         <div className="govuk-!-margin-top-2">
           <button

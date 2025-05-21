@@ -198,7 +198,7 @@ describe("add/edit/delete an engagement note", () => {
     // Now add a note
     cy.clickLink(engagementNoteLink);
     cy.clickButton("Add note");
-    cy.findByLabelText("Contents").type("My notes");
+    cy.findByLabelText("Add business intelligence").type("My notes");
     cy.clickButton("Save");
     cy.wait("@createNote");
 
