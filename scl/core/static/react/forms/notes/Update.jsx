@@ -41,7 +41,7 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
             <fieldset className="govuk-fieldset" key={`${field.name}-${index}`}>
               <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
                 <h2 className="govuk-fieldset__heading">
-                  Update Business intelligence
+                  Update business intelligence
                 </h2>
               </legend>
               <label className="govuk-label" htmlFor="contents">
