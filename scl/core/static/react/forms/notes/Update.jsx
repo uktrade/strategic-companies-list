@@ -25,7 +25,7 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
 
   return (
     <>
-      <h2 className="govuk-heading-m">Update notes</h2>
+      <h2 className="govuk-heading-m">Update Business intelligence</h2>
       <form
         onSubmit={handleSubmit((data) => onSubmit(data, "update"))}
         className="scl-inine-form"
@@ -41,7 +41,7 @@ const Update = ({ data, onSubmit, onDelete, setIsUpdating }) => {
             <fieldset className="govuk-fieldset" key={`${field.name}-${index}`}>
               <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
                 <h2 className="govuk-fieldset__heading">
-                  Update: note {index + 1}
+                  Update Business intelligence
                 </h2>
               </legend>
               <label className="govuk-label" htmlFor="contents">

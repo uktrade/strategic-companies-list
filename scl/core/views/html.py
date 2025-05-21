@@ -76,7 +76,14 @@ class EngagementDetailView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
                 {
                     "id": str(self.object.id),
                     "title": self.object.title,
-                    "details": self.object.details,
+                    "date": self.object.date.strftime(constants.DATE_FORMAT_SHORT),
+                    "engagement_type": self.object.engagement_type,
+                    "agenda": self.object.agenda,
+                    "civil_servants": self.object.civil_servants,
+                    "company_representatives": self.object.company_representatives,
+                    "ministers": self.object.ministers,
+                    "outcomes": self.object.outcomes,
+                    "actions": self.object.actions,
                     "flags": get_all_feature_flags(self.request),
                     "created": {
                         "name": f"{first_created.user.first_name} {first_created.user.last_name}",
@@ -147,7 +154,7 @@ class CompanyEngagementListView(ViewerOrCompanyAccountManagerUserMixin, DetailVi
                 "summary": self.object.summary,
                 "duns_number": self.object.duns_number,
             },
-            "details": x.details,
+            "agenda": x.agenda,
         }
         props = json.dumps(
             {
@@ -286,7 +293,7 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                                 {
                                     "id": str(engagement.id),
                                     "title": engagement.title,
-                                    "details": engagement.details,
+                                    "agenda": engagement.agenda,
                                     "date": engagement.date.strftime(
                                         constants.DATE_FORMAT_SHORT
                                     ),

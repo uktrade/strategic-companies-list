@@ -12,6 +12,8 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
+from reversion.models import Version
+from scl.core import constants
 
 from scl.core.constants import DATE_FORMAT_NUMERIC, DATE_FORMAT_SHORT
 from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
@@ -510,9 +512,25 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
     def patch(self, *args, **kwargs):
         with reversion.create_revision():
             engagement = self.engagement
-            engagement.title = self.data.get("title").strip()
-            engagement.details = self.data.get("details").strip()
+            engagement.title = self.data.get("title")
+            engagement.date = datetime.strptime(
+                self.data.get("date"), DATE_FORMAT_NUMERIC
+            ).date()
+            engagement.agenda = self.data.get("agenda")
+            engagement.civil_servants = self.data.get("civilServants")
+            engagement.company_representatives = self.data.get("companyRepresentatives")
+            engagement.engagement_type = self.data.get("engagementType")
+            engagement.ministers = self.data.get("ministers")
+            engagement.outcomes = self.data.get("outcomes")
+            engagement.actions = self.data.get("actions")
             engagement.save()
+
+            versions = Version.objects.get_for_object(engagement)
+
+            last_updated = versions.first().revision
+            first_created = versions.last().revision
+            print(">>>>>>>> first_created", first_created)
+            print(">>>>>>>> last_updated", last_updated)
 
             reversion.set_user(self.request.user)
             reversion.set_comment(
@@ -523,10 +541,28 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
         response = JsonResponse(
             {
                 "data": {
-                    "title": engagement.title,
-                    "details": engagement.details,
-                    "date": engagement.date.strftime(DATE_FORMAT_SHORT),
                     "id": engagement.id,
+                    "title": engagement.title,
+                    "date": engagement.date.strftime(constants.DATE_FORMAT_SHORT),
+                    "agenda": engagement.agenda,
+                    "company_representatives": engagement.company_representatives,
+                    "civil_servants": engagement.civil_servants,
+                    "ministers": engagement.ministers,
+                    "outcomes": engagement.outcomes,
+                    "actions": engagement.actions,
+                    "engagement_type": engagement.engagement_type,
+                    "created": {
+                        "name": f"{first_created.user.first_name} {first_created.user.last_name}",
+                        "date": first_created.date_created.strftime(
+                            constants.DATE_FORMAT_LONG
+                        ),
+                    },
+                    "last_updated": {
+                        "name": f"{last_updated.user.first_name} {last_updated.user.last_name}",
+                        "date": last_updated.date_created.strftime(
+                            constants.DATE_FORMAT_LONG
+                        ),
+                    },
                 }
             },
             status=200,
@@ -568,10 +604,25 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
         with reversion.create_revision():
             title = self.data.get("title")
             date = datetime.strptime(self.data.get("date"), DATE_FORMAT_NUMERIC).date()
-            details = self.data.get("details")
+            agenda = self.data.get("agenda")
+            civil_servants = self.data.get("civilServants")
+            company_representatives = self.data.get("companyRepresentatives")
+            engagement_type = self.data.get("engagementType")
+            ministers = self.data.get("ministers")
+            outcomes = self.data.get("outcomes")
+            actions = self.data.get("actions")
 
             Engagement.objects.create(
-                company_id=self.company.id, title=title, date=date, details=details
+                company_id=self.company.id,
+                title=title,
+                date=date,
+                agenda=agenda,
+                civil_servants=civil_servants,
+                company_representatives=company_representatives,
+                engagement_type=engagement_type,
+                ministers=ministers,
+                outcomes=outcomes,
+                actions=actions,
             )
 
             engagements = list(
@@ -589,10 +640,10 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
             {
                 "data": [
                     {
-                        "title": engagement.title,
-                        "details": engagement.details,
-                        "date": engagement.date.strftime(DATE_FORMAT_SHORT),
                         "id": engagement.id,
+                        "title": engagement.title,
+                        "date": engagement.date.strftime(DATE_FORMAT_SHORT),
+                        "agenda": engagement.agenda,
                     }
                     for engagement in engagements
                 ]

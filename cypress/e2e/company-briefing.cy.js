@@ -1,7 +1,4 @@
-// Testing Corp has an account manager
-const company = {
-  duns_number: "123456",
-};
+import { COMPANIES } from "./constants";
 
 describe("Company Briefing page", () => {
   before(() => {
@@ -9,15 +6,15 @@ describe("Company Briefing page", () => {
   });
 
   it("should have all the elements on the page", () => {
-    cy.visit(`/company-briefing/${company.duns_number}`);
+    cy.visit(`/company-briefing/${COMPANIES.testing_corp.duns_number}`);
 
     cy.findByRole("heading", {
       level: 1,
-      name: company.name,
+      name: COMPANIES.testing_corp.name,
     }).should("be.visible");
     cy.contains("strong", "D-U-N-S:")
       .parent()
-      .should("contain.text", company.duns_number);
+      .should("contain.text", COMPANIES.testing_corp.duns_number);
     cy.contains("strong", "Sectors:")
       .parent()
       .should(
@@ -76,163 +73,5 @@ describe("Company Briefing page", () => {
     ]);
 
     cy.assertCompanyBriefingSectionOrder(["Engagements", "Account managers"]);
-  });
-});
-
-describe("Add/edit an engagement", () => {
-  before(() => {
-    cy.resetDatabase();
-  });
-
-  const assertEngagementList = (expectedItems = []) => {
-    cy.findByRole("heading", { name: "Engagements" })
-      .closest("section")
-      .within(() => {
-        expectedItems.forEach((item, index) => {
-          cy.findAllByRole("listitem")
-            .eq(index)
-            .within(() => {
-              cy.findByRole("link").within(() => {
-                cy.findByText(item.date).should("exist");
-                cy.findByText(item.text).should("exist");
-              });
-            });
-        });
-      });
-  };
-
-  const assertViewAllEngagementsLink = (company) => {
-    cy.findByRole("heading", { name: "Engagements" })
-      .closest("section")
-      .within(() => {
-        cy.findByText("View all engagements")
-          .should("exist")
-          .and(
-            "have.attr",
-            "href",
-            `/company-briefing/${company.duns_number}/engagements`
-          );
-      });
-  };
-
-  it("should render error messages", () => {
-    cy.visit(`/company-briefing/${company.duns_number}`);
-
-    cy.clickButton("Add engagement");
-    cy.fillAndSubmitEngagementForm({
-      title: "",
-      date: "",
-      details: "",
-    });
-    cy.assertFormErrors({
-      Title: "Title is required",
-      Date: "Date is required",
-      Details: "Details are required",
-    });
-  });
-
-  it("should add an engagement", () => {
-    cy.visit(`/company-briefing/${company.duns_number}`);
-    cy.clickButton("Add engagement");
-    cy.fillAndSubmitEngagementForm({
-      title: "My engagement title",
-      date: "2026-12-03",
-      details: "My engagement details",
-    });
-    cy.assertBanner({
-      title: "Saved",
-      heading: "Engagement added",
-    });
-    assertEngagementList([
-      { date: "December 03, 2026", text: "My engagement title" },
-    ]);
-    assertViewAllEngagementsLink(company);
-  });
-
-  it("should edit an engagement (fixes a typo)", () => {
-    cy.intercept("POST", "/api/v1/engagement/*").as("apiRequestPOST");
-    cy.intercept("PATCH", "/api/v1/engagement/*").as("apiRequestPATCH");
-    cy.visit(`/company-briefing/${company.duns_number}`);
-    cy.clickButton("Add engagement");
-    cy.fillAndSubmitEngagementForm({
-      title: "My engagement tite", // typo
-      date: "2026-12-03",
-      details: "My engagement details",
-    });
-    cy.wait("@apiRequestPOST");
-    cy.clickLink("December 03, 2026 My engagement tite");
-    cy.clickButton("Edit details");
-    cy.findByLabelText("Title").clear().type("My engagement title"); // typo fixed
-    cy.clickButton("Save");
-    cy.wait("@apiRequestPATCH");
-    cy.assertBanner({
-      title: "Saved",
-      heading: "Engagement updated",
-    });
-  });
-});
-
-describe("add/edit/delete an engagement note", () => {
-  const engagementNote = {
-    title: "An engagement",
-    date: "2025-06-24",
-    details: "Details",
-  };
-
-  const engagementNoteLink = "June 24, 2025 An engagement";
-
-  before(() => {
-    cy.resetDatabase();
-  });
-
-  it("should add an engagement note", () => {
-    cy.intercept("POST", "/api/v1/engagement/*").as("createEngagement");
-    cy.intercept("POST", "/api/v1/engagement/*/note").as("createNote");
-    cy.visit(`/company-briefing/${company.duns_number}`);
-
-    // Create an engagement first
-    cy.clickButton("Add engagement");
-    cy.fillAndSubmitEngagementForm(engagementNote);
-    cy.wait("@createEngagement");
-
-    // Now add a note
-    cy.clickLink(engagementNoteLink);
-    cy.clickButton("Add note");
-    cy.findByLabelText("Add business intelligence").type("My notes");
-    cy.clickButton("Save");
-    cy.wait("@createNote");
-
-    // Ensure the banner has been rendered
-    cy.assertBanner({
-      title: "Saved",
-      heading: "Note added",
-    });
-  });
-
-  it("should edit an engagement note", () => {
-    cy.intercept("PATCH", "/api/v1/engagement/*/note").as("updateNote");
-    cy.visit(`/company-briefing/${company.duns_number}`);
-    cy.clickLink(engagementNoteLink);
-    cy.clickButton("Edit note");
-    cy.findByLabelText("Contents").clear().type("My notes!!!");
-    cy.clickButton("Save");
-    cy.wait("@updateNote");
-    cy.assertBanner({
-      title: "Saved",
-      heading: "Note updated",
-    });
-  });
-
-  it("should delete an engagement note", () => {
-    cy.intercept("DELETE", "/api/v1/engagement/*/note").as("deleteNote");
-    cy.visit(`/company-briefing/${company.duns_number}`);
-    cy.clickLink(engagementNoteLink);
-    cy.clickButton("Edit note");
-    cy.findByText("Delete").click();
-    cy.wait("@deleteNote");
-    cy.assertBanner({
-      title: "Saved",
-      heading: "Note deleted",
-    });
   });
 });

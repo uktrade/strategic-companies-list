@@ -1,7 +1,4 @@
-// Testing Corp has an account manager
-const company = {
-  duns_number: "123456",
-};
+import { COMPANIES } from "./constants";
 
 describe("Company Details page", () => {
   before(() => {
@@ -9,7 +6,7 @@ describe("Company Details page", () => {
   });
 
   it("should not change Title and Sector if changes are cancelled", () => {
-    cy.visit(`/company-briefing/${company.duns_number}`);
+    cy.visit(`/company-briefing/${COMPANIES.testing_corp.duns_number}`);
     cy.clickButton("Edit company details");
     cy.get("#title").clear().type("Test title");
     cy.get("#sectors_select").click();
@@ -17,13 +14,13 @@ describe("Company Details page", () => {
     cy.contains("Cancel").click();
     cy.findByRole("heading", {
       level: 1,
-      name: company.name,
+      name: COMPANIES.testing_corp.name,
     })
       .invoke("text")
       .should("equal", "Testing Corp");
     cy.contains("strong", "D-U-N-S:")
       .parent()
-      .should("contain.text", company.duns_number);
+      .should("contain.text", COMPANIES.testing_corp.duns_number);
     cy.contains("strong", "Sectors:")
       .parent()
       .should(
@@ -33,7 +30,7 @@ describe("Company Details page", () => {
   });
 
   it("should change Title and Sector if changes are saved", () => {
-    cy.visit(`/company-briefing/${company.duns_number}`);
+    cy.visit(`/company-briefing/${COMPANIES.testing_corp.duns_number}`);
     cy.clickButton("Edit company details");
     cy.get("#title").clear().type("Test title");
     cy.get("#sectors_select").click();
@@ -41,13 +38,13 @@ describe("Company Details page", () => {
     cy.clickButton("Save");
     cy.findByRole("heading", {
       level: 1,
-      name: company.name,
+      name: "Test title",
     })
       .invoke("text")
       .should("equal", "Test title");
     cy.contains("strong", "D-U-N-S:")
       .parent()
-      .should("contain.text", company.duns_number);
+      .should("contain.text", COMPANIES.testing_corp.duns_number);
     cy.contains("strong", "Sectors:")
       .parent()
       .should(
@@ -57,7 +54,7 @@ describe("Company Details page", () => {
   });
 
   it("should allow you to remove sectors", () => {
-    cy.visit(`/company-briefing/${company.duns_number}`);
+    cy.visit(`/company-briefing/${COMPANIES.testing_corp.duns_number}`);
     cy.clickButton("Edit company details");
     cy.get("#title").clear().type("Test title");
     cy.get(
@@ -67,20 +64,20 @@ describe("Company Details page", () => {
     cy.clickButton("Save");
     cy.findByRole("heading", {
       level: 1,
-      name: company.name,
+      name: "Test title",
     })
       .invoke("text")
       .should("equal", "Test title");
     cy.contains("strong", "D-U-N-S:")
       .parent()
-      .should("contain.text", company.duns_number);
+      .should("contain.text", COMPANIES.testing_corp.duns_number);
     cy.contains("strong", "Sectors:")
       .parent()
       .should("contain.text", "Advanced engineering, Aerospace");
   });
 
   it("should not allow you to remove all sectors", () => {
-    cy.visit(`/company-briefing/${company.duns_number}`);
+    cy.visit(`/company-briefing/${COMPANIES.testing_corp.duns_number}`);
     cy.clickButton("Edit company details");
     cy.get("#title").clear().type("Test title");
     cy.get(`[aria-label="Remove Advanced engineering"]`).click();
@@ -89,13 +86,13 @@ describe("Company Details page", () => {
     cy.clickButton("Save");
     cy.findByRole("heading", {
       level: 1,
-      name: company.name,
+      name: "Test title",
     })
       .invoke("text")
       .should("equal", "Test title");
     cy.contains("strong", "D-U-N-S:")
       .parent()
-      .should("contain.text", company.duns_number);
+      .should("contain.text", COMPANIES.testing_corp.duns_number);
     cy.contains("strong", "Sectors:")
       .parent()
       .should("contain.text", "Advanced engineering, Aerospace, Defence");

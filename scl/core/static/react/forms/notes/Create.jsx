@@ -41,7 +41,7 @@ const Create = ({
 
   return (
     <>
-      <h2 className="govuk-heading-m">Add note</h2>
+      <h2 className="govuk-heading-m">Add Business intelligence</h2>
       <form
         onSubmit={handleSubmit((data) => onSubmit(data, "create"))}
         className="scl-inine-form"

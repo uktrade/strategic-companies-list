@@ -2,7 +2,7 @@ import React from "react";
 import Section from "../../components/Section";
 
 const Engagements = ({ engagements, duns_number }) => (
-  <Section title="Engagements">
+  <Section title="Engagements" data-testid="engagements">
     {engagements.length ? (
       <>
         <ul className="scl-multiline-list govuk-!-margin-top-5">

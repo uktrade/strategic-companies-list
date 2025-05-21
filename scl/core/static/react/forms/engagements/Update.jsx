@@ -1,7 +1,9 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import Form from "./Form";
+import { transformLongDateToShort } from "../../utils";
 
-const Update = ({ onSubmit, data, setIsUpdating }) => {
+const Update = ({ onSubmit, data, handleCancel }) => {
   const {
     register,
     handleSubmit,
@@ -9,65 +11,31 @@ const Update = ({ onSubmit, data, setIsUpdating }) => {
   } = useForm({
     defaultValues: {
       title: data.title,
-      details: data.details,
+      date: transformLongDateToShort(data.date),
+      engagementType: data.engagement_type,
+      agenda: data.agenda,
+      civilServants: data.civil_servants,
+      companyRepresentatives: data.company_representatives,
+      ministers: data.ministers,
+      outcomes: data.outcomes,
+      actions: data.actions,
     },
   });
+
+  const props = {
+    data,
+    method: "update",
+    onSubmit,
+    handleSubmit,
+    handleCancel,
+    register,
+    errors,
+  };
 
   return (
     <>
       <h2 className="govuk-heading-m">Update: {data.title}</h2>
-      <form
-        onSubmit={handleSubmit((data) => onSubmit(data, "create"))}
-        className="scl-inine-form"
-      >
-        <label className="govuk-label" htmlFor="title">
-          Title
-        </label>
-        {errors.title && (
-          <p className="govuk-error-message">
-            <span className="govuk-visually-hidden">Error:</span>
-            {errors.title.message}
-          </p>
-        )}
-        <input
-          className="govuk-input govuk-!-margin-bottom-4"
-          id="title"
-          type="text"
-          {...register("title", {
-            required: "Title is required",
-          })}
-        />
-        <label className="govuk-label" htmlFor="title">
-          Details
-        </label>
-        {errors && (
-          <p className="govuk-error-message">
-            <span className="govuk-visually-hidden">Error:</span>
-            {errors?.details?.message}
-          </p>
-        )}
-        <textarea
-          className="govuk-textarea govuk-!-margin-bottom-4"
-          id="details"
-          type="text"
-          rows="5"
-          {...register("details", {
-            required: "Details are required",
-          })}
-        ></textarea>
-
-        <div className="govuk-!-margin-top-2">
-          <button type="submit" className="govuk-button govuk-!-margin-right-2">
-            Save
-          </button>
-          <a
-            className="govuk-button govuk-button--secondary"
-            onClick={() => setIsUpdating(false)}
-          >
-            Cancel
-          </a>
-        </div>
-      </form>
+      <Form {...props} />
     </>
   );
 };

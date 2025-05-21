@@ -75,17 +75,33 @@ class EngagementPageTest(TestCase):
         api_url = reverse(
             "api-engagement", kwargs={"engagement_id": self.engagement.id}
         )
-        patch_data = {"title": "new title", "details": "new details"}
+        patch_data = {
+            "title": "new title",
+            "agenda": "new agenda",
+            "date": "2040-01-25",
+            "engagementType": "Letter",
+            "civilServants": ["Bob", "Sarah"],
+            "companyRepresentatives": ["Jack", "Jill"],
+            "ministers": ["Louise", "Jenny"],
+            "outcomes": "An outcome",
+            "actions": "An action",
+        }
         response = account_manager_client.patch(
             api_url, json.dumps(patch_data), content_type="application/json"
         )
         assert response.status_code == 200
         data = response.json()
         assert data["data"]["title"] == "new title"
-        assert data["data"]["details"] == "new details"
+        assert data["data"]["agenda"] == "new agenda"
         self.engagement.refresh_from_db()
         assert self.engagement.title == "new title"
-        assert self.engagement.details == "new details"
+        assert self.engagement.agenda == "new agenda"
+        assert self.engagement.engagement_type == "Letter"
+        assert self.engagement.civil_servants == ["Bob", "Sarah"]
+        assert self.engagement.company_representatives == ["Jack", "Jill"]
+        assert self.engagement.ministers == ["Louise", "Jenny"]
+        assert self.engagement.outcomes == "An outcome"
+        assert self.engagement.actions == "An action"
 
     @pytest.mark.django_db
     def test_non_account_manager_cannot_edit_details(self):

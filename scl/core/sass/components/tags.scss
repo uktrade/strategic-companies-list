@@ -25,6 +25,10 @@
   line-height: 15px;
 }
 
+.scl-tag--wide {
+  max-width: 200px;
+}
+
 .scl-tag--security {
   /* A bit darker than GOV.UK's red so it looks less pink, especially when in the header against
      a dark background, but it's still AAA-compliant contrast-wise */
@@ -34,11 +38,4 @@
 .scl-tag--date {
   width: 100px;
   text-align: center;
-}
-
-.scl-tag--hanging {
-  float: right;
-  margin-top: -1px;
-  margin-bottom: 1px;
-  /* So text doesn't get too close underneath */
 }

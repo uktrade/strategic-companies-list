@@ -16,7 +16,12 @@ import NotificationBanner from "../../components/NotificationBanner";
 import Create from "../../forms/notes/Create";
 import Update from "../../forms/notes/Update";
 
-const Notes = ({ csrf_token, data }) => {
+const Notes = ({
+  csrf_token,
+  data,
+  isUpdatingEngagement,
+  setIsUpdatingNotes,
+}) => {
   const [notes, setNotes] = useState(data.notes);
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -30,6 +35,8 @@ const Notes = ({ csrf_token, data }) => {
   const stream = useRef(null);
   const client = useRef(null);
   const isRecording = useRef(null);
+
+  setIsUpdatingNotes(isCreating || isUpdating)
 
   const ENDPOINT = `/api/v1/engagement/${data.id}/note`;
 
@@ -172,7 +179,7 @@ const Notes = ({ csrf_token, data }) => {
 
       if (status === 200) {
         setNotes(data.data);
-        setNotification({ message: "Note added" });
+        setNotification({ message: "Business intelligence added" });
       } else {
         setNotification({
           message: `Status ${status}: ${data.message || data.error}`,
@@ -191,7 +198,7 @@ const Notes = ({ csrf_token, data }) => {
 
       if (status === 200) {
         setNotes(data.data);
-        setNotification({ message: "Note updated" });
+        setNotification({ message: "Business intelligence updated" });
       } else {
         setNotification({
           message: `Status ${status}: ${data.message || data.error}`,
@@ -213,7 +220,7 @@ const Notes = ({ csrf_token, data }) => {
 
     if (status === 200) {
       setNotes(data.data);
-      setNotification({ message: "Note deleted" });
+      setNotification({ message: "Business intelligence deleted" });
     } else {
       setNotification({
         message: `Status ${status}: ${data.message || data.error}`,
@@ -224,9 +231,15 @@ const Notes = ({ csrf_token, data }) => {
 
   return (
     <>
-      {!isCreating && !isUpdating && (
+      {!isCreating && !isUpdating && !isUpdatingEngagement && (
         <>
-          <h2 className="govuk-heading-m govuk-!-margin-top-8">Notes</h2>
+          <h2 className="govuk-heading-m govuk-!-margin-top-8">
+            Business intelligence
+          </h2>
+          <p className="govuk-body">
+            Only other account managers for this company can add or view
+            information in this section.
+          </p>
           <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-4" />
         </>
       )}
@@ -237,6 +250,7 @@ const Notes = ({ csrf_token, data }) => {
         />
         {!isCreating &&
           !isUpdating &&
+          !isUpdatingEngagement &&
           (notes.length ? (
             notes.map((note) => (
               <Card key={note.noteId} className="govuk-!-margin-bottom-4">
@@ -244,7 +258,9 @@ const Notes = ({ csrf_token, data }) => {
               </Card>
             ))
           ) : (
-            <p className="govuk-body">You currently have no notes.</p>
+            <p className="govuk-body">
+              This engagement has no business intelligence recorded.
+            </p>
           ))}
       </LoadingSpinner>
       {isCreating && (
@@ -266,11 +282,11 @@ const Notes = ({ csrf_token, data }) => {
           setIsUpdating={setIsUpdating}
         />
       )}
-      {!isCreating && !isUpdating && (
+      {!isCreating && !isUpdating && !isUpdatingEngagement && (
         <SectionActions
-          addLabel="Add note"
+          addLabel="Add Business intelligence"
           showEdit={Boolean(notes.length)}
-          editLabel={`Edit ${notes.length > 1 ? "notes" : "note"}`}
+          editLabel="Edit Business intelligence"
           setIsCreating={() => setIsCreating(!isCreating)}
           setIsUpdating={() => setIsUpdating(!isUpdating)}
         />

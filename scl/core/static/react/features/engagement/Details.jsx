@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 
 import ApiProxy from "../../proxy";
 
@@ -6,16 +6,16 @@ import Update from "../../forms/engagements/Update";
 import LoadingSpinner from "../../components/Spinner";
 import NotificationBanner from "../../components/NotificationBanner";
 
-import { GlobalContext } from "../../providers";
-
-const Details = ({ data, csrf_token }) => {
+const Details = ({
+  data,
+  csrf_token,
+  setIsUpdatingEngagement,
+  isUpdatingEngagement,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const [notification, setNotification] = useState(null);
   const [engagementDetails, setEngagementDetails] = useState(data);
-
-  const { isAccountManager } = useContext(GlobalContext);
 
   const ENDPOINT = `/api/v1/engagement/${data.id}`;
 
@@ -28,11 +28,11 @@ const Details = ({ data, csrf_token }) => {
     );
 
     setIsLoading(false);
-    setIsUpdating(false);
+    setIsUpdatingEngagement(false);
 
     if (status == 200) {
       setEngagementDetails(data.data);
-      setNotification({ message: "Engagement updated"});
+      setNotification({ message: "Engagement updated" });
     } else {
       setNotification({
         message: `Status ${status}: ${data.message || data.error}`,
@@ -47,40 +47,63 @@ const Details = ({ data, csrf_token }) => {
         message={notification?.message}
         status={notification?.status}
       />
-      {!isUpdating && (
+      {!isUpdatingEngagement && (
         <div className="govuk-!-margin-bottom-4">
+          <strong className="govuk-tag scl-tag--wide govuk-!-margin-bottom-4">
+            {engagementDetails.engagement_type}
+          </strong>
           <h1 className="govuk-heading-l govuk-!-margin-bottom-4">
             {engagementDetails.title}
           </h1>
           <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
-            <strong>Created:</strong> {data.created.date} by {data.created.name}
+            <strong>Engagement date:</strong> {engagementDetails.date}
           </p>
           <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
-            <strong>Last updated:</strong> {data.last_updated.date} by{" "}
-            {data.last_updated.name}
+            <strong>Company representatives:</strong>{" "}
+            {engagementDetails.company_representatives.join(", ")}
+          </p>
+          <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
+            <strong>Civil servants:</strong>{" "}
+            {engagementDetails.civil_servants.join(", ")}
+          </p>
+          <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
+            <strong>Minister(s):</strong>{" "}
+            {engagementDetails.ministers.join(", ")}
+          </p>
+          <p className="govuk-body govuk-body-s govuk-!-margin-bottom-1">
+            <strong>Last updated:</strong> {engagementDetails.last_updated.date}{" "}
+            by {engagementDetails.last_updated.name}
           </p>
 
           <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible"></hr>
         </div>
       )}
-      {!isUpdating && <p className="govuk-body">{engagementDetails.details}</p>}
-      {isUpdating && (
+      {!isUpdatingEngagement && (
+        <>
+          <h2 className="govuk-heading-m">Agenda</h2>
+          <p className="govuk-body">{engagementDetails.agenda}</p>
+          <h2 className="govuk-heading-m">Outcomes</h2>
+          <p className="govuk-body">
+            {engagementDetails.outcomes
+              ? engagementDetails.outcomes
+              : "Currently there are no outcomes."}
+          </p>
+          <h2 className="govuk-heading-m">Actions</h2>
+          <p className="govuk-body">
+            {engagementDetails.actions
+              ? engagementDetails.actions
+              : "Currently there are no actions."}
+          </p>
+        </>
+      )}
+      {isUpdatingEngagement && (
         <Update
           id={data.id}
           data={engagementDetails}
           onSubmit={onSubmit}
-          setIsUpdating={setIsUpdating}
+          handleCancel={() => setIsUpdatingEngagement(false)}
+          setIsUpdating={setIsUpdatingEngagement}
         />
-      )}
-      {!isUpdating && isAccountManager && (
-        <div className="govuk-!-margin-top-6">
-          <button
-            className="govuk-button govuk-button--secondary"
-            onClick={() => setIsUpdating(true)}
-          >
-            Edit details
-          </button>
-        </div>
       )}
     </LoadingSpinner>
   );

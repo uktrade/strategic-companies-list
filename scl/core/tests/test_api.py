@@ -6,7 +6,7 @@ import reversion
 from django.urls import reverse
 from waffle.testutils import override_flag
 
-from scl.core.constants import DATE_FORMAT_SHORT
+from scl.core.constants import DATE_FORMAT_NUMERIC, DATE_FORMAT_SHORT
 from scl.core.models import EngagementNote, Insight
 from scl.core.tests import factories
 
@@ -658,7 +658,14 @@ def test_engagement_api_patch(viewer_user_client, company_acc_manager):
     assert company_acc_manager.engagements.count() == 4
     data = {
         "title": "Foo",
-        "details": "Lorem ipsum dolor sit amet",
+        "agenda": "Lorem ipsum dolor sit amet",
+        "date": engagement.date.strftime(DATE_FORMAT_NUMERIC),
+        "engagementType": "Letter",
+        "civilServants": ["Bob", "Sarah"],
+        "companyRepresentatives": ["Jack", "Jill"],
+        "ministers": ["Louise", "Jenny"],
+        "outcomes": "An outcome",
+        "actions": "An action",
     }
     response = viewer_user_client.patch(
         reverse(
@@ -676,8 +683,14 @@ def test_engagement_api_patch(viewer_user_client, company_acc_manager):
 
     assert response_data["data"]["id"] == str(engagement.id)
     assert response_data["data"]["title"] == "Foo"
-    assert response_data["data"]["details"] == "Lorem ipsum dolor sit amet"
+    assert response_data["data"]["agenda"] == "Lorem ipsum dolor sit amet"
     assert response_data["data"]["date"] == engagement.date.strftime(DATE_FORMAT_SHORT)
+    assert response_data["data"]["engagement_type"] == "Letter"
+    assert response_data["data"]["civil_servants"] == ["Bob", "Sarah"]
+    assert response_data["data"]["company_representatives"] == ["Jack", "Jill"]
+    assert response_data["data"]["ministers"] == ["Louise", "Jenny"]
+    assert response_data["data"]["outcomes"] == "An outcome"
+    assert response_data["data"]["actions"] == "An action"
 
 
 @pytest.mark.django_db
@@ -716,8 +729,14 @@ def test_company_engagement_api_post(viewer_user_client, company_acc_manager):
     assert company_acc_manager.engagements.count() == 4
     data = {
         "title": "Foo",
-        "details": "Lorem ipsum dolor sit amet",
-        "date": "2026-01-27",
+        "agenda": "Lorem ipsum dolor sit amet",
+        "date": "2040-01-25",
+        "engagementType": "Letter",
+        "civilServants": ["Bob", "Sarah"],
+        "companyRepresentatives": ["Jack", "Jill"],
+        "ministers": ["Louise", "Jenny"],
+        "outcomes": "An outcome",
+        "actions": "An action",
     }
     response = viewer_user_client.post(
         reverse(
@@ -736,8 +755,8 @@ def test_company_engagement_api_post(viewer_user_client, company_acc_manager):
     # API only returns the 4 most recent engagements
     assert len(response_data["data"]) == 4
     assert "Foo" in [d["title"] for d in response_data["data"]]
-    assert "Lorem ipsum dolor sit amet" in [d["details"] for d in response_data["data"]]
-    assert "January 27, 2026" in [d["date"] for d in response_data["data"]]
+    assert "Lorem ipsum dolor sit amet" in [d["agenda"] for d in response_data["data"]]
+    assert "January 25, 2040" in [d["date"] for d in response_data["data"]]
 
 
 @pytest.mark.django_db
