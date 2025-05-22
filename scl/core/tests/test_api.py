@@ -756,7 +756,7 @@ def test_company_engagement_api_post(viewer_user_client, company_acc_manager):
     assert len(response_data["data"]) == 4
     assert "Foo" in [d["title"] for d in response_data["data"]]
     assert "Lorem ipsum dolor sit amet" in [d["agenda"] for d in response_data["data"]]
-    assert "January 25, 2040" in [d["date"] for d in response_data["data"]]
+    assert "January 25 2040" in [d["date"] for d in response_data["data"]]
 
 
 @pytest.mark.django_db
