@@ -2,13 +2,13 @@ import React from "react";
 import Section from "../../components/Section";
 
 const colour_engagement_type_map = {
-  legacy: "grey",
+  "legacy": "grey",
   "Email or website": "light-blue",
   "Face to Face": "pink",
-  Letter: "yellow",
+  "Letter": "yellow",
   "Non-contact Research": "grey",
   "Social Media": "purple",
-  Telephone: "green",
+  "Telephone": "green",
   "Video/Teleconf": "orange",
 };
 
