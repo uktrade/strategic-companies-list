@@ -36,7 +36,7 @@ const AddEngagement = ({
     <LoadingSpinner isLoading={isLoading}>
       <Create
         onSubmit={onSubmitAddEngagement}
-        setIsAddingEngagement={setIsAddingEngagement}
+        handleCancel={setIsAddingEngagement}
       />
     </LoadingSpinner>
   );

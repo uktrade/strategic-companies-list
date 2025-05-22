@@ -6,7 +6,7 @@ import uuid
 from django.contrib.auth import get_user_model
 
 from scl.core.constants import COUNTRIES_AND_TERRITORIES, SECTORS
-from scl.core.models import Insight
+from scl.core.models import Insight, Engagement
 
 
 class FuzzyChoiceList(factory.fuzzy.BaseFuzzyAttribute):
@@ -113,7 +113,12 @@ class EngagementFactory(factory.django.DjangoModelFactory):
     title = factory.Faker("text", max_nb_chars=128)
     date = factory.fuzzy.FuzzyDate(datetime.today(), datetime(2100, 12, 31))
     company = factory.SubFactory(CompanyFactory)
-    details = factory.Faker("text", max_nb_chars=500)
+    agenda = factory.Faker("text", max_nb_chars=100)
+    engagement_type = factory.fuzzy.FuzzyChoice(Engagement.ENGAGEMENT_TYPES)
+    company_representatives = factory.LazyFunction(lambda: ["Jack", "Jill"])
+    civil_servants = factory.LazyFunction(lambda: ["Bob", "Sarah"])
+    actions = factory.Faker("text", max_nb_chars=100)
+    outcomes = factory.Faker("text", max_nb_chars=100)
 
     class Meta:
         model = "core.Engagement"

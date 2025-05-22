@@ -1,6 +1,6 @@
 {
   "engines": {
-   "node": ">=22.0.0 <23.0.0"
+    "node": ">=22.0.0 <23.0.0"
   },
   "scripts": {
     "dev": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-transcribe-streaming": "^3.758.0",
+    "date-fns": "^4.1.0",
     "govuk-frontend": "^5.9.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",

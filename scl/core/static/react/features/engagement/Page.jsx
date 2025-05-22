@@ -7,8 +7,8 @@ import Details from "./Details";
 import { GlobalContext } from "../../providers";
 
 const Page = ({ data, csrf_token }) => {
+  const [isUpdatingEngagement, setIsUpdatingEngagement] = useState(false);
   const [isUpdatingNotes, setIsUpdatingNotes] = useState(false);
-  const [isCreatingNotes, setIsCreatingNotes] = useState(false);
 
   const { isAccountManager } = useContext(GlobalContext);
 
@@ -27,23 +27,33 @@ const Page = ({ data, csrf_token }) => {
       />
       <main className="govuk-main-wrapper" id="main-content">
         <div className="govuk-grid-row">
-          <div className="scl-page-header">
-            <div className="scl-page-header__two-thirds">
-              <Details
-                data={data}
+          <div className="govuk-grid-column-two-thirds">
+            <Details
+              data={data}
+              csrf_token={csrf_token}
+              isUpdatingEngagement={isUpdatingEngagement}
+              setIsUpdatingEngagement={setIsUpdatingEngagement}
+            />
+            {isAccountManager && (
+              <Notes
                 csrf_token={csrf_token}
+                data={data}
+                isUpdatingEngagement={isUpdatingEngagement}
+                setIsUpdatingNotes={setIsUpdatingNotes}
               />
-              {isAccountManager && (
-                <Notes
-                  csrf_token={csrf_token}
-                  data={data}
-                  isUpdatingNotes={isUpdatingNotes}
-                  isCreatingNotes={isCreatingNotes}
-                  setIsUpdatingNotes={setIsUpdatingNotes}
-                  setIsCreatingNotes={setIsCreatingNotes}
-                />
-              )}
-            </div>
+            )}
+          </div>
+          <div className="govuk-grid-column-one-third">
+            {!isUpdatingEngagement && !isUpdatingNotes && isAccountManager && (
+              <div className="scl-page-header__actions">
+                <button
+                  className="govuk-button govuk-button--secondary"
+                  onClick={() => setIsUpdatingEngagement(true)}
+                >
+                  Edit engagement
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </main>

@@ -36,18 +36,18 @@ const styleDivScroll = (num_rows, override_height) => {
 };
 
 export const Row = ({ children, ...props }) => (
-  <tr class="govuk-table__row" {...props}>
+  <tr className="govuk-table__row" {...props}>
     {children}
   </tr>
 );
 
 export const Cell = ({ children, header, scope, ...props }) => {
   return header ? (
-    <th scope={scope} class="govuk-table__header" {...props}>
+    <th scope={scope} className="govuk-table__header" {...props}>
       {children}
     </th>
   ) : (
-    <td class="govuk-table__cell" {...props}>
+    <td className="govuk-table__cell" {...props}>
       {children}
     </td>
   );
@@ -79,15 +79,15 @@ export const Table = ({
   >
     <table
       {...props}
-      class={`govuk-table ${props.className}`}
+      className={`govuk-table ${props.className}`}
       style={{
         ...styles,
         ...tableStyles,
         ...(hasStickyHeaders ? { ...styleStickyHeader.table } : {}),
       }}
     >
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
+      <thead className="govuk-table__head">
+        <tr className="govuk-table__row">
           {headers.map((header) => (
             <th scope="col" class="govuk-table__header">
               {header}
