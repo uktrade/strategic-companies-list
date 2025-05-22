@@ -17,6 +17,6 @@ export const transformValueToArray = (value) => {
 
 // Use in forms to convert long date format to yyyy-MM-dd
 export const transformLongDateToShort = (inputDate) => {
-  const parsedDate = parse(inputDate, "MMMM d, yyyy", new Date());
+  const parsedDate = parse(inputDate, "MMMM d yyyy", new Date());
   return format(parsedDate, "yyyy-MM-dd");
 };

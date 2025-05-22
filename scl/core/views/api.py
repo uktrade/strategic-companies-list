@@ -642,6 +642,10 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
                         "title": engagement.title,
                         "date": engagement.date.strftime(DATE_FORMAT_SHORT),
                         "agenda": engagement.agenda,
+                        "company_representatives": engagement.company_representatives,
+                        "civil_servants": engagement.civil_servants,
+                        "ministers": engagement.ministers,
+                        "engagement_type": engagement.engagement_type,
                     }
                     for engagement in engagements
                 ]
