@@ -610,7 +610,7 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
             outcomes = self.data.get("outcomes")
             actions = self.data.get("actions")
 
-            Engagement.objects.create(
+            engagement = Engagement.objects.create(
                 company_id=self.company.id,
                 title=title,
                 date=date,
@@ -622,6 +622,10 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
                 outcomes=outcomes,
                 actions=actions,
             )
+            versions = Version.objects.get_for_object(engagement)
+
+            last_updated = versions.first().revision
+            first_created = versions.last().revision
 
             engagements = list(
                 Engagement.objects.filter(
@@ -640,8 +644,26 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
                     {
                         "id": engagement.id,
                         "title": engagement.title,
-                        "date": engagement.date.strftime(DATE_FORMAT_SHORT),
+                        "date": engagement.date.strftime(constants.DATE_FORMAT_SHORT),
                         "agenda": engagement.agenda,
+                        "company_representatives": engagement.company_representatives,
+                        "civil_servants": engagement.civil_servants,
+                        "ministers": engagement.ministers,
+                        "outcomes": engagement.outcomes,
+                        "actions": engagement.actions,
+                        "engagement_type": engagement.engagement_type,
+                        "created": {
+                            "name": f"{first_created.user.first_name} {first_created.user.last_name}",
+                            "date": first_created.date_created.strftime(
+                                constants.DATE_FORMAT_LONG
+                            ),
+                        },
+                        "last_updated": {
+                            "name": f"{last_updated.user.first_name} {last_updated.user.last_name}",
+                            "date": last_updated.date_created.strftime(
+                                constants.DATE_FORMAT_LONG
+                            ),
+                        },
                     }
                     for engagement in engagements
                 ]
