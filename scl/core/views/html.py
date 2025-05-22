@@ -297,6 +297,12 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                                     "date": engagement.date.strftime(
                                         constants.DATE_FORMAT_SHORT
                                     ),
+                                    "company_representatives": engagement.company_representatives,
+                                    "civil_servants": engagement.civil_servants,
+                                    "ministers": engagement.ministers,
+                                    "outcomes": engagement.outcomes,
+                                    "actions": engagement.actions,
+                                    "engagement_type": engagement.engagement_type,
                                 }
                                 for engagement in engagements
                             ]

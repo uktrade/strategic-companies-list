@@ -9,7 +9,6 @@ const assertEngagementList = (expectedItems = []) => {
           .eq(index)
           .within(() => {
             cy.findByRole("link").within(() => {
-              cy.findByText(item.date).should("exist");
               cy.findByText(item.text).should("exist");
             });
           });
@@ -153,15 +152,15 @@ describe("Add/edit an engagement", () => {
         heading: "Engagement added",
       });
       assertEngagementList([
-        { date: "February 01, 2030", text: "My engagement tite" },
+        { date: "February 01 2030", text: "My engagement tite" },
       ]);
       assertViewAllEngagementsLink(COMPANIES.testing_corp);
       cy.findByTestId("engagements").within(() => {
         cy.findByRole("link", {
-          name: "February 01, 2030 My engagement tite",
+          name: "Social Media My engagement tite",
         }).click();
       });
-      cy.findByText("February 01, 2030").should("be.visible");
+      cy.findByText("February 01 2030").should("be.visible");
       cy.findByText("Bob, Sarah").should("be.visible");
       cy.findByText("Jack, Jill").should("be.visible");
       cy.findByText("Cara, Louise").should("be.visible");
@@ -173,7 +172,7 @@ describe("Add/edit an engagement", () => {
     it("should edit the engagement (fixes a typo)", () => {
       cy.findByTestId("engagements").within(() => {
         cy.findByRole("link", {
-          name: "February 01, 2030 My engagement tite",
+          name: "Social Media My engagement tite",
         }).click();
       });
       cy.clickButton("Edit engagement");
@@ -196,7 +195,7 @@ describe("Add/edit/delete a business intelligence note", () => {
     cy.visit(`/company-briefing/${COMPANIES.testing_corp.duns_number}`);
     cy.findByTestId("engagements").within(() => {
       cy.findByRole("link", {
-        name: "February 01, 2030 My engagement title",
+        name: "Social Media My engagement title",
       }).click();
     });
   });
