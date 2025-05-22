@@ -2,14 +2,14 @@ import React from "react";
 import Section from "../../components/Section";
 
 const colour_engagement_type_map = {
-  legacy: "grey",
+  "legacy": "grey",
   "Email or website": "light-blue",
-  "Face to face": "pink",
-  Letter: "yellow",
+  "Face to Face": "pink",
+  "Letter": "yellow",
   "Non-contact Research": "grey",
-  "Social media": "purple",
-  Telephone: "green",
-  "Video or teleconference": "orange",
+  "Social Media": "purple",
+  "Telephone": "green",
+  "Video/Teleconf": "orange",
 };
 
 const Engagements = ({ engagements, duns_number }) => (
