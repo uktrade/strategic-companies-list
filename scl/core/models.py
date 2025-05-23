@@ -5,7 +5,12 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
-from .constants import COUNTRIES_AND_TERRITORIES, SECTORS
+from .constants import (
+    COUNTRIES_AND_TERRITORIES,
+    SECTORS,
+    EngagementType,
+    ENGAGEMENT_TYPE_COLOUR_MAPPING,
+)
 
 
 @reversion.register()
@@ -138,26 +143,6 @@ class Insight(models.Model):
 @reversion.register()
 class Engagement(models.Model):
 
-    TYPE_LEGACY = "Legacy"
-    TYPE_EMAIL_WEBSITE = "email_website"
-    TYPE_FACE_TO_FACE = "face_to_face"
-    TYPE_LETTER = "letter"
-    TYPE_NON_CONTACT_RESEARCH = "non_contact_research"
-    TYPE_SOCIAL_MEDIA = "social_media"
-    TYPE_TELEPHONE = "telephone"
-    TYPE_VIDEO_TELECONF = "video_Teleconf"
-
-    ENGAGEMENT_TYPES = [
-        (TYPE_LEGACY, TYPE_LEGACY),
-        (TYPE_EMAIL_WEBSITE, "Email or website"),
-        (TYPE_FACE_TO_FACE, "Face to face"),
-        (TYPE_LETTER, "Letter"),
-        (TYPE_NON_CONTACT_RESEARCH, "Non contact research"),
-        (TYPE_SOCIAL_MEDIA, "Social media"),
-        (TYPE_TELEPHONE, "Telephone"),
-        (TYPE_VIDEO_TELECONF, "Video or teleconference"),
-    ]
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     title = models.CharField(blank=False, null=False, max_length=128)
@@ -166,7 +151,7 @@ class Engagement(models.Model):
     engagement_type = models.CharField(
         blank=False,
         null=False,
-        choices=ENGAGEMENT_TYPES,
+        choices=EngagementType,
         max_length=128,
     )
 
@@ -183,6 +168,17 @@ class Engagement(models.Model):
     agenda = models.TextField(null=True, blank=False, max_length=500)
     outcomes = models.TextField(null=True, blank=True, max_length=500)
     actions = models.TextField(null=True, blank=True, max_length=500)
+
+    @property
+    def all_attendees(self):
+        return self.ministers + self.civil_servants + self.company_representatives
+
+    @property
+    def engagement_type_colour(self):
+        try:
+            return ENGAGEMENT_TYPE_COLOUR_MAPPING[self.engagement_type]
+        except KeyError:
+            return ""
 
 
 @reversion.register()

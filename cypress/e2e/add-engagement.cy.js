@@ -132,8 +132,8 @@ describe("Add/edit an engagement", () => {
       // Deliberate typo: My engagement tite
       cy.findByLabelText("Title").type("My engagement tite");
       cy.findByLabelText("Date").type("2030-02-01");
-      cy.findByLabelText("Engagement type").select("Social Media");
-      cy.findByLabelText("Engagement type").select("Social Media");
+      cy.findByLabelText("Engagement type").select("Social media");
+      cy.findByLabelText("Engagement type").select("Social media");
       cy.findByLabelText("Who are you meeting from the company?").type(
         "Bob,Sarah"
       );
@@ -157,7 +157,7 @@ describe("Add/edit an engagement", () => {
       assertViewAllEngagementsLink(COMPANIES.testing_corp);
       cy.findByTestId("engagements").within(() => {
         cy.findByRole("link", {
-          name: "Social Media My engagement tite",
+          name: "My engagement tite",
         }).click();
       });
       cy.findByText("February 01 2030").should("be.visible");
@@ -172,7 +172,7 @@ describe("Add/edit an engagement", () => {
     it("should edit the engagement (fixes a typo)", () => {
       cy.findByTestId("engagements").within(() => {
         cy.findByRole("link", {
-          name: "Social Media My engagement tite",
+          name: "My engagement tite",
         }).click();
       });
       cy.clickButton("Edit engagement");
@@ -195,7 +195,7 @@ describe("Add/edit/delete a business intelligence note", () => {
     cy.visit(`/company-briefing/${COMPANIES.testing_corp.duns_number}`);
     cy.findByTestId("engagements").within(() => {
       cy.findByRole("link", {
-        name: "Social Media My engagement title",
+        name: "My engagement title",
       }).click();
     });
   });

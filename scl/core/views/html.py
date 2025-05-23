@@ -4,7 +4,6 @@ from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.views.generic import DetailView, TemplateView
 from django.urls import reverse
@@ -86,7 +85,8 @@ class EngagementDetailView(
                     "id": str(self.object.id),
                     "title": self.object.title,
                     "date": self.object.date.strftime(constants.DATE_FORMAT_SHORT),
-                    "engagement_type": self.object.engagement_type,
+                    "engagement_type": self.object.get_engagement_type_display(),
+                    "engagement_type_colour": self.object.engagement_type_colour,
                     "agenda": self.object.agenda,
                     "civil_servants": self.object.civil_servants,
                     "company_representatives": self.object.company_representatives,
@@ -112,6 +112,7 @@ class EngagementDetailView(
                         "name": self.object.company.name,
                         "duns_number": self.object.company.duns_number,
                     },
+                    "engagement_type_options": constants.ENGAGEMENT_TYPE_OPTIONS,
                     "notes": (
                         [
                             {
@@ -298,6 +299,7 @@ class CompanyDetailView(
                         ),
                         "has_access": self.test_func(),
                         "is_account_manager": self.test_user_can_edit(),
+                        "engagement_type_options": constants.ENGAGEMENT_TYPE_OPTIONS,
                         "engagements": (
                             [
                                 {
@@ -305,14 +307,13 @@ class CompanyDetailView(
                                     "title": engagement.title,
                                     "agenda": engagement.agenda,
                                     "date": engagement.date.strftime(
-                                        constants.DATE_FORMAT_SHORT
+                                        constants.DATE_FORMAT_NUMERIC_SLASHES
                                     ),
-                                    "company_representatives": engagement.company_representatives,
-                                    "civil_servants": engagement.civil_servants,
-                                    "ministers": engagement.ministers,
+                                    "all_attendees": engagement.all_attendees,
                                     "outcomes": engagement.outcomes,
                                     "actions": engagement.actions,
-                                    "engagement_type": engagement.engagement_type,
+                                    "engagement_type": engagement.get_engagement_type_display(),
+                                    "engagement_type_colour": engagement.engagement_type_colour,
                                 }
                                 for engagement in engagements
                             ]

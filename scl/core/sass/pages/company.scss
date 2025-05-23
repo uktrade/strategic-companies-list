@@ -1,0 +1,18 @@
+.scl-engagement-list {
+    .govuk-summary-list__key {
+        // override non mobile styles as we don't want these rendered side by side here
+        display: block;
+        width: auto;
+        padding: 0;
+        margin-bottom: 0;
+    }
+
+    .govuk-summary-list__value {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .govuk-summary-list__row {
+        display: block;
+    }
+}

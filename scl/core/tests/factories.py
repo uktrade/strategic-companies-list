@@ -1,12 +1,14 @@
 from datetime import datetime
 import factory.fuzzy
+from faker import Faker
 import random
 import uuid
 
 from django.contrib.auth import get_user_model
 
 from scl.core.constants import COUNTRIES_AND_TERRITORIES, SECTORS
-from scl.core.models import Insight, Engagement
+from scl.core.models import Insight
+from scl.core.constants import EngagementType
 
 
 class FuzzyChoiceList(factory.fuzzy.BaseFuzzyAttribute):
@@ -32,6 +34,27 @@ class FuzzyChoiceList(factory.fuzzy.BaseFuzzyAttribute):
         if self.getter is None:
             return choices
         return [self.getter(value) for value in choices]
+
+
+class FakerList(factory.fuzzy.BaseFuzzyAttribute):
+    """Handles faker output for ArrayField.
+
+    Args:
+        provider (str): Name of the Faker provider.
+        num_choices (int): Defaults to 1. Number of values to generate.
+    """
+
+    def __init__(self, provider, num_choices=1):
+        self.provider = provider
+        self.num_choices = num_choices
+        super().__init__()
+
+    def fuzz(self):
+        choices = []
+        fake = Faker()
+        for i in range(1, self.num_choices):
+            choices.append(getattr(fake, self.provider)())
+        return choices
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -98,7 +121,9 @@ class InsightFactory(factory.django.DjangoModelFactory):
     updated_at = factory.fuzzy.FuzzyDate(datetime.today(), datetime(2100, 12, 31))
     company = factory.SubFactory(CompanyFactory)
     created_by = factory.SubFactory(UserFactory)
-    insight_type = factory.fuzzy.FuzzyChoice(Insight.INSIGHT_TYPES)
+    insight_type = factory.fuzzy.FuzzyChoice(
+        Insight.INSIGHT_TYPES, getter=lambda c: c[0]
+    )
     title = factory.Faker("text", max_nb_chars=255)
     details = factory.Faker("text", max_nb_chars=500)
 
@@ -110,13 +135,16 @@ class InsightFactory(factory.django.DjangoModelFactory):
 
 class EngagementFactory(factory.django.DjangoModelFactory):
     id = factory.LazyAttribute(lambda _: uuid.uuid4())
-    title = factory.Faker("text", max_nb_chars=128)
+    title = factory.Faker("text", max_nb_chars=50)
     date = factory.fuzzy.FuzzyDate(datetime.today(), datetime(2100, 12, 31))
     company = factory.SubFactory(CompanyFactory)
     agenda = factory.Faker("text", max_nb_chars=100)
-    engagement_type = factory.fuzzy.FuzzyChoice(Engagement.ENGAGEMENT_TYPES)
-    company_representatives = factory.LazyFunction(lambda: ["Jack", "Jill"])
-    civil_servants = factory.LazyFunction(lambda: ["Bob", "Sarah"])
+    engagement_type = factory.fuzzy.FuzzyChoice(
+        [val for val in EngagementType.values if val != "Legacy"]
+    )
+    company_representatives = FakerList("name", num_choices=2)
+    civil_servants = FakerList("name", num_choices=4)
+    ministers = FakerList("name", num_choices=3)
     actions = factory.Faker("text", max_nb_chars=100)
     outcomes = factory.Faker("text", max_nb_chars=100)
 

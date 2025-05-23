@@ -1,61 +1,41 @@
 import React from "react";
 import Section from "../../components/Section";
 
-const colour_engagement_type_map = {
-  "legacy": "grey",
-  "Email or website": "light-blue",
-  "Face to Face": "pink",
-  "Letter": "yellow",
-  "Non-contact Research": "grey",
-  "Social Media": "purple",
-  "Telephone": "green",
-  "Video/Teleconf": "orange",
-};
-
 const Engagements = ({ engagements, duns_number }) => (
-  <Section title="Engagements" data-testid="engagements">
+  <Section title="Engagements" data-testid="engagements" className="scl-engagement-list">
     {engagements.length ? (
       <>
         <ul className="scl-multiline-list govuk-!-margin-top-2">
           {engagements.map((engagement) => {
             return (
-              <li
-                className="scl-multiline-list__item govuk-!-margin-bottom-3"
-                key={engagement.id}
-              >
+              <li className="scl-multiline-list__item govuk-!-margin-bottom-3" key={engagement.id}>
+                <p
+                  className={`govuk-tag govuk-!-font-size-16 govuk-!-font-weight-regular govuk-tag govuk-tag--${engagement.engagement_type_colour}`}>
+                  {engagement.engagement_type}
+                </p>
                 <a
                   href={`/engagement/${engagement.id}`}
                   className="govuk-link govuk-link--no-visited-state scl-multiline-list__link govuk-!-font-size-19 govuk-!-font-weight-bold"
                 >
-                  <strong
-                    className={`govuk-tag govuk-tag--${
-                      colour_engagement_type_map[engagement.engagement_type]
-                    } scl-tag scl-tag--wide govuk-!-font-weight-regular govuk-!-margin-bottom-2`}
-                  >
-                    {engagement.engagement_type}
-                  </strong>
-                  <span className="scl-multiline-list__link_text">
+                  <p className="scl-multiline-list__link_text govuk-link govuk-!-font-weight-bold govuk-!-font-size-19 govuk-!-margin-bottom-3 govuk-!-margin-top-3">
                     {engagement.title}
-                  </span>
+                  </p>
                 </a>
-                <p class="govuk-body govuk-body-s govuk-!-margin-top-2 govuk-!-margin-bottom-2">
-                  <strong>Date</strong>
-                  <br />
-                  <span class="govuk-!-text-break-word">{engagement.date}</span>
-                </p>
-                <p class="govuk-body govuk-body-s govuk-!-margin-bottom-2">
-                  <strong>Atendees</strong>
-                  <br />
-                  <span>
-                    {engagement.company_representatives
-                      ?.concat(
-                        engagement.civil_servants ?? [],
-                        engagement.ministers ?? []
-                      )
-                      .join(", ")}
-                  </span>
-                </p>
-                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-bottom-3"></hr>
+                <dl className="govuk-summary-list govuk-summary-list--no-border govuk-!-font-size-16 govuk-!-margin-bottom-2">
+                  <div className="govuk-summary-list__row govuk-!-margin-bottom-2">
+                    <dt className="govuk-summary-list__key">Date</dt>
+                    <dd className="govuk-summary-list__value">{engagement.date}</dd>
+                  </div>
+                  <div className="govuk-summary-list__row govuk-!-margin-bottom-2">
+                    <dt className="govuk-summary-list__key">Attendees</dt>
+                    <dd className="govuk-summary-list__value">{(engagement.all_attendees ?? []).join(", ")}
+                    </dd>
+                  </div>
+                </dl>
+                <div className="govuk-!-display-none engagement-details">
+                  <p className="govuk-body">{engagement.details}</p>
+                </div>
+                <hr className="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-4" />
               </li>
             );
           })}

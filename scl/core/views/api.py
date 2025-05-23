@@ -522,7 +522,9 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
             engagement.agenda = self.data.get("agenda")
             engagement.civil_servants = self.data.get("civilServants")
             engagement.company_representatives = self.data.get("companyRepresentatives")
-            engagement.engagement_type = self.data.get("engagementType")
+            engagement.engagement_type = constants.ENGAGEMENT_TYPE_MAP[
+                self.data.get("engagementType")
+            ]
             engagement.ministers = self.data.get("ministers")
             engagement.outcomes = self.data.get("outcomes")
             engagement.actions = self.data.get("actions")
@@ -551,7 +553,9 @@ class EngagementAPIView(CompanyAccountManagerUserMixin, View):
                     "ministers": engagement.ministers,
                     "outcomes": engagement.outcomes,
                     "actions": engagement.actions,
-                    "engagement_type": engagement.engagement_type,
+                    "engagement_type": engagement.get_engagement_type_display(),
+                    "engagement_type_options": constants.ENGAGEMENT_TYPE_OPTIONS,
+                    "engagement_type_colour": engagement.engagement_type_colour,
                     "created": {
                         "name": f"{first_created.user.first_name} {first_created.user.last_name}",
                         "date": first_created.date_created.strftime(
@@ -608,7 +612,9 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
             agenda = self.data.get("agenda")
             civil_servants = self.data.get("civilServants")
             company_representatives = self.data.get("companyRepresentatives")
-            engagement_type = self.data.get("engagementType")
+            engagement_type = constants.ENGAGEMENT_TYPE_MAP[
+                self.data.get("engagementType")
+            ]
             ministers = self.data.get("ministers")
             outcomes = self.data.get("outcomes")
             actions = self.data.get("actions")
@@ -648,7 +654,8 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
                         "company_representatives": engagement.company_representatives,
                         "civil_servants": engagement.civil_servants,
                         "ministers": engagement.ministers,
-                        "engagement_type": engagement.engagement_type,
+                        "engagement_type": engagement.get_engagement_type_display(),
+                        "engagement_type_colour": engagement.engagement_type_colour,
                     }
                     for engagement in engagements
                 ]

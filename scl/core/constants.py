@@ -1,6 +1,47 @@
+from django.db.models import TextChoices
+
 DATE_FORMAT_LONG = "%B %d, %Y, %H:%M"
 DATE_FORMAT_SHORT = "%B %d %Y"
 DATE_FORMAT_NUMERIC = "%Y-%m-%d"
+DATE_FORMAT_NUMERIC_SLASHES = "%d/%m/%Y"
+
+
+class EngagementType(TextChoices):
+    TYPE_LEGACY = "Legacy", "Legacy"
+    TYPE_EMAIL_WEBSITE = "email_website", "Email or website"
+    TYPE_FACE_TO_FACE = "face_to_face", "Face to face"
+    TYPE_LETTER = "letter", "Letter"
+    TYPE_NON_CONTACT_RESEARCH = "non_contact_research", "Non contact research"
+    TYPE_SOCIAL_MEDIA = "social_media", "Social media"
+    TYPE_TELEPHONE = "telephone", "Telephone"
+    TYPE_VIDEO_TELECONF = "video_teleconf", "Video or teleconference"
+
+
+ENGAGEMENT_TYPE_COLOUR_MAPPING = {
+    EngagementType.TYPE_LEGACY: "grey",
+    EngagementType.TYPE_EMAIL_WEBSITE: "light-blue",
+    EngagementType.TYPE_FACE_TO_FACE: "pink",
+    EngagementType.TYPE_LETTER: "yellow",
+    EngagementType.TYPE_NON_CONTACT_RESEARCH: "grey",
+    EngagementType.TYPE_SOCIAL_MEDIA: "purple",
+    EngagementType.TYPE_TELEPHONE: "green",
+    EngagementType.TYPE_VIDEO_TELECONF: "orange",
+}
+
+# react only uses the human readable value. the db wants the internal value of the engagement type
+# annoyingly this isn't a built in function in django's TextChoices enum class
+ENGAGEMENT_TYPE_MAP = {
+    label: value for value, label in zip(EngagementType.values, EngagementType.labels)
+}
+
+# users should not be able to select the "Legacy" type
+ENGAGEMENT_TYPE_OPTIONS = [
+    label
+    for value, label in EngagementType.choices
+    if value != EngagementType.TYPE_LEGACY
+]
+
+
 # DBT's official list of countries and territories
 COUNTRIES_AND_TERRITORIES = (
     ("AE-AZ", "Abu Dhabi"),
