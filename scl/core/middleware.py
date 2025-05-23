@@ -22,6 +22,7 @@ def BasicAccessMiddleware(get_response):
                 {
                     "email_address": request.user.email,
                     "user_id": request.user.username,
+                    "support_email": settings.SUPPORT_EMAIL,
                 },
                 status=403,
             )
