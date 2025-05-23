@@ -2,6 +2,7 @@ import React from "react";
 import { transformValueToArray } from "../../utils";
 
 const Form = ({
+  data,
   method,
   onSubmit,
   handleSubmit,
@@ -69,14 +70,10 @@ const Form = ({
       <option value="" disabled>
         Select engagement type
       </option>
-      <option value="Email/Website">Email/Website</option>
-      <option value="Face to Face">Face to Face</option>
-      <option value="Find Exporters">Find Exporters</option>
-      <option value="Letter">Letter</option>
-      <option value="Non-contact Research">Non contact research</option>
-      <option value="Social Media">Social Media</option>
-      <option value="Telephone">Telephone</option>
-      <option value="Video/Teleconf">Video/Teleconf</option>
+      {data.engagement_type_options.map(option => {
+        return (<option key={option} value={option}>{option}</option>)
+      }
+      )}
     </select>
 
     <label className="govuk-label" htmlFor="company-representatives">

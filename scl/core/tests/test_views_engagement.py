@@ -100,7 +100,7 @@ class EngagementPageTest(TestCase):
         self.engagement.refresh_from_db()
         assert self.engagement.title == "new title"
         assert self.engagement.agenda == "new agenda"
-        assert self.engagement.engagement_type == "Letter"
+        assert self.engagement.engagement_type == "letter"
         assert self.engagement.civil_servants == ["Bob", "Sarah"]
         assert self.engagement.company_representatives == ["Jack", "Jill"]
         assert self.engagement.ministers == ["Louise", "Jenny"]

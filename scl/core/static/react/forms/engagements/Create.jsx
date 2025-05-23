@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import Form from "./Form";
 
-const Create = ({ onSubmit, handleCancel }) => {
+const Create = ({ onSubmit, handleCancel, data }) => {
   const {
     register,
     handleSubmit,
@@ -10,6 +10,7 @@ const Create = ({ onSubmit, handleCancel }) => {
   } = useForm();
 
   const props = {
+    data,
     method: "create",
     onSubmit,
     handleSubmit,

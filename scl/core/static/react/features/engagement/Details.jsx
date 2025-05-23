@@ -49,7 +49,7 @@ const Details = ({
       />
       {!isUpdatingEngagement && (
         <div className="govuk-!-margin-bottom-4">
-          <strong className="govuk-tag scl-tag--wide govuk-!-margin-bottom-4">
+          <strong className={`govuk-tag scl-tag--wide govuk-!-margin-bottom-4 govuk-tag--${engagementDetails.engagement_type_colour}`}>
             {engagementDetails.engagement_type}
           </strong>
           <h1 className="govuk-heading-l govuk-!-margin-bottom-4">
