@@ -71,7 +71,9 @@ def test_company_insight_api_authorisation(
 
 
 @pytest.mark.django_db
-def test_company_api_patch(viewer_user_client, company_acc_manager):
+def test_company_api_patch(
+    super_access_user_client, viewer_user_client, company_acc_manager
+):
     data = {
         "title": "Company name",
         "sectors": [
@@ -80,18 +82,24 @@ def test_company_api_patch(viewer_user_client, company_acc_manager):
         ],
     }
 
-    response = viewer_user_client.patch(
-        reverse("api-company", kwargs={"duns_number": company_acc_manager.duns_number}),
-        json.dumps(data),
-    )
+    clients = [super_access_user_client, viewer_user_client]
 
-    assert response.status_code == 200
-    response_data = json.loads(response.content)
-    assert response_data["data"]["title"] == "Company name"
-    assert response_data["data"]["company_sectors"] == [
-        {"label": "Advanced engineering", "value": "SL0001"},
-        {"label": "Aerospace", "value": "SL0011"},
-    ]
+    for client in clients:
+        response = client.patch(
+            reverse(
+                "api-company",
+                kwargs={"duns_number": company_acc_manager.duns_number},
+            ),
+            json.dumps(data),
+        )
+
+        assert response.status_code == 200
+        response_data = json.loads(response.content)
+        assert response_data["data"]["title"] == "Company name"
+        assert response_data["data"]["company_sectors"] == [
+            {"label": "Advanced engineering", "value": "SL0001"},
+            {"label": "Aerospace", "value": "SL0011"},
+        ]
 
 
 @pytest.mark.django_db
@@ -159,7 +167,9 @@ def test_company_insight_api_get(viewer_user_client, company_acc_manager):
 
 
 @pytest.mark.django_db
-def test_company_insight_api_post(viewer_user_client, company_acc_manager):
+def test_company_insight_api_post(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
     # sanity check
     assert (
         company_acc_manager.insights.filter(
@@ -172,28 +182,34 @@ def test_company_insight_api_post(viewer_user_client, company_acc_manager):
         "title": "Foo",
         "details": "Lorem ipsum dolor sit amet",
     }
-    response = viewer_user_client.post(
-        reverse(
-            "api-company-insight",
-            kwargs={
-                "duns_number": company_acc_manager.duns_number,
-                "insight_type": Insight.TYPE_HMG_PRIORITY,
-            },
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
-    response_data = json.loads(response.content)
+    clients = [super_access_user_client, viewer_user_client]
 
-    assert response_data["data"][0]["title"] == "Foo"
-    assert response_data["data"][0]["details"] == "Lorem ipsum dolor sit amet"
-    assert len(response_data["data"]) == 7
+    for client in clients:
+        response = client.post(
+            reverse(
+                "api-company-insight",
+                kwargs={
+                    "duns_number": company_acc_manager.duns_number,
+                    "insight_type": Insight.TYPE_HMG_PRIORITY,
+                },
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+        assert response.status_code == 200
+        response_data = json.loads(response.content)
+
+        assert response_data["data"][0]["title"] == "Foo"
+        assert response_data["data"][0]["details"] == "Lorem ipsum dolor sit amet"
+    assert len(response_data["data"]) == 8
 
 
 @pytest.mark.django_db
-def test_company_insight_api_patch(viewer_user_client, company_acc_manager):
+def test_company_insight_api_patch(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
     # sanity check
     existing_insights = company_acc_manager.insights.filter(
         insight_type=Insight.TYPE_HMG_PRIORITY
@@ -212,59 +228,71 @@ def test_company_insight_api_patch(viewer_user_client, company_acc_manager):
             "details": "Dolor sit amet",
         },
     ]
-    response = viewer_user_client.patch(
-        reverse(
-            "api-company-insight",
-            kwargs={
-                "duns_number": company_acc_manager.duns_number,
-                "insight_type": Insight.TYPE_HMG_PRIORITY,
-            },
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
-    response_data = json.loads(response.content)
+    clients = [super_access_user_client, viewer_user_client]
 
-    assert response_data["data"][0]["title"] == "Update 1"
-    assert response_data["data"][0]["details"] == "Lorem ipsum"
-    assert response_data["data"][1]["title"] == "Update 2"
-    assert response_data["data"][1]["details"] == "Dolor sit amet"
+    for client in clients:
+
+        response = client.patch(
+            reverse(
+                "api-company-insight",
+                kwargs={
+                    "duns_number": company_acc_manager.duns_number,
+                    "insight_type": Insight.TYPE_HMG_PRIORITY,
+                },
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+        assert response.status_code == 200
+        response_data = json.loads(response.content)
+
+        assert response_data["data"][0]["title"] == "Update 1"
+        assert response_data["data"][0]["details"] == "Lorem ipsum"
+        assert response_data["data"][1]["title"] == "Update 2"
+        assert response_data["data"][1]["details"] == "Dolor sit amet"
     assert len(response_data["data"]) == 6
 
 
 @pytest.mark.django_db
-def test_company_insight_api_delete(viewer_user_client, company_acc_manager):
+def test_company_insight_api_delete(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
+
     # sanity check
     existing_insights = company_acc_manager.insights.filter(
         insight_type=Insight.TYPE_HMG_PRIORITY
     )
     assert existing_insights.count() == 6
 
-    insight_to_delete = existing_insights[0]
-    insight_id = str(insight_to_delete.id)
+    clients = [super_access_user_client, viewer_user_client]
 
-    data = {
-        "insightId": insight_id,
-    }
-    response = viewer_user_client.delete(
-        reverse(
-            "api-company-insight",
-            kwargs={
-                "duns_number": company_acc_manager.duns_number,
-                "insight_type": Insight.TYPE_HMG_PRIORITY,
-            },
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
+    for client in clients:
 
-    assert response.status_code == 200
-    response_data = json.loads(response.content)
+        insight_to_delete = existing_insights[0]
+        insight_id = str(insight_to_delete.id)
 
-    assert insight_id not in [i["insightId"] for i in response_data["data"]]
-    assert len(response_data["data"]) == 5
+        data = {
+            "insightId": insight_id,
+        }
+        response = client.delete(
+            reverse(
+                "api-company-insight",
+                kwargs={
+                    "duns_number": company_acc_manager.duns_number,
+                    "insight_type": Insight.TYPE_HMG_PRIORITY,
+                },
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+        assert response.status_code == 200
+        response_data = json.loads(response.content)
+
+        assert insight_id not in [i["insightId"] for i in response_data["data"]]
+    assert len(response_data["data"]) == 4
 
 
 @pytest.mark.django_db
@@ -315,7 +343,9 @@ def test_key_people_api_get(viewer_user_client, company_acc_manager):
 
 
 @pytest.mark.django_db
-def test_key_people_api_post(viewer_user_client, company_acc_manager):
+def test_key_people_api_post(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
     # sanity check
     assert company_acc_manager.key_people.count() == 3
     data = {
@@ -323,24 +353,31 @@ def test_key_people_api_post(viewer_user_client, company_acc_manager):
         "role": "CEO",
         "email": "john.smith@company.co.uk",
     }
-    response = viewer_user_client.post(
-        reverse(
-            "api-key-people", kwargs={"duns_number": company_acc_manager.duns_number}
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
+    clients = [super_access_user_client, viewer_user_client]
 
-    response_data = json.loads(response.content)
-    assert len(response_data["data"]) == 4
-    assert "John Smith" in [d["name"] for d in response_data["data"]]
-    assert "john.smith@company.co.uk" in [d["email"] for d in response_data["data"]]
+    for client in clients:
+        response = client.post(
+            reverse(
+                "api-key-people",
+                kwargs={"duns_number": company_acc_manager.duns_number},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+        assert response.status_code == 200
+
+        response_data = json.loads(response.content)
+        assert "John Smith" in [d["name"] for d in response_data["data"]]
+        assert "john.smith@company.co.uk" in [d["email"] for d in response_data["data"]]
+    assert len(response_data["data"]) == 5
 
 
 @pytest.mark.django_db
-def test_key_people_api_patch(viewer_user_client, company_acc_manager):
+def test_key_people_api_patch(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
     # sanity check
     assert company_acc_manager.key_people.count() == 3
     key_person = company_acc_manager.key_people.first()
@@ -352,49 +389,65 @@ def test_key_people_api_patch(viewer_user_client, company_acc_manager):
             "email": "john.smith@company.co.uk",
         }
     ]
-    response = viewer_user_client.patch(
-        reverse(
-            "api-key-people", kwargs={"duns_number": company_acc_manager.duns_number}
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
+    clients = [super_access_user_client, viewer_user_client]
 
-    response_data = json.loads(response.content)
-    assert len(response_data["data"]) == 3
+    for client in clients:
+        response = client.patch(
+            reverse(
+                "api-key-people",
+                kwargs={"duns_number": company_acc_manager.duns_number},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
 
-    updated = [d for d in response_data["data"] if d["userId"] == str(key_person.id)][0]
-    assert updated["name"] == "John Smith"
-    assert updated["role"] == "CEO"
-    assert updated["email"] == "john.smith@company.co.uk"
+        assert response.status_code == 200
+
+        response_data = json.loads(response.content)
+        assert len(response_data["data"]) == 3
+
+        updated = [
+            d for d in response_data["data"] if d["userId"] == str(key_person.id)
+        ][0]
+        assert updated["name"] == "John Smith"
+        assert updated["role"] == "CEO"
+        assert updated["email"] == "john.smith@company.co.uk"
 
 
 @pytest.mark.django_db
-def test_key_people_api_delete(viewer_user_client, company_acc_manager):
+def test_key_people_api_delete(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
     # sanity check
     assert company_acc_manager.key_people.count() == 3
-    key_person = company_acc_manager.key_people.first()
-    data = {
-        "id": str(key_person.id),
-    }
-    response = viewer_user_client.delete(
-        reverse(
-            "api-key-people", kwargs={"duns_number": company_acc_manager.duns_number}
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
+    clients = [super_access_user_client, viewer_user_client]
 
-    response_data = json.loads(response.content)
-    assert len(response_data["data"]) == 2
+    for client in clients:
+        key_person = company_acc_manager.key_people.first()
+        data = {
+            "id": str(key_person.id),
+        }
+        response = client.delete(
+            reverse(
+                "api-key-people",
+                kwargs={"duns_number": company_acc_manager.duns_number},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
 
-    assert "John Smith" not in [d["name"] for d in response_data["data"]]
-    assert "CEO" not in [d["role"] for d in response_data["data"]]
-    assert "john.smith@company.co.uk" not in [d["email"] for d in response_data["data"]]
+        assert response.status_code == 200
+
+        response_data = json.loads(response.content)
+
+        assert "John Smith" not in [d["name"] for d in response_data["data"]]
+        assert "CEO" not in [d["role"] for d in response_data["data"]]
+        assert "john.smith@company.co.uk" not in [
+            d["email"] for d in response_data["data"]
+        ]
+    assert len(response_data["data"]) == 1
 
 
 @pytest.mark.django_db
@@ -428,7 +481,9 @@ def test_engagement_note_api_methods_authorisation(
 
 
 @pytest.mark.django_db
-def test_engagement_note_api_post(viewer_user, viewer_user_client, company_acc_manager):
+def test_engagement_note_api_post(
+    viewer_user, viewer_user_client, super_access_user_client, company_acc_manager
+):
     engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
     engagement = engagement_note.engagement
     # sanity check
@@ -436,25 +491,29 @@ def test_engagement_note_api_post(viewer_user, viewer_user_client, company_acc_m
     data = {
         "contents": "   Lorem ipsum 1234  \n",
     }
-    response = viewer_user_client.post(
-        reverse(
-            "api-engagement-note",
-            kwargs={"engagement_id": engagement.id},
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
+    clients = [super_access_user_client, viewer_user_client]
 
-    response_data = json.loads(response.content)
-    assert len(response_data["data"]) == 3
-    assert "Lorem ipsum 1234" in [d["contents"] for d in response_data["data"]]
+    for client in clients:
+        response = client.post(
+            reverse(
+                "api-engagement-note",
+                kwargs={"engagement_id": engagement.id},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+        assert response.status_code == 200
+
+        response_data = json.loads(response.content)
+        assert "Lorem ipsum 1234" in [d["contents"] for d in response_data["data"]]
+    assert len(response_data["data"]) == 4
 
 
 @pytest.mark.django_db
 def test_engagement_note_api_patch(
-    viewer_user, viewer_user_client, company_acc_manager
+    viewer_user, viewer_user_client, super_access_user_client, company_acc_manager
 ):
     engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
     engagement = engagement_note.engagement
@@ -468,52 +527,64 @@ def test_engagement_note_api_patch(
             }
         ]
     }
-    response = viewer_user_client.patch(
-        reverse(
-            "api-engagement-note",
-            kwargs={"engagement_id": engagement.id},
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
+    clients = [super_access_user_client, viewer_user_client]
 
-    response_data = json.loads(response.content)
+    for client in clients:
+        response = client.patch(
+            reverse(
+                "api-engagement-note",
+                kwargs={"engagement_id": engagement.id},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
+
+        assert response.status_code == 200
+
+        response_data = json.loads(response.content)
+
+        updated = [
+            d for d in response_data["data"] if d["noteId"] == str(engagement_note.id)
+        ][0]
+        assert updated["contents"] == "Lorem ipsum"
     assert len(response_data["data"]) == 2
-
-    updated = [
-        d for d in response_data["data"] if d["noteId"] == str(engagement_note.id)
-    ][0]
-    assert updated["contents"] == "Lorem ipsum"
 
 
 @pytest.mark.django_db
 def test_engagement_note_api_delete(
-    viewer_user, viewer_user_client, company_acc_manager
+    viewer_user, viewer_user_client, super_access_user_client, company_acc_manager
 ):
     engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
     engagement = engagement_note.engagement
     # sanity check
     assert engagement.notes.count() == 2
-    data = {
-        "id": str(engagement_note.id),
-    }
-    response = viewer_user_client.delete(
-        reverse(
-            "api-engagement-note",
-            kwargs={"engagement_id": engagement.id},
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
+    clients = [super_access_user_client, viewer_user_client]
 
-    response_data = json.loads(response.content)
-    assert len(response_data["data"]) == 1
+    for client in clients:
+        engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
+        engagement = engagement_note.engagement
+        data = {
+            "id": str(engagement_note.id),
+        }
+        response = client.delete(
+            reverse(
+                "api-engagement-note",
+                kwargs={"engagement_id": engagement.id},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
 
-    assert str(engagement_note.id) not in [d["noteId"] for d in response_data["data"]]
+        assert response.status_code == 200
+
+        response_data = json.loads(response.content)
+
+        assert str(engagement_note.id) not in [
+            d["noteId"] for d in response_data["data"]
+        ]
+    assert len(response_data["data"]) == 0
 
 
 @pytest.mark.django_db
@@ -569,7 +640,9 @@ def test_insight_api_get(viewer_user_client, company_acc_manager):
 
 
 @pytest.mark.django_db
-def test_insight_api_patch(viewer_user_client, company_acc_manager):
+def test_insight_api_patch(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
     insight = company_acc_manager.insights.first()
     # sanity check
     assert company_acc_manager.insights.count() == 11
@@ -578,47 +651,56 @@ def test_insight_api_patch(viewer_user_client, company_acc_manager):
         "details": "Lorem ipsum dolor sit amet",
         "order": 1,
     }
-    response = viewer_user_client.patch(
-        reverse(
-            "api-insight",
-            kwargs={"insight_id": insight.id},
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
+    clients = [super_access_user_client, viewer_user_client]
 
-    response_data = json.loads(response.content)
-    assert company_acc_manager.insights.count() == 11
+    for client in clients:
+        response = client.patch(
+            reverse(
+                "api-insight",
+                kwargs={"insight_id": insight.id},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
 
-    assert response_data["id"] == str(insight.id)
-    assert response_data["title"] == "Foo"
-    assert response_data["details"] == "Lorem ipsum dolor sit amet"
-    assert response_data["created_by"] == insight.created_by.get_full_name()
-    assert response_data["created_at"] == insight.created_at.isoformat()
-    assert response_data["order"] == 1
+        assert response.status_code == 200
+
+        response_data = json.loads(response.content)
+        assert company_acc_manager.insights.count() == 11
+
+        assert response_data["id"] == str(insight.id)
+        assert response_data["title"] == "Foo"
+        assert response_data["details"] == "Lorem ipsum dolor sit amet"
+        assert response_data["created_by"] == insight.created_by.get_full_name()
+        assert response_data["created_at"] == insight.created_at.isoformat()
+        assert response_data["order"] == 1
 
 
 @pytest.mark.django_db
-def test_insight_api_delete(viewer_user_client, company_acc_manager):
-    insight = company_acc_manager.insights.first()
+def test_insight_api_delete(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
     # sanity check
     assert company_acc_manager.insights.count() == 11
 
-    response = viewer_user_client.delete(
-        reverse(
-            "api-insight",
-            kwargs={"insight_id": insight.id},
-        ),
-    )
+    clients = [super_access_user_client, viewer_user_client]
 
-    assert response.status_code == 200
+    for client in clients:
+        insight = company_acc_manager.insights.first()
+        response = client.delete(
+            reverse(
+                "api-insight",
+                kwargs={"insight_id": insight.id},
+            ),
+        )
 
-    response_data = json.loads(response.content)
-    assert company_acc_manager.insights.count() == 10
+        assert response.status_code == 200
 
-    assert response_data["status"] == "success"
+        response_data = json.loads(response.content)
+
+        assert response_data["status"] == "success"
+    assert company_acc_manager.insights.count() == 9
 
 
 @pytest.mark.django_db
@@ -652,7 +734,9 @@ def test_engagement_api_methods_authorisation(
 
 
 @pytest.mark.django_db
-def test_engagement_api_patch(viewer_user_client, company_acc_manager):
+def test_engagement_api_patch(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
     engagement = company_acc_manager.engagements.first()
     # sanity check
     assert company_acc_manager.engagements.count() == 4
@@ -667,30 +751,36 @@ def test_engagement_api_patch(viewer_user_client, company_acc_manager):
         "outcomes": "An outcome",
         "actions": "An action",
     }
-    response = viewer_user_client.patch(
-        reverse(
-            "api-engagement",
-            kwargs={"engagement_id": engagement.id},
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
+    clients = [super_access_user_client, viewer_user_client]
 
-    response_data = json.loads(response.content)
-    assert company_acc_manager.engagements.count() == 4
+    for client in clients:
+        response = client.patch(
+            reverse(
+                "api-engagement",
+                kwargs={"engagement_id": engagement.id},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
 
-    assert response_data["data"]["id"] == str(engagement.id)
-    assert response_data["data"]["title"] == "Foo"
-    assert response_data["data"]["agenda"] == "Lorem ipsum dolor sit amet"
-    assert response_data["data"]["date"] == engagement.date.strftime(DATE_FORMAT_SHORT)
-    assert response_data["data"]["engagement_type"] == "Letter"
-    assert response_data["data"]["civil_servants"] == ["Bob", "Sarah"]
-    assert response_data["data"]["company_representatives"] == ["Jack", "Jill"]
-    assert response_data["data"]["ministers"] == ["Louise", "Jenny"]
-    assert response_data["data"]["outcomes"] == "An outcome"
-    assert response_data["data"]["actions"] == "An action"
+        assert response.status_code == 200
+
+        response_data = json.loads(response.content)
+        assert company_acc_manager.engagements.count() == 4
+
+        assert response_data["data"]["id"] == str(engagement.id)
+        assert response_data["data"]["title"] == "Foo"
+        assert response_data["data"]["agenda"] == "Lorem ipsum dolor sit amet"
+        assert response_data["data"]["date"] == engagement.date.strftime(
+            DATE_FORMAT_SHORT
+        )
+        assert response_data["data"]["engagement_type"] == "Letter"
+        assert response_data["data"]["civil_servants"] == ["Bob", "Sarah"]
+        assert response_data["data"]["company_representatives"] == ["Jack", "Jill"]
+        assert response_data["data"]["ministers"] == ["Louise", "Jenny"]
+        assert response_data["data"]["outcomes"] == "An outcome"
+        assert response_data["data"]["actions"] == "An action"
 
 
 @pytest.mark.django_db
@@ -724,7 +814,9 @@ def test_company_engagement_api_methods_authorisation(
 
 
 @pytest.mark.django_db
-def test_company_engagement_api_post(viewer_user_client, company_acc_manager):
+def test_company_engagement_api_post(
+    viewer_user_client, super_access_user_client, company_acc_manager
+):
     # sanity check
     assert company_acc_manager.engagements.count() == 4
     data = {
@@ -738,25 +830,30 @@ def test_company_engagement_api_post(viewer_user_client, company_acc_manager):
         "outcomes": "An outcome",
         "actions": "An action",
     }
-    response = viewer_user_client.post(
-        reverse(
-            "api-company-engagement",
-            kwargs={"duns_number": company_acc_manager.duns_number},
-        ),
-        json.dumps(data),
-        content_type="application/json",
-    )
 
-    assert response.status_code == 200
+    clients = [super_access_user_client, viewer_user_client]
 
-    response_data = json.loads(response.content)
-    assert company_acc_manager.engagements.count() == 5
+    for client in clients:
+        response = client.post(
+            reverse(
+                "api-company-engagement",
+                kwargs={"duns_number": company_acc_manager.duns_number},
+            ),
+            json.dumps(data),
+            content_type="application/json",
+        )
 
-    # API only returns the 4 most recent engagements
-    assert len(response_data["data"]) == 4
-    assert "Foo" in [d["title"] for d in response_data["data"]]
-    assert "Lorem ipsum dolor sit amet" in [d["agenda"] for d in response_data["data"]]
-    assert "January 25 2040" in [d["date"] for d in response_data["data"]]
+        assert response.status_code == 200
+
+        response_data = json.loads(response.content)
+
+        # API only returns the 4 most recent engagements
+        assert "Foo" in [d["title"] for d in response_data["data"]]
+        assert "Lorem ipsum dolor sit amet" in [
+            d["agenda"] for d in response_data["data"]
+        ]
+        assert "January 25 2040" in [d["date"] for d in response_data["data"]]
+    assert company_acc_manager.engagements.count() == 6
 
 
 @pytest.mark.django_db

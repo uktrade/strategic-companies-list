@@ -39,7 +39,10 @@ class CompanyAccountManagerUserMixin(UserPassesTestMixin):
     protected_methods = ["patch", "put", "post", "delete"]
 
     def test_func(self):
-        is_account_manager = self.request.user in self.company.account_manager.all()
+        is_account_manager = (
+            self.request.user in self.company.account_manager.all()
+            or self.request.user.in_group(settings.SUPER_ACCESS_GROUP)
+        )
         return is_account_manager
 
     def dispatch(self, request, *args, **kwargs):
