@@ -130,6 +130,7 @@ IP_FILTER_EXCLUDE_PATHS = HEALTH_CHECK_PATHS
 # This allows the app itself to be quite open in terms of SSO, but access is managed within
 BASIC_ACCESS_GROUP = "Basic access"
 VIEWER_ACCESS_GROUP = "Viewer access"
+SUPER_ACCESS_GROUP = "Super access"
 BASIC_ACCESS_EXCLUDE_PATHS = HEALTH_CHECK_PATHS + [
     reverse_lazy("authbroker_client:login"),
     reverse_lazy("authbroker_client:callback"),

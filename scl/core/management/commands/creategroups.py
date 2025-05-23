@@ -9,6 +9,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         Group.objects.get_or_create(name=settings.BASIC_ACCESS_GROUP)
         Group.objects.get_or_create(name=settings.VIEWER_ACCESS_GROUP)
+        Group.objects.get_or_create(name=settings.SUPER_ACCESS_GROUP)
         self.stdout.write(
-            self.style.SUCCESS("Successfully created 'Basic' and 'Viewer' access groups")
+            self.style.SUCCESS(
+                "Successfully created 'Basic','Viewer' and 'Super' access groups"
+            )
         )

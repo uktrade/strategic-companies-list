@@ -21,6 +21,12 @@ def viewer_group():
 
 @pytest.fixture
 @pytest.mark.django_db
+def super_access_group():
+    return Group.objects.create(name=settings.SUPER_ACCESS_GROUP)
+
+
+@pytest.fixture
+@pytest.mark.django_db
 def basic_access_user(basic_access_group):
     user = factories.UserFactory.create(is_superuser=False, groups=[basic_access_group])
     return user
@@ -46,6 +52,23 @@ def viewer_user(basic_access_group, viewer_group):
 @pytest.mark.django_db
 def viewer_user_client(client, viewer_user):
     client.force_login(viewer_user)
+    return client
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def super_access_user(basic_access_group, viewer_group, super_access_group):
+    user = factories.UserFactory.create(
+        is_superuser=False,
+        groups=[basic_access_group, viewer_group, super_access_group],
+    )
+    return user
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def super_access_user_client(client, super_access_user):
+    client.force_login(super_access_user)
     return client
 
 

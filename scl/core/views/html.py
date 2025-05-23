@@ -30,6 +30,16 @@ class ViewerOrCompanyAccountManagerUserMixin(UserPassesTestMixin):
         return is_viewer or is_account_manager
 
 
+class UserCanEditMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_user_can_edit(self):
+        return (
+            self.request.user in self.company.account_manager.all()
+            or self.request.user.in_group(settings.SUPER_ACCESS_GROUP)
+        )
+
+
 class IndexView(TemplateView):
     template_name = "index.html"
 
@@ -50,7 +60,9 @@ class IndexView(TemplateView):
         return context
 
 
-class EngagementDetailView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
+class EngagementDetailView(
+    ViewerOrCompanyAccountManagerUserMixin, UserCanEditMixin, DetailView
+):
     template_name = "engagement.html"
     model = Engagement
 
@@ -60,9 +72,6 @@ class EngagementDetailView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        is_account_manager = (
-            self.request.user in self.object.company.account_manager.all()
-        )
 
         versions = Version.objects.get_for_object(self.object)
 
@@ -97,7 +106,7 @@ class EngagementDetailView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
                             constants.DATE_FORMAT_LONG
                         ),
                     },
-                    "is_account_manager": is_account_manager,
+                    "is_account_manager": self.test_user_can_edit(),
                     "has_access": self.test_func(),
                     "company": {
                         "name": self.object.company.name,
@@ -111,7 +120,7 @@ class EngagementDetailView(ViewerOrCompanyAccountManagerUserMixin, DetailView):
                             }
                             for note in notes
                         ]
-                        if is_account_manager
+                        if self.test_user_can_edit()
                         else []
                     ),
                 }
@@ -174,7 +183,9 @@ class CompanyEngagementListView(ViewerOrCompanyAccountManagerUserMixin, DetailVi
         return context
 
 
-class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
+class CompanyDetailView(
+    DetailView, ViewerOrCompanyAccountManagerUserMixin, UserCanEditMixin
+):
     model = Company
     template_name = "company.html"
 
@@ -189,7 +200,6 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = date.today()
-        is_account_manager = self.request.user in self.object.account_manager.all()
 
         account_managers = list(self.object.account_manager.all())
 
@@ -287,7 +297,7 @@ class CompanyDetailView(DetailView, ViewerOrCompanyAccountManagerUserMixin):
                             else []
                         ),
                         "has_access": self.test_func(),
-                        "is_account_manager": is_account_manager,
+                        "is_account_manager": self.test_user_can_edit(),
                         "engagements": (
                             [
                                 {

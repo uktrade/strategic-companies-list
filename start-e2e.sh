@@ -27,6 +27,7 @@ user.is_staff = True
 user.is_superuser = True
 user.groups.add(Group.objects.get(name='Basic access'))
 user.groups.add(Group.objects.get(name='Viewer access'))
+user.groups.add(Group.objects.get(name='Super access'))
 user.save()
 EOF
 
