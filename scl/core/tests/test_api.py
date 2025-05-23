@@ -775,7 +775,7 @@ def test_engagement_api_patch(
         assert response_data["data"]["date"] == engagement.date.strftime(
             DATE_FORMAT_SHORT
         )
-        assert response_data["data"]["engagement_type"] == "letter"
+        assert response_data["data"]["engagement_type"] == "Letter"
         assert response_data["data"]["civil_servants"] == ["Bob", "Sarah"]
         assert response_data["data"]["company_representatives"] == ["Jack", "Jill"]
         assert response_data["data"]["ministers"] == ["Louise", "Jenny"]
