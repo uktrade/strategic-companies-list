@@ -19,7 +19,10 @@ const Engagements = ({ engagements, duns_number }) => (
         <ul className="scl-multiline-list govuk-!-margin-top-2">
           {engagements.map((engagement) => {
             return (
-              <li className="scl-multiline-list__item" key={engagement.id}>
+              <li
+                className="scl-multiline-list__item govuk-!-margin-bottom-3"
+                key={engagement.id}
+              >
                 <a
                   href={`/engagement/${engagement.id}`}
                   className="govuk-link govuk-link--no-visited-state scl-multiline-list__link govuk-!-font-size-19 govuk-!-font-weight-bold"
@@ -27,7 +30,7 @@ const Engagements = ({ engagements, duns_number }) => (
                   <strong
                     className={`govuk-tag govuk-tag--${
                       colour_engagement_type_map[engagement.engagement_type]
-                    } govuk-!-font-tabular-numbers scl-tag scl-tag--small scl-tag--date scl-multiline-list__date`}
+                    } scl-tag scl-tag--wide govuk-!-font-weight-regular govuk-!-margin-bottom-2`}
                   >
                     {engagement.engagement_type}
                   </strong>
@@ -40,7 +43,7 @@ const Engagements = ({ engagements, duns_number }) => (
                   <br />
                   <span class="govuk-!-text-break-word">{engagement.date}</span>
                 </p>
-                <p class="govuk-body govuk-body-s govuk-!-margin-bottom-5">
+                <p class="govuk-body govuk-body-s govuk-!-margin-bottom-2">
                   <strong>Atendees</strong>
                   <br />
                   <span>
@@ -52,7 +55,7 @@ const Engagements = ({ engagements, duns_number }) => (
                       .join(", ")}
                   </span>
                 </p>
-                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible"></hr>
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-bottom-3"></hr>
               </li>
             );
           })}
