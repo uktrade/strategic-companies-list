@@ -317,3 +317,7 @@ WEBPACK_LOADER = {
         "IGNORE": [r".+\.hot-update.js", r".+\.map"],
     }
 }
+
+# Team support email
+
+SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", "nobody@example.com")
