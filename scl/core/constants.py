@@ -8,13 +8,13 @@ DATE_FORMAT_NUMERIC_SLASHES = "%d/%m/%Y"
 
 class EngagementType(TextChoices):
     TYPE_LEGACY = "Legacy", "Legacy"
-    TYPE_EMAIL_WEBSITE = "email_website", "Email or website"
+    TYPE_EMAIL_WEBSITE = "email_website", "Email / Website"
     TYPE_FACE_TO_FACE = "face_to_face", "Face to face"
-    TYPE_LETTER = "letter", "Letter"
+    TYPE_LETTER = "letter", "Letter / Fax"
     TYPE_NON_CONTACT_RESEARCH = "non_contact_research", "Non contact research"
-    TYPE_SOCIAL_MEDIA = "social_media", "Social media"
+    TYPE_SOCIAL_MEDIA = "social_media", "Social Media"
     TYPE_TELEPHONE = "telephone", "Telephone"
-    TYPE_VIDEO_TELECONF = "video_teleconf", "Video or teleconference"
+    TYPE_VIDEO_TELECONF = "video_teleconf", "Video / Teleconference"
 
 
 ENGAGEMENT_TYPE_COLOUR_MAPPING = {
