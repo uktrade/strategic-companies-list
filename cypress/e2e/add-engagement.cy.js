@@ -132,8 +132,7 @@ describe("Add/edit an engagement", () => {
       // Deliberate typo: My engagement tite
       cy.findByLabelText("Title").type("My engagement tite");
       cy.findByLabelText("Date").type("2030-02-01");
-      cy.findByLabelText("Engagement type").select("Social media");
-      cy.findByLabelText("Engagement type").select("Social media");
+      cy.findByLabelText("Engagement type").select("Social Media");
       cy.findByLabelText("Who are you meeting from the company?").type(
         "Bob,Sarah"
       );
