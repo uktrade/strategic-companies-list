@@ -102,7 +102,7 @@ def company_acc_manager(viewer_user):
             3, engagement=engagements[0], created_by=acc_manager.account_manager
         )
         factories.EngagementNoteFactory.create_batch(
-            2, engagement=engagements[1], created_by=viewer_user
+            2, engagement=engagements[0], created_by=viewer_user
         )
 
     return company
@@ -110,7 +110,7 @@ def company_acc_manager(viewer_user):
 
 @pytest.fixture
 @pytest.mark.django_db
-def company_not_acc_manager(viewer_user):
+def company_not_acc_manager(viewer_user, super_access_user):
     """
     Company with an account manager that is not the viewer_user.
     """
@@ -134,6 +134,9 @@ def company_not_acc_manager(viewer_user):
         engagements = factories.EngagementFactory.create_batch(4, company=company)
         factories.EngagementNoteFactory.create_batch(
             3, engagement=engagements[0], created_by=acc_manager.account_manager
+        )
+        factories.EngagementNoteFactory.create_batch(
+            2, engagement=engagements[0], created_by=super_access_user
         )
 
     return company

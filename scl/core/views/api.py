@@ -699,6 +699,10 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
         logger.info("Requesting enagement with id: %s", self.kwargs["engagement_id"])
         return Engagement.objects.get(id=self.kwargs["engagement_id"])
 
+    @property
+    def user_notes(self):
+        return self.engagement.notes.filter(created_by=self.request.user)
+
     def patch(self, *args, **kwargs):
         with reversion.create_revision():
             for d in self.data["notes"]:
@@ -707,14 +711,11 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
                 note.contents = d["contents"]
                 note.save()
 
-            updated_notes = self.engagement.notes.all()
-
             reversion.set_user(self.request.user)
             reversion.set_comment(
                 "Note updated"
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
-
         response = JsonResponse(
             {
                 "data": [
@@ -722,7 +723,7 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
                         "noteId": str(note.id),
                         "contents": note.contents,
                     }
-                    for note in updated_notes
+                    for note in self.user_notes
                 ],
             },
             status=200,
@@ -749,7 +750,6 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
-            notes = self.engagement.notes.all()
         response = JsonResponse(
             {
                 "data": [
@@ -757,7 +757,7 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
                         "noteId": str(note.id),
                         "contents": note.contents,
                     }
-                    for note in notes
+                    for note in self.user_notes
                 ],
             },
             status=200,
@@ -781,7 +781,6 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
                 f"({self.request.build_absolute_uri()} from {self.request.headers.get('referer', '')})"
             )
 
-            notes = self.engagement.notes.all()
         response = JsonResponse(
             {
                 "data": [
@@ -789,7 +788,7 @@ class EngagementNoteAPIView(CompanyAccountManagerUserMixin, View):
                         "noteId": str(note.id),
                         "contents": note.contents,
                     }
-                    for note in notes
+                    for note in self.user_notes
                 ],
             },
             status=200,

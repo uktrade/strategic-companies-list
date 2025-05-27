@@ -237,8 +237,7 @@ const Notes = ({
             Business intelligence
           </h2>
           <p className="govuk-body">
-            Only other account managers for this company can add or view
-            information in this section.
+          Only you can add or view information in this section.
           </p>
           <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-4" />
         </>

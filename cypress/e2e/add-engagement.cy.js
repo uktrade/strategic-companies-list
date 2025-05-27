@@ -33,7 +33,7 @@ const assertViewAllEngagementsLink = (company) => {
 const assertEmptyNotes = () => {
   cy.findByRole("heading", { name: "Business intelligence", level: 2 });
   cy.findByText(
-    "Only other account managers for this company can add or view information in this section."
+    "Only you can add or view information in this section."
   ).should("be.visible");
   cy.findByText(
     "This engagement has no business intelligence recorded."
