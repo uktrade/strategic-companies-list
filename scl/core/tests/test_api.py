@@ -454,7 +454,7 @@ def test_key_people_api_delete(
 @pytest.mark.parametrize(
     "method,exp_status", [("get", 405), ("post", 403), ("patch", 403), ("delete", 403)]
 )
-def test_engagement_note_api_methods_authorisation(
+def test_engagement_note_api_methods_authorisation_for_non_acc(
     method, exp_status, viewer_user_client, company_not_acc_manager
 ):
     engagement = company_not_acc_manager.engagements.first()
@@ -481,44 +481,81 @@ def test_engagement_note_api_methods_authorisation(
 
 
 @pytest.mark.django_db
-def test_engagement_note_api_post(
-    viewer_user, viewer_user_client, super_access_user_client, company_acc_manager
-):
-    engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
-    engagement = engagement_note.engagement
+def test_engagement_note_api_post(viewer_user, viewer_user_client, company_acc_manager):
+    total_notes = EngagementNote.objects.all()
+    total_user_notes = EngagementNote.objects.filter(created_by=viewer_user)
+    engagement = total_user_notes.first().engagement
+
     # sanity check
-    assert engagement.notes.count() == 2
+    assert total_notes.count() == 5
+    assert total_user_notes.count() == 2
     data = {
         "contents": "   Lorem ipsum 1234  \n",
     }
 
-    clients = [super_access_user_client, viewer_user_client]
+    response = viewer_user_client.post(
+        reverse(
+            "api-engagement-note",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
 
-    for client in clients:
-        response = client.post(
-            reverse(
-                "api-engagement-note",
-                kwargs={"engagement_id": engagement.id},
-            ),
-            json.dumps(data),
-            content_type="application/json",
-        )
+    assert response.status_code == 200
 
-        assert response.status_code == 200
+    response_data = json.loads(response.content)
+    assert "Lorem ipsum 1234" in [d["contents"] for d in response_data["data"]]
+    assert len(response_data["data"]) == 3
+    assert total_notes.count() == 6
+    assert total_user_notes.count() == 3
 
-        response_data = json.loads(response.content)
-        assert "Lorem ipsum 1234" in [d["contents"] for d in response_data["data"]]
-    assert len(response_data["data"]) == 4
+
+@pytest.mark.django_db
+def test_engagement_note_api_post_super_access_user(
+    super_access_user, super_access_user_client, company_not_acc_manager
+):
+    total_notes = EngagementNote.objects.all()
+    total_user_notes = EngagementNote.objects.filter(created_by=super_access_user)
+    engagement = total_user_notes.first().engagement
+
+    # sanity check
+    assert total_notes.count() == 5
+    assert total_user_notes.count() == 2
+    data = {
+        "contents": "   Lorem ipsum 1234  \n",
+    }
+
+    response = super_access_user_client.post(
+        reverse(
+            "api-engagement-note",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+    assert "Lorem ipsum 1234" in [d["contents"] for d in response_data["data"]]
+    assert len(response_data["data"]) == 3
+    assert total_notes.count() == 6
+    assert total_user_notes.count() == 3
 
 
 @pytest.mark.django_db
 def test_engagement_note_api_patch(
-    viewer_user, viewer_user_client, super_access_user_client, company_acc_manager
+    viewer_user, viewer_user_client, company_acc_manager
 ):
-    engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
-    engagement = engagement_note.engagement
+    total_notes = EngagementNote.objects.all()
+    total_user_notes = total_notes.filter(created_by=viewer_user)
+    engagement = total_user_notes.first().engagement
+    engagement_note = total_user_notes.first()
+
     # sanity check
-    assert engagement.notes.count() == 2
+    assert total_notes.count() == 5
+    assert total_user_notes.count() == 2
     data = {
         "notes": [
             {
@@ -528,63 +565,145 @@ def test_engagement_note_api_patch(
         ]
     }
 
-    clients = [super_access_user_client, viewer_user_client]
+    response = viewer_user_client.patch(
+        reverse(
+            "api-engagement-note",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
 
-    for client in clients:
-        response = client.patch(
-            reverse(
-                "api-engagement-note",
-                kwargs={"engagement_id": engagement.id},
-            ),
-            json.dumps(data),
-            content_type="application/json",
-        )
+    assert response.status_code == 200
 
-        assert response.status_code == 200
+    response_data = json.loads(response.content)
 
-        response_data = json.loads(response.content)
+    updated = [
+        d for d in response_data["data"] if d["noteId"] == str(engagement_note.id)
+    ]
 
-        updated = [
-            d for d in response_data["data"] if d["noteId"] == str(engagement_note.id)
-        ][0]
-        assert updated["contents"] == "Lorem ipsum"
+    assert updated[0]["contents"] == "Lorem ipsum"
     assert len(response_data["data"]) == 2
+    assert total_notes.count() == 5
+    assert total_user_notes.count() == 2
+
+
+@pytest.mark.django_db
+def test_engagement_note_api_patch_super_access_user(
+    super_access_user, super_access_user_client, company_not_acc_manager
+):
+    total_notes = EngagementNote.objects.all()
+    total_user_notes = total_notes.filter(created_by=super_access_user)
+    engagement = total_user_notes.first().engagement
+    engagement_note = total_user_notes.first()
+
+    # sanity check
+    assert total_notes.count() == 5
+    assert total_user_notes.count() == 2
+    data = {
+        "notes": [
+            {
+                "contents": "Lorem ipsum",
+                "noteId": str(engagement_note.id),
+            }
+        ]
+    }
+
+    response = super_access_user_client.patch(
+        reverse(
+            "api-engagement-note",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+
+    updated = [
+        d for d in response_data["data"] if d["noteId"] == str(engagement_note.id)
+    ]
+
+    assert updated[0]["contents"] == "Lorem ipsum"
+    assert len(response_data["data"]) == 2
+    assert total_notes.count() == 5
+    assert total_user_notes.count() == 2
 
 
 @pytest.mark.django_db
 def test_engagement_note_api_delete(
-    viewer_user, viewer_user_client, super_access_user_client, company_acc_manager
+    viewer_user, viewer_user_client, company_acc_manager
 ):
+    total_notes = EngagementNote.objects.all()
+    total_user_notes = total_notes.filter(created_by=viewer_user)
+    engagement = total_user_notes.first().engagement
+    engagement_note = total_user_notes.first()
+
+    # sanity check
+    assert total_notes.count() == 5
+    assert total_user_notes.count() == 2
+
     engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
     engagement = engagement_note.engagement
+    data = {
+        "id": str(engagement_note.id),
+    }
+    response = viewer_user_client.delete(
+        reverse(
+            "api-engagement-note",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+
+    response_data = json.loads(response.content)
+
+    assert str(engagement_note.id) not in [d["noteId"] for d in response_data["data"]]
+    assert len(response_data["data"]) == 1
+    assert total_notes.count() == 4
+
+
+@pytest.mark.django_db
+def test_engagement_note_api_delete_super_access_user(
+    super_access_user, super_access_user_client, company_not_acc_manager
+):
+    total_notes = EngagementNote.objects.all()
+    total_user_notes = total_notes.filter(created_by=super_access_user)
+    engagement = total_user_notes.first().engagement
+    engagement_note = total_user_notes.first()
+
     # sanity check
-    assert engagement.notes.count() == 2
+    assert total_notes.count() == 5
+    assert total_user_notes.count() == 2
 
-    clients = [super_access_user_client, viewer_user_client]
+    engagement_note = EngagementNote.objects.filter(
+        created_by=super_access_user
+    ).first()
+    engagement = engagement_note.engagement
+    data = {
+        "id": str(engagement_note.id),
+    }
+    response = super_access_user_client.delete(
+        reverse(
+            "api-engagement-note",
+            kwargs={"engagement_id": engagement.id},
+        ),
+        json.dumps(data),
+        content_type="application/json",
+    )
 
-    for client in clients:
-        engagement_note = EngagementNote.objects.filter(created_by=viewer_user).first()
-        engagement = engagement_note.engagement
-        data = {
-            "id": str(engagement_note.id),
-        }
-        response = client.delete(
-            reverse(
-                "api-engagement-note",
-                kwargs={"engagement_id": engagement.id},
-            ),
-            json.dumps(data),
-            content_type="application/json",
-        )
+    assert response.status_code == 200
 
-        assert response.status_code == 200
+    response_data = json.loads(response.content)
 
-        response_data = json.loads(response.content)
-
-        assert str(engagement_note.id) not in [
-            d["noteId"] for d in response_data["data"]
-        ]
-    assert len(response_data["data"]) == 0
+    assert str(engagement_note.id) not in [d["noteId"] for d in response_data["data"]]
+    assert len(response_data["data"]) == 1
+    assert total_notes.count() == 4
 
 
 @pytest.mark.django_db
