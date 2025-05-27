@@ -744,7 +744,7 @@ def test_engagement_api_patch(
         "title": "Foo",
         "agenda": "Lorem ipsum dolor sit amet",
         "date": engagement.date.strftime(DATE_FORMAT_NUMERIC),
-        "engagementType": "Letter",
+        "engagementType": "Letter / Fax",
         "civilServants": ["Bob", "Sarah"],
         "companyRepresentatives": ["Jack", "Jill"],
         "ministers": ["Louise", "Jenny"],
@@ -775,7 +775,7 @@ def test_engagement_api_patch(
         assert response_data["data"]["date"] == engagement.date.strftime(
             DATE_FORMAT_SHORT
         )
-        assert response_data["data"]["engagement_type"] == "Letter"
+        assert response_data["data"]["engagement_type"] == "Letter / Fax"
         assert response_data["data"]["civil_servants"] == ["Bob", "Sarah"]
         assert response_data["data"]["company_representatives"] == ["Jack", "Jill"]
         assert response_data["data"]["ministers"] == ["Louise", "Jenny"]
@@ -823,7 +823,7 @@ def test_company_engagement_api_post(
         "title": "Foo",
         "agenda": "Lorem ipsum dolor sit amet",
         "date": "2040-01-25",
-        "engagementType": "Letter",
+        "engagementType": "Letter / Fax",
         "civilServants": ["Bob", "Sarah"],
         "companyRepresentatives": ["Jack", "Jill"],
         "ministers": ["Louise", "Jenny"],
