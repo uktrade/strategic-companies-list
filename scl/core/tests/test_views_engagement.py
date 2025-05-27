@@ -2,10 +2,10 @@ import json
 
 import pytest
 import reversion
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.test import Client, TestCase
 from django.urls import reverse
-from django.conf import settings
 
 from scl.core.tests import factories
 
@@ -83,7 +83,7 @@ class EngagementPageTest(TestCase):
             "title": "new title",
             "agenda": "new agenda",
             "date": "2040-01-25",
-            "engagementType": "Letter",
+            "engagementType": "Letter / Fax",
             "civilServants": ["Bob", "Sarah"],
             "companyRepresentatives": ["Jack", "Jill"],
             "ministers": ["Louise", "Jenny"],
@@ -100,7 +100,7 @@ class EngagementPageTest(TestCase):
         self.engagement.refresh_from_db()
         assert self.engagement.title == "new title"
         assert self.engagement.agenda == "new agenda"
-        assert self.engagement.engagement_type == "letter"
+        assert self.engagement.engagement_type == "Letter / Fax"
         assert self.engagement.civil_servants == ["Bob", "Sarah"]
         assert self.engagement.company_representatives == ["Jack", "Jill"]
         assert self.engagement.ministers == ["Louise", "Jenny"]
