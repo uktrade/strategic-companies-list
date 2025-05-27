@@ -1,0 +1,12 @@
+{% block initialGTMDataLayer %} 
+    <script nonce="{{ request.csp_nonce }}">
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            "event": "pageLoaded",
+            "user": {
+                "status": "logged-in",
+                "id": "{{ SSO_USER_ID }}"
+            },
+        });
+    </script>
+{% endblock %}
