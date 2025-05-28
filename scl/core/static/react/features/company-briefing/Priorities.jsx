@@ -43,7 +43,7 @@ const Priorities = ({
 
     if (status == 200) {
       setPriorities(data.data);
-      setNotification({ message: "Priortiy deleted" });
+      setNotification({ message: "Priority deleted" });
     } else {
       setNotification({
         message: `Status ${status}: ${data.message || data.error}`,
@@ -66,7 +66,7 @@ const Priorities = ({
 
       if (status == 200) {
         setPriorities(data.data);
-        setNotification({ message: "Priortiy created" });
+        setNotification({ message: "Priority created" });
       } else {
         setNotification({
           message: `Status ${status}: ${data.message || data.error}`,
@@ -86,7 +86,7 @@ const Priorities = ({
 
       if (status == 200) {
         setPriorities(data.data);
-        setNotification({ message: "Priortiy updated" });
+        setNotification({ message: "Priority updated" });
       } else {
         setNotification({
           message: `Status ${status}: ${data.message || data.error}`,
