@@ -971,6 +971,15 @@ def test_company_engagement_api_post(
         assert "Lorem ipsum dolor sit amet" in [
             d["agenda"] for d in response_data["data"]
         ]
+        assert "Letter" in [d["engagement_type"] for d in response_data["data"]]
+        assert ["Louise", "Jenny"] in [d["ministers"] for d in response_data["data"]]
+        assert ["Bob", "Sarah"] in [d["civil_servants"] for d in response_data["data"]]
+        assert ["Jack", "Jill"] in [
+            d["company_representatives"] for d in response_data["data"]
+        ]
+        assert ["Louise", "Jenny", "Bob", "Sarah", "Jack", "Jill"] in [
+            d["all_attendees"] for d in response_data["data"]
+        ]
         assert "January 25 2040" in [d["date"] for d in response_data["data"]]
     assert company_acc_manager.engagements.count() == 6
 
