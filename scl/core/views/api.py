@@ -654,6 +654,7 @@ class CompanyEngagementAPIView(CompanyAccountManagerUserMixin, View):
                         "company_representatives": engagement.company_representatives,
                         "civil_servants": engagement.civil_servants,
                         "ministers": engagement.ministers,
+                        "all_attendees": engagement.all_attendees,
                         "engagement_type": engagement.get_engagement_type_display(),
                         "engagement_type_colour": engagement.engagement_type_colour,
                     }

@@ -1,21 +1,5 @@
 import { COMPANIES } from "./constants";
 
-const assertEngagementList = (expectedItems = []) => {
-  cy.findByRole("heading", { name: "Engagements" })
-    .closest("section")
-    .within(() => {
-      expectedItems.forEach((item, index) => {
-        cy.findAllByRole("listitem")
-          .eq(index)
-          .within(() => {
-            cy.findByRole("link").within(() => {
-              cy.findByText(item.text).should("exist");
-            });
-          });
-      });
-    });
-};
-
 const assertViewAllEngagementsLink = (company) => {
   cy.findByRole("heading", { name: "Engagements" })
     .closest("section")
@@ -32,9 +16,9 @@ const assertViewAllEngagementsLink = (company) => {
 
 const assertEmptyNotes = () => {
   cy.findByRole("heading", { name: "Business intelligence", level: 2 });
-  cy.findByText(
-    "Only you can add or view information in this section."
-  ).should("be.visible");
+  cy.findByText("Only you can add or view information in this section.").should(
+    "be.visible"
+  );
   cy.findByText(
     "This engagement has no business intelligence recorded."
   ).should("be.visible");
@@ -151,9 +135,23 @@ describe("Add/edit an engagement", () => {
         title: "Saved",
         heading: "Engagement added",
       });
-      assertEngagementList([
-        { date: "February 01 2030", text: "My engagement tite" },
-      ]);
+
+      cy.findByRole("heading", { name: "Engagements", level: 2 })
+        .closest("section")
+        .within(() => {
+          cy.findByRole("link", {
+            name: "My engagement tite",
+          }).should("be.visible");
+          cy.findByText("Date")
+            .should("be.visible")
+            .next()
+            .findByText("February 01 2030");
+          cy.findByText("Attendees")
+            .should("be.visible")
+            .next()
+            .findByText("Cara, Louise, Jack, Jill, Bob, Sarah");
+        });
+
       assertViewAllEngagementsLink(COMPANIES.testing_corp);
       cy.findByTestId("engagements").within(() => {
         cy.findByRole("link", {
