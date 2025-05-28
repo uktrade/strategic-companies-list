@@ -100,7 +100,7 @@ const Page = ({ data, id, csrf_token, nonce }) => {
                   />
                   <Priorities
                     id={id}
-                    caption="Account managers can enter how this company can support government priorities, highlight opoortunities or share useful department-specific insights."
+                    caption="Account managers can enter how this company can support government priorities, highlight opportunities or share useful department-specific insights."
                     title="HMG priorities for engagement"
                     insightType="hmg_priority"
                     emptyMessage="Currently no government priorities are assigned."
