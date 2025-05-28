@@ -11,6 +11,8 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - scl:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
   sso:
     build: https://github.com/uktrade/mock-sso.git
     networks:
