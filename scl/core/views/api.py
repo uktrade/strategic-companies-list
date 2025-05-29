@@ -13,8 +13,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 from reversion.models import Version
-from scl.core import constants
 
+from scl.core import constants
 from scl.core.constants import DATE_FORMAT_NUMERIC, DATE_FORMAT_SHORT
 from scl.core.models import Company, Engagement, EngagementNote, Insight, KeyPeople
 from scl.core.views.utils import get_all_sectors, get_company_sectors
@@ -158,6 +158,16 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
                 company.name = self.data.get("title").strip()
             if self.data.get("sectors"):
                 company.sectors = [key["value"] for key in self.data.get("sectors")]
+            if self.data.get("summary"):
+                company.summary = self.data.get("summary").strip()
+            if self.data.get("global_hq_name"):
+                company.global_hq_name = self.data.get("global_hq_name").strip()
+            if self.data.get("global_hq_country"):
+                company.global_hq_country = self.data.get("global_hq_country").strip()
+            if self.data.get("global_turnover_millions_usd"):
+                company.global_turnover_millions_usd = self.data.get("global_turnover_millions_usd")
+            if self.data.get("global_number_of_employees"):
+                company.global_number_of_employees = self.data.get("global_number_of_employees")
             company.save()
 
             updated_company = Company.objects.get(
@@ -176,6 +186,11 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
                     "duns_number": updated_company.duns_number,
                     "company_sectors": get_company_sectors(updated_company),
                     "all_sectors": get_all_sectors(),
+                    "summary": updated_company.summary,
+                    "global_hq_name": updated_company.global_hq_name,
+                    "global_hq_country": updated_company.global_hq_country,
+                    "global_turnover_millions_usd": updated_company.global_turnover_millions_usd,
+                    "global_number_of_employees": updated_company.global_number_of_employees,
                     "last_updated": updated_company.last_updated.strftime(
                         "%B %d, %Y, %H:%M"
                     ),

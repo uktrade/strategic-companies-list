@@ -80,6 +80,11 @@ def test_company_api_patch(
             {"value": "SL0001", "label": "Advanced engineering"},
             {"value": "SL0011", "label": "Aerospace"},
         ],
+        "summary": "new summary",
+        "global_hq_name": "global_hq_name",
+        "global_hq_country": "AL",
+        "global_turnover_millions_usd": 1000000,
+        "global_number_of_employees": 999999,
     }
 
     clients = [super_access_user_client, viewer_user_client]
@@ -94,12 +99,17 @@ def test_company_api_patch(
         )
 
         assert response.status_code == 200
-        response_data = json.loads(response.content)
-        assert response_data["data"]["title"] == "Company name"
-        assert response_data["data"]["company_sectors"] == [
+        response_data = json.loads(response.content)["data"]
+        assert response_data["title"] == "Company name"
+        assert response_data["company_sectors"] == [
             {"label": "Advanced engineering", "value": "SL0001"},
             {"label": "Aerospace", "value": "SL0011"},
         ]
+        assert response_data["summary"] == "new summary"
+        assert response_data["global_hq_name"] == "global_hq_name"
+        assert response_data["global_hq_country"] == "AL"
+        assert response_data["global_turnover_millions_usd"] == 1000000
+        assert response_data["global_number_of_employees"] == 999999
 
 
 @pytest.mark.django_db
