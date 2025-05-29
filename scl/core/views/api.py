@@ -154,14 +154,14 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
     def patch(self, *args, **kwargs):
         with reversion.create_revision():
             company = self.company
+            if self.data.get("title"):
+                company.name = self.data.get("title").strip()
             fields_company = [
                 f.name
                 for f in company._meta.get_fields()
                 if not f.auto_created and f.concrete
             ]
             for field in fields_company:
-                if self.data.get("title"):
-                    company.name = self.data.get("title").strip()
                 if field in self.data:
                     value_field = self.data[field]
                     if isinstance(value_field, str):
