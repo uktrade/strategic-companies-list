@@ -162,7 +162,7 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
                 if not f.auto_created and f.concrete
             ]
             for field in fields_company:
-                if field in self.data:
+                if self.data.get(field):
                     value_field = self.data[field]
                     if isinstance(value_field, str):
                         value_field = value_field.strip()
