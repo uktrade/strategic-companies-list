@@ -164,7 +164,7 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
                 if not f.auto_created and f.concrete
             ]
             for field in fields_company:
-                # does field exist in data/does it have a value?
+                # does incoming data field exist/have a value?
                 if self.data.get(field):
                     value_field = self.data[field]
                     if isinstance(value_field, str):
