@@ -154,20 +154,23 @@ class CompanyAPIView(CompanyAccountManagerUserMixin, View):
     def patch(self, *args, **kwargs):
         with reversion.create_revision():
             company = self.company
-            if self.data.get("title"):
-                company.name = self.data.get("title").strip()
-            if self.data.get("sectors"):
-                company.sectors = [key["value"] for key in self.data.get("sectors")]
-            if self.data.get("summary"):
-                company.summary = self.data.get("summary").strip()
-            if self.data.get("global_hq_name"):
-                company.global_hq_name = self.data.get("global_hq_name").strip()
-            if self.data.get("global_hq_country"):
-                company.global_hq_country = self.data.get("global_hq_country").strip()
-            if self.data.get("global_turnover_millions_usd"):
-                company.global_turnover_millions_usd = self.data.get("global_turnover_millions_usd")
-            if self.data.get("global_number_of_employees"):
-                company.global_number_of_employees = self.data.get("global_number_of_employees")
+            fields_company = [
+                f.name
+                for f in company._meta.get_fields()
+                if not f.auto_created and f.concrete
+            ]
+            for field in fields_company:
+                if self.data.get("title"):
+                    company.name = self.data.get("title").strip()
+                if field in self.data:
+                    value_field = self.data[field]
+                    if isinstance(value_field, str):
+                        value_field = value_field.strip()
+                    elif isinstance(value_field, list):
+                        value_field = [
+                            key["value"] for key in value_field
+                        ]
+                    setattr(company, field, value_field)
             company.save()
 
             updated_company = Company.objects.get(
